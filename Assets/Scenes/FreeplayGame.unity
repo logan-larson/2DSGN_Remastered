@@ -225,8 +225,8 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 119172114}
   _networkObjectCache: {fileID: 119172114}
   _posLerpValue: 0.05
-  _airborneRotLerpValue: 0.01
-  _grounedRotLerpValue: 0.05
+  _airborneRotLerpValue: 0.05
+  _groundedRotLerpValue: 0.05
   startingZ: -10
   zFactor: 0.4
   _movementManager: {fileID: 0}

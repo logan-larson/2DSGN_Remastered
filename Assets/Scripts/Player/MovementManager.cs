@@ -87,6 +87,9 @@ public class MovementManager : NetworkBehaviour
         public Vector3 Velocity;
         public bool IsGrounded;
         public Mode Mode;
+        public bool DirectionLeft;
+        public bool DirectionRight;
+        //public bool IsJumping;
     }
 
     public PublicMovementData PublicData;
@@ -504,10 +507,27 @@ public class MovementManager : NetworkBehaviour
             {
                 // If horizontal input is given, add velocity
                 if (moveData.Horizontal != 0f)
+                {
                     _currentVelocity += transform.right * moveData.Horizontal * _acceleration * modeMultiplier;
-                // If no horizontal input is given, decrease velocity by friction
+
+                    if (moveData.Horizontal < 0f)
+                    {
+                        PublicData.DirectionLeft = true;
+                        PublicData.DirectionRight = false;
+                    }
+                    else if (moveData.Horizontal > 0f)
+                    {
+                        PublicData.DirectionLeft = false;
+                        PublicData.DirectionRight = true;
+                    }
+                }
                 else
+                {
+                    // If no horizontal input is given, decrease velocity by friction
                     _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _friction);
+                    PublicData.DirectionLeft = false;
+                    PublicData.DirectionRight = false;
+                }
             }
         }
 

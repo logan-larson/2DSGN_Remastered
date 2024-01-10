@@ -16,7 +16,7 @@ public class CameraController : NetworkBehaviour
     private float _airborneRotLerpValue = 0.05f;
 
     [SerializeField]
-    private float _grounedRotLerpValue = 0.05f;
+    private float _groundedRotLerpValue = 0.05f;
 
     [SerializeField]
     private float startingZ = -10f;
@@ -140,13 +140,19 @@ public class CameraController : NetworkBehaviour
         Vector3 lerpedPos = Vector3.Lerp(this.transform.position, targetPos, _posLerpValue);
 
         // Set the rotation lerp value based on whether the player is grounded or not
-        var rotLerpValue = _movementManager.PublicData.IsGrounded ? _grounedRotLerpValue : _airborneRotLerpValue;
+        var rotLerpValue = _movementManager.PublicData.IsGrounded ? _groundedRotLerpValue : _airborneRotLerpValue;
 
         // Check if the player is holding the camera rotation lock button
         Quaternion lerpedRot = this.transform.rotation;
         if (!_inputManager.CameraLockInput)
         {
-            lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation, rotLerpValue);
+            var movementRot = _movementManager.PublicData.DirectionLeft
+                ? Quaternion.Euler(0, 0, 10f)
+                : _movementManager.PublicData.DirectionRight
+                    ? Quaternion.Euler(0, 0, -10f)
+                    : Quaternion.identity
+                    ;
+            lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);
         }
 
         this.transform.SetPositionAndRotation(new Vector3(lerpedPos.x, lerpedPos.y, lerpedPos.z), lerpedRot);
