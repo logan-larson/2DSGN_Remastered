@@ -89,7 +89,7 @@ public class MovementManager : NetworkBehaviour
         public Mode Mode;
         public bool DirectionLeft;
         public bool DirectionRight;
-        //public bool IsJumping;
+        public bool IsJumping;
     }
 
     public PublicMovementData PublicData;
@@ -505,28 +505,16 @@ public class MovementManager : NetworkBehaviour
             }
             else
             {
+
                 // If horizontal input is given, add velocity
                 if (moveData.Horizontal != 0f)
                 {
                     _currentVelocity += transform.right * moveData.Horizontal * _acceleration * modeMultiplier;
-
-                    if (moveData.Horizontal < 0f)
-                    {
-                        PublicData.DirectionLeft = true;
-                        PublicData.DirectionRight = false;
-                    }
-                    else if (moveData.Horizontal > 0f)
-                    {
-                        PublicData.DirectionLeft = false;
-                        PublicData.DirectionRight = true;
-                    }
                 }
                 else
                 {
                     // If no horizontal input is given, decrease velocity by friction
                     _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _friction);
-                    PublicData.DirectionLeft = false;
-                    PublicData.DirectionRight = false;
                 }
             }
         }
@@ -549,6 +537,8 @@ public class MovementManager : NetworkBehaviour
                 _canJump = false;
                 _isGrounded = false;
                 _timeSinceGrounded = 0f;
+
+                PublicData.IsJumping = true;
 
                 _currentVelocity += transform.up * _jumpVelocity;
 
@@ -586,6 +576,23 @@ public class MovementManager : NetworkBehaviour
             _currentVelocity += (Vector3.down * _gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
+        }
+
+        // The direction has to be set based on velocity not input
+        if (_currentVelocity.x < 0f)
+        {
+            PublicData.DirectionLeft = true;
+            PublicData.DirectionRight = false;
+        }
+        else if (_currentVelocity.x > 0f)
+        {
+            PublicData.DirectionLeft = false;
+            PublicData.DirectionRight = true;
+        }
+        else
+        {
+            PublicData.DirectionLeft = false;
+            PublicData.DirectionRight = false;
         }
 
         //CheckNeedRecalc();

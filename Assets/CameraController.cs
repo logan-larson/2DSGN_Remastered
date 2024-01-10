@@ -21,6 +21,9 @@ public class CameraController : NetworkBehaviour
     [SerializeField]
     private float startingZ = -10f;
 
+    [SerializeField]
+    private float movementRotationFactor = 1.5f;
+
     /// <summary>
     /// The factor by which the z position is effected by the player's velocity.
     /// </summary>
@@ -147,9 +150,9 @@ public class CameraController : NetworkBehaviour
         if (!_inputManager.CameraLockInput)
         {
             var movementRot = _movementManager.PublicData.DirectionLeft
-                ? Quaternion.Euler(0, 0, 10f)
+                ? Quaternion.Euler(0, 0, movementRotationFactor * _movementManager.PublicData.Velocity.magnitude)
                 : _movementManager.PublicData.DirectionRight
-                    ? Quaternion.Euler(0, 0, -10f)
+                    ? Quaternion.Euler(0, 0, -movementRotationFactor * _movementManager.PublicData.Velocity.magnitude)
                     : Quaternion.identity
                     ;
             lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);
