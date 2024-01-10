@@ -1,10 +1,11 @@
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
+using PlayFab.MultiplayerModels;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows;
+using UnityEngine.InputSystem;
 
 public class MovementManager : NetworkBehaviour
 {
@@ -15,31 +16,30 @@ public class MovementManager : NetworkBehaviour
     /// </summary>
     public struct MoveData : IReplicateData
     {
+        // Movement input
         public float Horizontal;
-        public bool Sprint;
         public bool Jump;
-        public bool Slide;
 
-        public Mode Mode;
+        // Mode input
+        public bool Sprint;
+        public bool Slide;
+        public bool Shoot;
 
         private uint _tick;
 
-        public void Dispose()
+        public MoveData(float horizontal, bool jump, bool sprint, bool slide, bool shoot)
         {
-            Debug.Log("Don't need to dispose of anything??");
-            return;
-            //throw new System.NotImplementedException();
+            Horizontal = horizontal;
+            Sprint = sprint;
+            Slide = slide;
+            Shoot = shoot;
+            Jump = jump;
+            _tick = 0;
         }
 
-        public uint GetTick()
-        {
-            return _tick;
-        }
-
-        public void SetTick(uint value)
-        {
-            _tick = value;
-        }
+        public void Dispose() { }
+        public uint GetTick() => _tick;
+        public void SetTick(uint value) => _tick = value;
     }
 
     /// <summary>
@@ -53,24 +53,24 @@ public class MovementManager : NetworkBehaviour
         public bool IsGrounded;
         public float TimeOnGround;
 
+        public Mode Mode;
+
         private uint _tick;
 
-        public void Dispose()
+        public ReconcileData(Vector3 position, Vector3 velocity, Quaternion rotation, bool isGrounded, float timeOnGround, Mode mode)
         {
-            Debug.Log("Don't need to dispose of anything??");
-            return;
-            //throw new System.NotImplementedException();
+            Position = position;
+            Velocity = velocity;
+            Rotation = rotation;
+            IsGrounded = isGrounded;
+            TimeOnGround = timeOnGround;
+            Mode = mode;
+            _tick = 0;
         }
 
-        public uint GetTick()
-        {
-            return _tick;
-        }
-
-        public void SetTick(uint value)
-        {
-            _tick = value;
-        }
+        public void Dispose() { }
+        public uint GetTick() => _tick;
+        public void SetTick(uint value) => _tick = value;
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class MovementManager : NetworkBehaviour
     /// </summary>
     public struct RaycastOrigins
     {
-        public Vector2 topLeft, topRight, bottomLeft, bottomRight;
+        public Vector2 bottomLeft, bottomRight;
     }
 
     public struct PublicMovementData
@@ -86,15 +86,16 @@ public class MovementManager : NetworkBehaviour
         public Vector3 Position;
         public Vector3 Velocity;
         public bool IsGrounded;
+        public Mode Mode;
     }
 
     public PublicMovementData PublicData;
 
     public enum Mode
     {
-        Parkour,
-        Combat,
-        Sliding
+        Sprint,
+        Shoot,
+        Slide
     }
 
     #endregion
@@ -134,22 +135,22 @@ public class MovementManager : NetworkBehaviour
     //private float _maxAirborneSpeed = 10f;
 
     /// <summary>
-    /// The amount by which the player's speed is changed when they sprint.
+    /// The amount by which the player's speed is changed when they are in sprint mode.
     /// </summary>
     [SerializeField]
     private float _sprintMultiplier = 2f;
 
     /// <summary>
-    /// The amount by which the player's speed is changed when they are in parkour mode.
+    /// The amount by which the player's speed is changed when they are in shoot mode.
     /// </summary>
     [SerializeField]
-    private float _parkourMultiplier = 1.5f;
+    private float _shootMultiplier = 0.75f;
 
     /// <summary>
-    /// The amount by which the player's speed is changed when they are in combat mode.
+    /// The amount by which the player's speed is changed when they are in slide mode.
     /// </summary>
     [SerializeField]
-    private float _combatMultiplier = 1f;
+    private float _slideMultiplier = 1f;
 
     /// <summary>
     /// The worlds gravity
@@ -207,7 +208,7 @@ public class MovementManager : NetworkBehaviour
     /// Current mode of the player.
     /// </summary>
     [SerializeField]
-    private Mode _currentMode = Mode.Parkour;
+    private Mode _currentMode = Mode.Sprint;
 
     #endregion
 
@@ -371,9 +372,11 @@ public class MovementManager : NetworkBehaviour
         moveData = default;
 
         moveData.Horizontal = _inputManager.HorizontalMoveInput;
-        moveData.Sprint = _inputManager.SprintInput;
         moveData.Jump = _inputManager.JumpInput;
+
+        moveData.Sprint = _inputManager.SprintInput;
         moveData.Slide = _inputManager.SlideInput;
+        moveData.Shoot = _inputManager.ShootInput;
     }
 
     /// <summary>
@@ -397,6 +400,8 @@ public class MovementManager : NetworkBehaviour
         UpdateRaycastOrigins();
 
         UpdateGrounded();
+
+        UpdateMode(moveData);
 
         UpdateVelocity(moveData, asServer);
 
@@ -427,8 +432,6 @@ public class MovementManager : NetworkBehaviour
     {
         _raycastOrigins.bottomLeft = transform.position - (transform.right / 2) - (transform.up / 2);
         _raycastOrigins.bottomRight = transform.position + (transform.right / 2) - (transform.up / 2);
-        _raycastOrigins.topLeft = transform.position - (transform.right / 2) + (transform.up / 2);
-        _raycastOrigins.topRight = transform.position + (transform.right / 2) + (transform.up / 2);
     }
 
     private void UpdateGrounded()
@@ -454,49 +457,68 @@ public class MovementManager : NetworkBehaviour
         }
     }
 
+    private void UpdateMode(MoveData moveData)
+    {
+        // Mode Priority: Shoot > Sprint > Slide
+        if (moveData.Shoot)
+        {
+            _currentMode = Mode.Shoot;
+        }
+        else if (moveData.Sprint)
+        {
+            _currentMode = Mode.Sprint;
+        }
+        else if (moveData.Slide)
+        {
+            _currentMode = Mode.Slide;
+        }
+    }
+
     private void UpdateVelocity(MoveData moveData, bool asServer)
     {
-        // Increase top speed when sprint key is pressed
-        //float sprintMultiplier = moveData.Sprint && !_inCombatMode ? MovementProperties.SprintMultiplier : 1f;
-        float sprintMultiplier =
-            moveData.Sprint && _currentMode != Mode.Combat
-            ? _sprintMultiplier
-            : 1f;
-
-        sprintMultiplier = _currentMode == Mode.Sliding
-            ? 1f
-            : sprintMultiplier;
-
-        // Set top speed based on mode
-        float modeMultiplier = _currentMode == Mode.Parkour ? _parkourMultiplier : _combatMultiplier;
-        modeMultiplier = _currentMode == Mode.Sliding ? _parkourMultiplier : _combatMultiplier;
-
-        // If grounded, change velocity
-        if (_isGrounded && _currentMode != Mode.Sliding)
+        // Based on the mode, set the movement speed multiplier
+        float modeMultiplier = 1f;
+        switch (_currentMode)
         {
-            // If horizontal input is given, add velocity
-            if (moveData.Horizontal != 0f)
-                _currentVelocity += transform.right * moveData.Horizontal * _acceleration * _sprintMultiplier * modeMultiplier;
-            // If no horizontal input is given, decrease velocity by friction
-            else
-                _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _friction);
+            case Mode.Sprint:
+                modeMultiplier = _sprintMultiplier;
+                break;
+            case Mode.Shoot:
+                modeMultiplier = _shootMultiplier;
+                break;
+            case Mode.Slide:
+                modeMultiplier = _slideMultiplier;
+                break;
         }
 
-        // If grounded and sliding, adjust the velocity to match the slope
-        if (_isGrounded && _currentMode == Mode.Sliding)
+        // If grounded, change velocity
+        if (_isGrounded)
         {
-            Vector3 newVelo = Vector3.ProjectOnPlane(_currentVelocity, transform.up);
-            _currentVelocity = newVelo;
+            // If sliding, adjust the velocity to match the slope
+            if (_currentMode == Mode.Slide)
+            {
+                Vector3 newVelo = Vector3.ProjectOnPlane(_currentVelocity, transform.up);
+                _currentVelocity = newVelo;
+            }
+            else
+            {
+                // If horizontal input is given, add velocity
+                if (moveData.Horizontal != 0f)
+                    _currentVelocity += transform.right * moveData.Horizontal * _acceleration * modeMultiplier;
+                // If no horizontal input is given, decrease velocity by friction
+                else
+                    _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _friction);
+            }
         }
 
         // Limit top speed
         //float maxSpeed = _isGrounded ? MovementProperties.MaxSpeed : MovementProperties.MaxAirborneSpeed;
         // Sliding tweaks lol
-        float maxSpeed = _isGrounded && _currentMode != Mode.Sliding ? _maxSpeed : 100f;
+        float maxSpeed = _isGrounded && _currentMode != Mode.Slide ? _maxSpeed : 100f;
 
-        if (_isGrounded && _currentVelocity.magnitude > maxSpeed * sprintMultiplier * modeMultiplier)
+        if (_isGrounded && _currentVelocity.magnitude > maxSpeed * modeMultiplier)
         {
-            _currentVelocity = _currentVelocity.normalized * maxSpeed * sprintMultiplier * modeMultiplier;
+            _currentVelocity = _currentVelocity.normalized * maxSpeed * modeMultiplier;
         }
 
         if (_isGrounded)
@@ -527,7 +549,7 @@ public class MovementManager : NetworkBehaviour
                     _recalculateLandingCoroutineIsRunning = false;
                 }
 
-                if (_currentMode == Mode.Sliding)
+                if (_currentMode == Mode.Slide)
                 {
                     // Apply gravity in direction of slope
                     Vector3 gravity = new Vector3(0f, _gravity, 0f);
