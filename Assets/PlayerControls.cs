@@ -71,6 +71,24 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press(behavior=2)"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CameraLock"",
+                    ""type"": ""Button"",
+                    ""id"": ""7702114a-589e-480e-b0a6-55207612099b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""bbf3afd5-86ef-4105-b946-e4bf9012eb2d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -282,6 +300,50 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Slide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8c85a76-1537-478f-96bb-45c075094f6c"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraLock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""500ba6b6-3d0b-4548-8b38-c622db08e855"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CameraLock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""26e369a0-9df6-4168-9676-97c08ea598d7"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65863ada-50f3-4388-9be2-f82738cac17d"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -295,6 +357,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_Slide = m_Player.FindAction("Slide", throwIfNotFound: true);
+        m_Player_CameraLock = m_Player.FindAction("CameraLock", throwIfNotFound: true);
+        m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -359,6 +423,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_Slide;
+    private readonly InputAction m_Player_CameraLock;
+    private readonly InputAction m_Player_Aim;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
@@ -368,6 +434,8 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @Slide => m_Wrapper.m_Player_Slide;
+        public InputAction @CameraLock => m_Wrapper.m_Player_CameraLock;
+        public InputAction @Aim => m_Wrapper.m_Player_Aim;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -392,6 +460,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Slide.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
                 @Slide.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
                 @Slide.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
+                @CameraLock.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraLock;
+                @CameraLock.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraLock;
+                @CameraLock.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCameraLock;
+                @Aim.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
+                @Aim.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
+                @Aim.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -411,6 +485,12 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Slide.started += instance.OnSlide;
                 @Slide.performed += instance.OnSlide;
                 @Slide.canceled += instance.OnSlide;
+                @CameraLock.started += instance.OnCameraLock;
+                @CameraLock.performed += instance.OnCameraLock;
+                @CameraLock.canceled += instance.OnCameraLock;
+                @Aim.started += instance.OnAim;
+                @Aim.performed += instance.OnAim;
+                @Aim.canceled += instance.OnAim;
             }
         }
     }
@@ -422,5 +502,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnSlide(InputAction.CallbackContext context);
+        void OnCameraLock(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
     }
 }

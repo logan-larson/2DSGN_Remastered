@@ -359,7 +359,7 @@ public class MovementManager : NetworkBehaviour
             Reconciliation(reconcileData, true);
         }
 
-        //SetPublicMovementData();
+        SetPublicMovementData();
     }
 
 
@@ -770,4 +770,11 @@ public class MovementManager : NetworkBehaviour
     }
 
     #endregion
+
+    private void SetPublicMovementData()
+    {
+        PublicData.Position = transform.position;
+        PublicData.Velocity = _currentVelocity;
+        PublicData.IsGrounded = _isGrounded;
+    }
 }

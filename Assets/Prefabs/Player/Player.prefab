@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 3100404765116628695}
   - component: {fileID: 3717805940115971261}
   - component: {fileID: 6559925058770471689}
+  - component: {fileID: 3276682624696573865}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -139,6 +140,7 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 1545532727767801880}
   - {fileID: 6559925058770471689}
+  - {fileID: 3276682624696573865}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -262,8 +264,8 @@ MonoBehaviour:
   _friction: 1
   _maxSpeed: 5
   _sprintMultiplier: 2
-  _parkourMultiplier: 1.5
-  _combatMultiplier: 1
+  _shootMultiplier: 0.75
+  _slideMultiplier: 1
   _gravity: 10
   _maxRotationDegrees: 180
   _jumpVelocity: 10
@@ -275,3 +277,18 @@ MonoBehaviour:
     m_Bits: 64
   _overrideRayLength: 0
   _currentMode: 0
+--- !u!114 &3276682624696573865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8224984725197528771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e8aa3915bb010047b45857c733e5b4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 7614852995303497732}
+  _networkObjectCache: {fileID: 7614852995303497732}

@@ -16,6 +16,8 @@ public class InputManager : MonoBehaviour
 
     public Vector2 Aim { get; private set; }
 
+    public bool CameraLockInput { get; private set; }
+
     void Start()
     {
         
@@ -49,5 +51,10 @@ public class InputManager : MonoBehaviour
     public void OnShoot(InputValue value)
     {
         ShootInput = value.isPressed;
+    }
+
+    public void OnCameraLock(InputValue value)
+    {
+        CameraLockInput = value.isPressed;
     }
 }
