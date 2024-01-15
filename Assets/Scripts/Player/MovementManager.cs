@@ -94,6 +94,9 @@ public class MovementManager : NetworkBehaviour
 
     public PublicMovementData PublicData;
 
+    // TEMP
+    public float angle;
+
     public enum Mode
     {
         Sprint,
@@ -452,6 +455,8 @@ public class MovementManager : NetworkBehaviour
             _groundDistance = groundedHit.distance;
             if (_isGrounded && _timeOnGround > _minimumJumpTime * 2f)
                 _canJump = true;
+
+            PublicData.IsJumping = false;
         }
         // Otherwise, increase the time since grounded
         else
@@ -529,6 +534,8 @@ public class MovementManager : NetworkBehaviour
             _currentVelocity = _currentVelocity.normalized * maxSpeed * modeMultiplier;
         }
 
+
+        // The direction has to be set based on velocity relative to the player
         if (_isGrounded)
         {
             // Jump
@@ -576,23 +583,6 @@ public class MovementManager : NetworkBehaviour
             _currentVelocity += (Vector3.down * _gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
-        }
-
-        // The direction has to be set based on velocity not input
-        if (_currentVelocity.x < 0f)
-        {
-            PublicData.DirectionLeft = true;
-            PublicData.DirectionRight = false;
-        }
-        else if (_currentVelocity.x > 0f)
-        {
-            PublicData.DirectionLeft = false;
-            PublicData.DirectionRight = true;
-        }
-        else
-        {
-            PublicData.DirectionLeft = false;
-            PublicData.DirectionRight = false;
         }
 
         //CheckNeedRecalc();
@@ -803,5 +793,20 @@ public class MovementManager : NetworkBehaviour
         PublicData.Position = transform.position;
         PublicData.Velocity = _currentVelocity;
         PublicData.IsGrounded = _isGrounded;
+
+        angle = Vector3.SignedAngle(PublicData.Velocity, transform.right, transform.up);
+        if (PublicData.Velocity.magnitude != 0f)
+        {
+            if (angle < 5f || angle > 355f)
+            {
+                PublicData.DirectionLeft = false;
+                PublicData.DirectionRight = true;
+            }
+            else if (angle > 175f && angle < 185f)
+            {
+                PublicData.DirectionLeft = true;
+                PublicData.DirectionRight = false;
+            }
+        }
     }
 }
