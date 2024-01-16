@@ -94,16 +94,6 @@ public class MovementManager : NetworkBehaviour
 
     public PublicMovementData PublicData;
 
-    // TEMP
-    public float angle;
-
-    public enum Mode
-    {
-        Sprint,
-        Shoot,
-        Slide
-    }
-
     #endregion
 
     #region Script References
@@ -794,7 +784,7 @@ public class MovementManager : NetworkBehaviour
         PublicData.Velocity = _currentVelocity;
         PublicData.IsGrounded = _isGrounded;
 
-        angle = Vector3.SignedAngle(PublicData.Velocity, transform.right, transform.up);
+        var angle = Vector3.SignedAngle(PublicData.Velocity, transform.right, transform.up);
         if (PublicData.Velocity.magnitude != 0f)
         {
             if (angle < 5f || angle > 355f)
