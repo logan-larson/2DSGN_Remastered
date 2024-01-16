@@ -784,6 +784,8 @@ public class MovementManager : NetworkBehaviour
         PublicData.Velocity = _currentVelocity;
         PublicData.IsGrounded = _isGrounded;
 
+        PublicData.Mode = _currentMode;
+
         var angle = Vector3.SignedAngle(PublicData.Velocity, transform.right, transform.up);
         if (PublicData.Velocity.magnitude != 0f)
         {
