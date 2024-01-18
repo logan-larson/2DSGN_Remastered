@@ -8,4 +8,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OnlineGame.unity
     guid: c2804825fe6f53f4c826fc512ed39745
+  - enabled: 1
+    path: Assets/Scenes/Authentication.unity
+    guid: 766017ca750c8aa4e81727374b6f7013
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: d7a349746041bf84496a479fb4ee41d7
+  - enabled: 1
+    path: Assets/Scenes/LobbyShell.unity
+    guid: b32e2fab2496f1c4b8b1f53fee248585
+  - enabled: 1
+    path: Assets/Scenes/OfflineGame.unity
+    guid: bb1db77b3dee5c844a12ffb5c1042f0a
   m_configObjects: {}

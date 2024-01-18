@@ -409,7 +409,7 @@ MonoBehaviour:
   _unreliableMTU: 1023
   _ipv4BindAddress: 
   _ipv6BindAddress: 
-  _port: 17310
+  _port: 54962
   _maximumClients: 4095
   _clientAddress: 9a9f4b.edge.hathora.dev
   _timeout: 15
