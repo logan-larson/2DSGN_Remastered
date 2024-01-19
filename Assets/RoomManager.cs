@@ -19,6 +19,9 @@ public class RoomManager : MonoBehaviour
     private TMP_InputField _serverPortInput;
 
     [SerializeField]
+    private TMP_Text _joinInputErrorText;
+
+    [SerializeField]
     private TMP_Text _serverAddressText;
 
     [SerializeField]
@@ -26,6 +29,9 @@ public class RoomManager : MonoBehaviour
 
     [SerializeField]
     private TMP_Text _serverStatusText;
+
+    [SerializeField]
+    private ServerInfo _serverInfo;
 
     private HathoraCloudSDK hathora;
 
@@ -39,6 +45,7 @@ public class RoomManager : MonoBehaviour
             appId: _serverConfig.HathoraCoreOpts.AppId
         );
 
+        _joinInputErrorText.gameObject.SetActive(false);
     }
 
     public async void OnHost()
@@ -119,14 +126,27 @@ public class RoomManager : MonoBehaviour
 
     public void OnJoin()
     {
+        _joinInputErrorText.gameObject.SetActive(false);
+
         if (string.IsNullOrEmpty(_serverAddressInput.text) || string.IsNullOrEmpty(_serverPortInput.text))
         {
             Debug.LogError("Server address or port is empty");
+            _joinInputErrorText.gameObject.SetActive(true);
+            return;
+        }
+
+        if (ushort.TryParse(_serverPortInput.text, out ushort port) == false)
+        {
+            Debug.LogError("Server port is not a number");
+            _joinInputErrorText.gameObject.SetActive(true);
             return;
         }
 
         // Join the room
+        _serverInfo.Address = _serverAddressInput.text;
+        _serverInfo.Port = ushort.Parse(_serverPortInput.text);
 
+        UnityEngine.SceneManagement.SceneManager.LoadScene("OnlineGame");
     }
 
     public void OnMainMenu()

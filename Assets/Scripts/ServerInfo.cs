@@ -6,5 +6,5 @@ using UnityEngine;
 public class ServerInfo : ScriptableObject
 {
     public string Address;
-    public double Port;
+    public ushort Port;
 }

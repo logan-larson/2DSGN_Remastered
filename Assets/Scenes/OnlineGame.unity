@@ -438,6 +438,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buildInfo: {fileID: 11400000, guid: 112176f20fe600b4f9dd340b4df611f5, type: 2}
   _networkManager: {fileID: 1689785922}
+  _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
+  _tugboat: {fileID: 1689785919}
 --- !u!1 &1763587993
 GameObject:
   m_ObjectHideFlags: 0
