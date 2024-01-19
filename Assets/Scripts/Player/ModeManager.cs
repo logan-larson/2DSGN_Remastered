@@ -147,6 +147,14 @@ public class ModeManager : NetworkBehaviour
     private void UpdateModeServerRpc(Mode mode)
     {
         SetMode(mode);
+
+        UpdateModeObserversRpc(mode);
+    }
+
+    [ObserversRpc (ExcludeOwner = true)]
+    private void UpdateModeObserversRpc(Mode mode)
+    {
+        SetMode(mode);
     }
 
     private void SetDirection(bool directionLeft, bool directionRight)
