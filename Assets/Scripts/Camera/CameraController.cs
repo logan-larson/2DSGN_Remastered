@@ -48,9 +48,6 @@ public class CameraController : NetworkBehaviour
     /// </summary>
     private bool _subscribedToTimeManager = false;
 
-
-    private Coroutine _jumpDelayCoroutine = null;
-
     #region Script References
 
     [SerializeField]
