@@ -262,8 +262,8 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 2498455354
-  <SceneId>k__BackingField: 10730784037762693934
+  _scenePathHash: 2664145989
+  <SceneId>k__BackingField: 11442419896234846962
   <AssetPathHash>k__BackingField: 0
 --- !u!1 &324589540
 GameObject:
