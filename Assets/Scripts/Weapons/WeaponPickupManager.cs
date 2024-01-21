@@ -1,3 +1,4 @@
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections;
@@ -8,8 +9,11 @@ public class WeaponPickupManager : NetworkBehaviour
 {
     #region Public Fields
 
+    [SyncVar]
     public WeaponInfo WeaponInfo;
-    public Vector2 InitialVelocity = Vector2.zero;
+
+    [SyncVar]
+    public Vector2 InitialVelocity;
 
     #endregion
 
@@ -27,26 +31,33 @@ public class WeaponPickupManager : NetworkBehaviour
 
     public void Initialize(WeaponInfo weaponInfo, Vector2 initialVelocity)
     {
+        if (weaponInfo == null)
+            return;
+
         WeaponInfo = weaponInfo;
         InitialVelocity = initialVelocity;
-
-        _rigidbody.AddForce(InitialVelocity, ForceMode2D.Impulse);
-
-        _spriteRenderer.sprite = WeaponInfo.Sprite;
     }
 
-    public override void OnStartClient()
+    public override void OnSpawnServer(NetworkConnection connection)
     {
-        base.OnStartClient();
+        base.OnSpawnServer(connection);
 
-        Initialize(WeaponInfo, InitialVelocity);
+        _rigidbody.AddForce(InitialVelocity, ForceMode2D.Impulse);
+        _spriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
+
+        SetSpriteObserversRpc();
+    }
+
+    [ObserversRpc]
+    private void SetSpriteObserversRpc()
+    {
+        if (WeaponInfo == null)
+            return;
+
+        _spriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
     }
 
     #endregion
-
-    [SyncVar]
-    public bool IsAvailable = true;
-
 
     public void SetHighlight(bool highlight)
     {

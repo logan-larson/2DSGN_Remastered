@@ -34,6 +34,7 @@ public class WeaponManager : NetworkBehaviour
 
     private (float, WeaponPickupManager) _closestWeaponPickup;
 
+    [SerializeField]
     private WeaponInfo _currentWeaponInfo;
 
     private float _currentPickupCooldown = 0.0f;
@@ -92,6 +93,18 @@ public class WeaponManager : NetworkBehaviour
     {
         _inputManager ??= GetComponent<InputManager>();
         _movementManager ??= GetComponent<MovementManager>();
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        _weaponPickupsParent = GameObject.Find("WeaponPickups");
+
+        if (_weaponPickupsParent == null)
+        {
+            Debug.LogError("WeaponPickups parent not found.");
+        }
     }
 
     // When the client starts, set the weapon pickups parent.
@@ -211,7 +224,7 @@ public class WeaponManager : NetworkBehaviour
 
         // Set the player's weapon info to the pickup info.
         SetCurrentWeapon(weaponPickupManager.WeaponInfo);
-        SetCurrentWeaponObserversRpc(pickup);
+        SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
 
         // Destroy the pickup.
         //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
@@ -249,24 +262,19 @@ public class WeaponManager : NetworkBehaviour
         _currentWeaponInfo = null;
     }
 
-    [Server]
     private void SetCurrentWeapon(WeaponInfo weaponInfo)
     {
         // Set the current weapon to the weapon info.
         _currentWeaponInfo = weaponInfo;
 
         // TODO: Initialize other things like the weapon sprite, etc.
-        _weaponHolder.GetComponentInChildren<SpriteRenderer>().sprite = weaponInfo.Sprite;
+        _weaponHolder.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>(weaponInfo.SpritePath);
     }
 
     [ObserversRpc]
-    private void SetCurrentWeaponObserversRpc(Transform pickup)
+    private void SetCurrentWeaponObserversRpc(WeaponInfo weaponInfo)
     {
-        if (pickup == null || !pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
-        {
-            return;
-        }
-        SetCurrentWeapon(weaponPickupManager.WeaponInfo);
+        SetCurrentWeapon(weaponInfo);
     }
 
     #endregion
