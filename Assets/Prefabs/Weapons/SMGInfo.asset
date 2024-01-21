@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa9e32290791c84a9ec91434da2b3f6, type: 3}
-  m_Name: SMGPickup
+  m_Name: SMGInfo
   m_EditorClassIdentifier: 
   Sprite: {fileID: 21300000, guid: 08e25ff5d4f71c44cb6f867e31d8ed68, type: 3}

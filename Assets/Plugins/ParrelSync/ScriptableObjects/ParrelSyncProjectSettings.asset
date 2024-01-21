@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa9e32290791c84a9ec91434da2b3f6, type: 3}
-  m_Name: RevolverPickup
+  m_Script: {fileID: 11500000, guid: c0011418c9d75434988a06b6df93b283, type: 3}
+  m_Name: ParrelSyncProjectSettings
   m_EditorClassIdentifier: 
-  Sprite: {fileID: 21300000, guid: 7b3b75992f3c3474b991fc982b7149f5, type: 3}
+  m_OptionalSymbolicLinkFolders: []

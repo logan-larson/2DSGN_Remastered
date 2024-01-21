@@ -13,6 +13,7 @@ public class InputManager : MonoBehaviour
     public bool ShootInput { get; private set; }
 
     public bool JumpInput { get; private set; }
+    public bool InteractInput { get; private set; }
 
     public Vector2 Aim { get; private set; }
 
@@ -41,6 +42,11 @@ public class InputManager : MonoBehaviour
     public void OnJump(InputValue value)
     {
         JumpInput = value.isPressed;
+    }
+
+    public void OnInteract(InputValue value)
+    {
+        InteractInput = value.isPressed;
     }
 
     public void OnSlide(InputValue value)

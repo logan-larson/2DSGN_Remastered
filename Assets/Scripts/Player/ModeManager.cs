@@ -49,6 +49,9 @@ public class ModeManager : NetworkBehaviour
     {
         base.OnStartClient();
 
+        if (!base.IsOwner)
+            return;
+
         UpdateModeClient(_movementManager.PublicData.Mode);
     }
 

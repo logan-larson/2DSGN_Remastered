@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8aa9e32290791c84a9ec91434da2b3f6, type: 3}
-  m_Name: SniperPickup
+  m_Name: SniperInfo
   m_EditorClassIdentifier: 
   Sprite: {fileID: 21300000, guid: 85346ac7852e98a469edad55488c53ce, type: 3}
