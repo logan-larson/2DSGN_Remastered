@@ -580,6 +580,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
+      propertyPath: _scenePathHash
+      value: 2259222448
+      objectReference: {fileID: 0}
+    - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 9703286531365056595
+      objectReference: {fileID: 0}
+    - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
+      propertyPath: <ChildNetworkObjects>k__BackingField.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1777671522851362135, guid: 9ecb39063903b084286df5577e659489, type: 3}
       propertyPath: m_UseFullKinematicContacts
       value: 1

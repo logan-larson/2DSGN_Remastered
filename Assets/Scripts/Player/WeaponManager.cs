@@ -6,6 +6,12 @@ using UnityEngine;
 
 public class WeaponManager : NetworkBehaviour
 {
+    #region Public Fields
+
+    public bool IsWeaponEquipped;
+
+    #endregion
+
     #region Serialized Fields
 
     [SerializeField]
@@ -38,6 +44,8 @@ public class WeaponManager : NetworkBehaviour
     private WeaponInfo _currentWeaponInfo;
 
     private float _currentPickupCooldown = 0.0f;
+
+    private Quaternion _weaponHolderInitialRelativeRotation;
 
     #endregion
 
@@ -145,6 +153,18 @@ public class WeaponManager : NetworkBehaviour
             // Increment the pickup cooldown.
             _currentPickupCooldown += (float) TimeManager.TickDelta;
         }
+
+        // Move the weapon holder to the player's location at a constant speed if the weapon is not equipped.
+        if (!IsWeaponEquipped)
+        {
+            _weaponHolder.position = Vector3.MoveTowards(_weaponHolder.position, transform.position, 12.0f * (float) TimeManager.TickDelta);
+
+            // If the weapon is close enough to the player, set the weapon holder to the player's position.
+            if (Vector3.Distance(_weaponHolder.position, transform.position) < 1f)
+            {
+                EquipWeapon();
+            }
+        }
     }
 
     private void HighlightClosestPickup()
@@ -226,6 +246,10 @@ public class WeaponManager : NetworkBehaviour
         SetCurrentWeapon(weaponPickupManager.WeaponInfo);
         SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
 
+        IsWeaponEquipped = false;
+        _weaponHolder.parent = null;
+        _weaponHolder.position = pickup.position;
+
         // Destroy the pickup.
         //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
         Destroy(pickup.gameObject);
@@ -275,6 +299,13 @@ public class WeaponManager : NetworkBehaviour
     private void SetCurrentWeaponObserversRpc(WeaponInfo weaponInfo)
     {
         SetCurrentWeapon(weaponInfo);
+    }
+
+    private void EquipWeapon()
+    {
+        _weaponHolder.parent = transform;
+        _weaponHolder.localPosition = Vector3.zero;
+        IsWeaponEquipped = true;
     }
 
     #endregion
