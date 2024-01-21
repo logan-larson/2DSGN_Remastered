@@ -17,4 +17,10 @@ public class WeaponPickupManager : MonoBehaviour
 
     [SyncVar]
     public bool IsAvailable = true;
+
+
+    public void SetHighlight(bool highlight)
+    {
+        _spriteRenderer.color = highlight ? Color.yellow : Color.white;
+    }
 }
