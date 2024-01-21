@@ -137,9 +137,9 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6132786426448696753}
   _networkObjectCache: {fileID: 6132786426448696753}
   WeaponInfo: {fileID: 0}
+  InitialVelocity: {x: 0, y: 0}
   _spriteRenderer: {fileID: 2689411999210917743}
   _rigidbody: {fileID: 5189826979155428404}
-  IsAvailable: 1
 --- !u!114 &6132786426448696753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +189,7 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 6132786426448696753}
   _networkObjectCache: {fileID: 6132786426448696753}
-  _componentConfiguration: 0
+  _componentConfiguration: 3
   _synchronizeParent: 0
   _packing:
     Position: 1

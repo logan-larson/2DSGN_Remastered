@@ -45,8 +45,6 @@ public class WeaponManager : NetworkBehaviour
 
     private float _currentPickupCooldown = 0.0f;
 
-    private Quaternion _weaponHolderInitialRelativeRotation;
-
     #endregion
 
     #region Script References
@@ -154,6 +152,7 @@ public class WeaponManager : NetworkBehaviour
             _currentPickupCooldown += (float) TimeManager.TickDelta;
         }
 
+        /* TODO: Fix the movement for the weapon holder after picking up a weapon.
         // Move the weapon holder to the player's location at a constant speed if the weapon is not equipped.
         if (!IsWeaponEquipped)
         {
@@ -165,6 +164,7 @@ public class WeaponManager : NetworkBehaviour
                 EquipWeapon();
             }
         }
+        */
     }
 
     private void HighlightClosestPickup()
@@ -246,9 +246,12 @@ public class WeaponManager : NetworkBehaviour
         SetCurrentWeapon(weaponPickupManager.WeaponInfo);
         SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
 
+        /* TODO: Fix the movement for the weapon holder after picking up a weapon.
         IsWeaponEquipped = false;
         _weaponHolder.parent = null;
         _weaponHolder.position = pickup.position;
+        _weaponHolder.rotation = pickup.rotation;
+        */
 
         // Destroy the pickup.
         //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
