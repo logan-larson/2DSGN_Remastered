@@ -117,6 +117,10 @@ public class WeaponManager : NetworkBehaviour
         {
             Debug.LogError("WeaponPickups parent not found.");
         }
+
+        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.PublicData.Mode == Mode.Shoot);
+
+        _playerController.OnModeChange.AddListener(OnModeChange);
     }
 
     // When the client starts, set the weapon pickups parent.
@@ -130,6 +134,8 @@ public class WeaponManager : NetworkBehaviour
         {
             Debug.LogError("WeaponPickups parent not found.");
         }
+
+        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.PublicData.Mode == Mode.Shoot);
     }
 
     #endregion
@@ -338,6 +344,31 @@ public class WeaponManager : NetworkBehaviour
     {
         // If the player is not aiming, return.
         _weaponHolder.rotation = Quaternion.LookRotation(Vector3.forward, _playerController.PublicData.AimDirection) * Quaternion.Euler(0f, 0f, 90f);
+    }
+
+    #endregion
+
+    #region Weapon Firing
+
+
+
+    #endregion
+
+    #region Events
+
+    private void OnModeChange(Mode mode)
+    {
+        var spriteActive = mode == Mode.Shoot;
+        _weaponHolder.GetChild(0).gameObject.SetActive(spriteActive);
+
+        OnModeChangeObserversRpc(mode);
+    }
+
+    [ObserversRpc]
+    private void OnModeChangeObserversRpc(Mode mode)
+    {
+        var spriteActive = mode == Mode.Shoot;
+        _weaponHolder.GetChild(0).gameObject.SetActive(spriteActive);
     }
 
     #endregion

@@ -4,6 +4,7 @@ using FishNet.Transporting;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerController : NetworkBehaviour
@@ -109,6 +110,12 @@ public class PlayerController : NetworkBehaviour
     [Header("Public Fields")]
 
     public PublicMovementData PublicData;
+
+    #endregion
+
+    #region Events
+
+    public UnityEvent<Mode> OnModeChange = new UnityEvent<Mode>();
 
     #endregion
 
@@ -227,6 +234,12 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private Mode _currentMode = Mode.Sprint;
 
+    /// <summary>
+    /// Previous mode of the player.
+    /// </summary>
+    [SerializeField]
+    private Mode _previousMode = Mode.Sprint;
+
     #endregion
 
     #region Private Variables
@@ -303,12 +316,6 @@ public class PlayerController : NetworkBehaviour
     /// Set to true when the player's movement should be disabled.
     /// </summary>
     private bool _movementDisabled = false;
-
-    /// <summary>
-    /// Direction the player is aiming.
-    /// </summary>
-    [SerializeField]
-    private Vector3 _aimDirection = Vector3.zero;
 
     #endregion
 
@@ -901,6 +908,12 @@ public class PlayerController : NetworkBehaviour
                 PublicData.DirectionLeft = true;
                 PublicData.DirectionRight = false;
             }
+        }
+
+        if (_currentMode != _previousMode)
+        {
+            OnModeChange.Invoke(_currentMode);
+            _previousMode = _currentMode;
         }
     }
 }

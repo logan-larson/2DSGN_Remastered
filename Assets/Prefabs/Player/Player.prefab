@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 5278654378381601111}
   - component: {fileID: 6571099630282843190}
   m_Layer: 0
-  m_Name: Revolver
+  m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -721,6 +721,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 1545532727767801880}
+  - {fileID: 3717805940115971261}
   - {fileID: 6559925058770471689}
   - {fileID: 3276682624696573865}
   - {fileID: 8376055070018631659}
@@ -829,6 +830,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3178f276727d09449941e1c8b64af999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 7614852995303497732}
+  _networkObjectCache: {fileID: 7614852995303497732}
+  InputDevice: Keyboard&Mouse
 --- !u!114 &6559925058770471689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -841,7 +846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ea34195ebcdd6d488bdb6826934719e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 1
+  _componentIndexCache: 2
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
   _inputManager: {fileID: 3717805940115971261}
@@ -863,6 +868,7 @@ MonoBehaviour:
     m_Bits: 64
   _overrideRayLength: 0
   _currentMode: 0
+  _aimDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &3276682624696573865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -875,7 +881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e8aa3915bb010047b45857c733e5b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 2
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
 --- !u!114 &8376055070018631659
@@ -890,7 +896,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94242e18afcb08549b539ffad469deeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
   IsWeaponEquipped: 0
