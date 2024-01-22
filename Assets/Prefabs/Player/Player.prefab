@@ -584,7 +584,7 @@ MonoBehaviour:
   _sprintMode: {fileID: 2590370709865871483}
   _shootMode: {fileID: 7464203539986217859}
   _slideMode: {fileID: 3417150714354622630}
-  _playerController: {fileID: 0}
+  _playerController: {fileID: 6559925058770471689}
 --- !u!114 &7745946432842124585
 MonoBehaviour:
   m_ObjectHideFlags: 0

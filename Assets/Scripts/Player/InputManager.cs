@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,9 +22,13 @@ public class InputManager : MonoBehaviour
 
     public bool CameraLockInput { get; private set; }
 
-    void Start()
+    public string InputDevice { get; private set; } = "Keyboard&Mouse";
+
+    private PlayerInput _playerInput;
+
+    private void Awake()
     {
-        
+        _playerInput = GetComponent<PlayerInput>();
     }
 
     void Update()
@@ -73,5 +78,16 @@ public class InputManager : MonoBehaviour
     public void OnCameraLock(InputValue value)
     {
         CameraLockInput = value.isPressed;
+    }
+
+    public void OnControlsChanged()
+    {
+        if (_playerInput == null)
+        {
+            InputDevice = "Keyboard&Mouse";
+            return;
+        }
+
+        InputDevice = _playerInput.currentControlScheme;
     }
 }

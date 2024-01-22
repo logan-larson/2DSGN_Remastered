@@ -7,7 +7,17 @@ using UnityEngine.InputSystem;
 public class CameraController : NetworkBehaviour
 {
 
+    #region Public Fields
+
+    [Header("Public Fields")]
+
+    public float CurrentZ;
+
+    #endregion
+
     #region Serialized Fields
+
+    [Header("Serialized Fields")]
 
     [SerializeField]
     private float _posLerpValue = 0.05f;
@@ -166,5 +176,7 @@ public class CameraController : NetworkBehaviour
         }
 
         this.transform.SetPositionAndRotation(new Vector3(lerpedPos.x, lerpedPos.y, lerpedPos.z), lerpedRot);
+
+        CurrentZ = this.transform.position.z;
     }
 }

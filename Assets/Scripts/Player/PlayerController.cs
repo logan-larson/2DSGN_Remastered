@@ -94,6 +94,7 @@ public class PlayerController : NetworkBehaviour
     {
         public Vector3 Position;
         public Vector3 Velocity;
+        public Vector3 AimDirection;
         public bool IsGrounded;
         public Mode Mode;
         public bool DirectionLeft;
@@ -101,11 +102,19 @@ public class PlayerController : NetworkBehaviour
         public bool IsJumping;
     }
 
+    #endregion
+
+    #region Public Fields
+
+    [Header("Public Fields")]
+
     public PublicMovementData PublicData;
 
     #endregion
 
     #region Script References
+
+    [Header("Script References")]
 
     [SerializeField]
     private InputManager _inputManager;
@@ -295,6 +304,12 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private bool _movementDisabled = false;
 
+    /// <summary>
+    /// Direction the player is aiming.
+    /// </summary>
+    [SerializeField]
+    private Vector3 _aimDirection = Vector3.zero;
+
     #endregion
 
     #region Time Management
@@ -426,6 +441,8 @@ public class PlayerController : NetworkBehaviour
 
         UpdateMode(moveData);
 
+        UpdateAimDirection(moveData);
+
         UpdateFire();
 
         UpdateVelocity(moveData, asServer);
@@ -500,6 +517,31 @@ public class PlayerController : NetworkBehaviour
         else if (moveData.Slide)
         {
             _currentMode = Mode.Slide;
+        }
+    }
+
+    private void UpdateAimDirection(MoveData moveData)
+    {
+        if (_inputManager.InputDevice == "Keyboard&Mouse")
+        {
+            var mousePosition = Input.mousePosition;
+
+            mousePosition.z = Camera.main.transform.position.z * -1f;
+
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+            mouseWorldPosition.z = 0f;
+
+            _aimDirection = (mousePosition - transform.position).normalized;
+        }
+        else if (_inputManager.InputDevice == "Gamepad")
+        {
+            if (_inputManager.Aim != Vector2.zero)
+                _aimDirection = transform.localRotation * new Vector3(_inputManager.Aim.x, _inputManager.Aim.y, 0f).normalized;
+        }
+        else
+        {
+            _aimDirection = moveData.AimDirection;
         }
     }
 
@@ -628,7 +670,7 @@ public class PlayerController : NetworkBehaviour
                 _timeSinceLastShot = 0f;
 
                 //_currentVelocity += -new Vector3(moveData.AimDirection.x, moveData.AimDirection.y, 0f) * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
-                _currentVelocity += Vector3.up * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
+                _currentVelocity += -_aimDirection * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
 
                 _recalculateLanding = true;
             }
