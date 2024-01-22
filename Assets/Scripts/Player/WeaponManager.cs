@@ -10,6 +10,8 @@ public class WeaponManager : NetworkBehaviour
 
     public bool IsWeaponEquipped;
 
+    public WeaponInfo CurrentWeaponInfo { get; private set; } = null;
+
     #endregion
 
     #region Serialized Fields
@@ -39,9 +41,6 @@ public class WeaponManager : NetworkBehaviour
     private GameObject _weaponPickupsParent;
 
     private (float, WeaponPickupManager) _closestWeaponPickup;
-
-    [SerializeField]
-    private WeaponInfo _currentWeaponInfo;
 
     private float _currentPickupCooldown = 0.0f;
 
@@ -104,6 +103,8 @@ public class WeaponManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
+
+        SetCurrentWeapon(_defaultWeaponInfo);
 
         _weaponPickupsParent = GameObject.Find("WeaponPickups");
 
@@ -271,7 +272,7 @@ public class WeaponManager : NetworkBehaviour
     private void DropCurrentWeapon()
     {
         // If the player has no current weapon or if the current weapon is the default weapon, return.
-        if (_currentWeaponInfo == null || _currentWeaponInfo == _defaultWeaponInfo)
+        if (CurrentWeaponInfo == null || CurrentWeaponInfo == _defaultWeaponInfo)
             return;
 
         // Create a new weapon pickup based on the current weapon's info.
@@ -281,18 +282,18 @@ public class WeaponManager : NetworkBehaviour
         var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();
 
         // Call initialize on the weapon pickup.
-        weaponPickupManager.Initialize(_currentWeaponInfo, _movementManager.PublicData.Velocity);
+        weaponPickupManager.Initialize(CurrentWeaponInfo, _movementManager.PublicData.Velocity);
 
         InstanceFinder.ServerManager.Spawn(weaponPickup);
 
         // Set the current weapon to null.
-        _currentWeaponInfo = null;
+        CurrentWeaponInfo = null;
     }
 
     private void SetCurrentWeapon(WeaponInfo weaponInfo)
     {
         // Set the current weapon to the weapon info.
-        _currentWeaponInfo = weaponInfo;
+        CurrentWeaponInfo = weaponInfo;
 
         // TODO: Initialize other things like the weapon sprite, etc.
         _weaponHolder.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>(weaponInfo.SpritePath);

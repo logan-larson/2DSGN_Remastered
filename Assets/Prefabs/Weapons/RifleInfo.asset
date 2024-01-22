@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RifleInfo
   m_EditorClassIdentifier: 
   SpritePath: Sprites/Weapons/Rifle
-  FireRate: 0
+  FireRate: 1
   Damage: 0
   Range: 0
   IsAutomatic: 0
@@ -23,4 +23,4 @@ MonoBehaviour:
   BloomAngleIncreasePerShot: 0
   Recoil: 0
   RecoilRecoveryRate: 0
-  AirborneKnockback: 0
+  AirborneKnockback: 5

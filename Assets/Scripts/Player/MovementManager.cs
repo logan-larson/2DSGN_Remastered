@@ -18,6 +18,8 @@ public class MovementManager : NetworkBehaviour
         // Movement input
         public float Horizontal;
         public bool Jump;
+        public bool Fire;
+        public Vector2 AimDirection;
 
         // Mode input
         public bool Sprint;
@@ -26,13 +28,15 @@ public class MovementManager : NetworkBehaviour
 
         private uint _tick;
 
-        public MoveData(float horizontal, bool jump, bool sprint, bool slide, bool shoot)
+        public MoveData(float horizontal, bool jump, bool fire, Vector2 aimDirection, bool sprint, bool slide, bool shoot)
         {
             Horizontal = horizontal;
             Sprint = sprint;
             Slide = slide;
             Shoot = shoot;
             Jump = jump;
+            Fire = fire;
+            AimDirection = aimDirection;
             _tick = 0;
         }
 
@@ -52,17 +56,23 @@ public class MovementManager : NetworkBehaviour
         public bool IsGrounded;
         public float TimeOnGround;
 
+        // What do I need to reconcile for the shooting?
+        public float TimeSinceLastShot;
+        public bool CanShoot;
+
         public Mode Mode;
 
         private uint _tick;
 
-        public ReconcileData(Vector3 position, Vector3 velocity, Quaternion rotation, bool isGrounded, float timeOnGround, Mode mode)
+        public ReconcileData(Vector3 position, Vector3 velocity, Quaternion rotation, bool isGrounded, float timeOnGround, float timeSinceLastShot, bool canShoot, Mode mode)
         {
             Position = position;
             Velocity = velocity;
             Rotation = rotation;
             IsGrounded = isGrounded;
             TimeOnGround = timeOnGround;
+            TimeSinceLastShot = timeSinceLastShot;
+            CanShoot = canShoot;
             Mode = mode;
             _tick = 0;
         }
@@ -99,6 +109,9 @@ public class MovementManager : NetworkBehaviour
 
     [SerializeField]
     private InputManager _inputManager;
+
+    [SerializeField]
+    private WeaponManager _weaponManager;
 
     #endregion
 
@@ -250,6 +263,16 @@ public class MovementManager : NetworkBehaviour
     private bool _canJump = true;
 
     /// <summary>
+    /// True if the player is allowed to shoot.
+    /// </summary>
+    private bool _canShoot = true;
+
+    /// <summary>
+    /// Time since player has shot, used for re-enabling shooting.
+    /// </summary>
+    private float _timeSinceLastShot = 0f;
+
+    /// <summary>
     /// The predicted landing position for airborne player.
     /// </summary>
     private Vector3 _predictedPosition = new Vector3();
@@ -372,6 +395,11 @@ public class MovementManager : NetworkBehaviour
         moveData.Sprint = _inputManager.SprintInput;
         moveData.Slide = _inputManager.SlideInput;
         moveData.Shoot = _inputManager.ShootInput;
+
+        moveData.Fire = _inputManager.FireInput;
+
+        // TODO: If it's a gamepad, use the aim direction from the right stick
+        moveData.AimDirection = _inputManager.Aim;
     }
 
     /// <summary>
@@ -398,6 +426,8 @@ public class MovementManager : NetworkBehaviour
 
         UpdateMode(moveData);
 
+        UpdateFire();
+
         UpdateVelocity(moveData, asServer);
 
         UpdatePosition(moveData);
@@ -417,6 +447,8 @@ public class MovementManager : NetworkBehaviour
         _currentVelocity = new Vector3(data.Velocity.x, data.Velocity.y, data.Velocity.z);
         _isGrounded = data.IsGrounded;
         _timeOnGround = data.TimeOnGround;
+        _canShoot = data.CanShoot;
+        _timeSinceLastShot = data.TimeSinceLastShot;
     }
 
     #endregion
@@ -468,6 +500,24 @@ public class MovementManager : NetworkBehaviour
         else if (moveData.Slide)
         {
             _currentMode = Mode.Slide;
+        }
+    }
+
+    private void UpdateFire()
+    {
+        _canShoot = false;
+
+        if (_weaponManager.CurrentWeaponInfo == null)
+            return;
+
+        // If the player can shoot, check if they are shooting
+        if (_timeSinceLastShot >= _weaponManager.CurrentWeaponInfo.FireRate)
+        {
+            _canShoot = true;
+        }
+        else
+        {
+            _timeSinceLastShot += (float)TimeManager.TickDelta;
         }
     }
 
@@ -572,6 +622,16 @@ public class MovementManager : NetworkBehaviour
             _currentVelocity += (Vector3.down * _gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
+            if (_canShoot && moveData.Fire)
+            {
+                _canShoot = false;
+                _timeSinceLastShot = 0f;
+
+                //_currentVelocity += -new Vector3(moveData.AimDirection.x, moveData.AimDirection.y, 0f) * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
+                _currentVelocity += Vector3.up * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
+
+                _recalculateLanding = true;
+            }
         }
 
         //CheckNeedRecalc();
