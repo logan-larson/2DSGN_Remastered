@@ -142,6 +142,8 @@ public class WeaponManager : NetworkBehaviour
         if (!base.IsOwner)
             return;
 
+        // -- Weapon Equipping --
+
         // Highlight the closest weapon pickup. This only occurs client side.
         HighlightClosestPickup();
 
@@ -158,6 +160,13 @@ public class WeaponManager : NetworkBehaviour
             _currentPickupCooldown += (float) TimeManager.TickDelta;
         }
 
+        // -- Weapon Aiming --
+
+        UpdateWeaponHolderDirection();
+
+
+        // -- Weapon Firing --
+
         /* TODO: Fix the movement for the weapon holder after picking up a weapon.
         // Move the weapon holder to the player's location at a constant speed if the weapon is not equipped.
         if (!IsWeaponEquipped)
@@ -172,6 +181,10 @@ public class WeaponManager : NetworkBehaviour
         }
         */
     }
+
+    #endregion
+
+    #region Weapon Equipping
 
     private void HighlightClosestPickup()
     {
@@ -315,6 +328,16 @@ public class WeaponManager : NetworkBehaviour
         _weaponHolder.parent = transform;
         _weaponHolder.localPosition = Vector3.zero;
         IsWeaponEquipped = true;
+    }
+
+    #endregion
+
+    #region Weapon Aiming
+
+    private void UpdateWeaponHolderDirection()
+    {
+        // If the player is not aiming, return.
+        _weaponHolder.rotation = Quaternion.LookRotation(Vector3.forward, _playerController.PublicData.AimDirection) * Quaternion.Euler(0f, 0f, 90f);
     }
 
     #endregion

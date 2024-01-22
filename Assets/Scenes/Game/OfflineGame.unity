@@ -224,13 +224,14 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 119172114}
   _networkObjectCache: {fileID: 119172114}
+  CurrentZ: 0
   _posLerpValue: 0.05
   _airborneRotLerpValue: 0.05
   _groundedRotLerpValue: 0.05
   startingZ: -10
   movementRotationFactor: 1.5
   zFactor: 0.4
-  _movementManager: {fileID: 0}
+  _playerController: {fileID: 0}
   _inputManager: {fileID: 0}
 --- !u!114 &119172114
 MonoBehaviour:
@@ -589,8 +590,16 @@ PrefabInstance:
       value: 9703286531365056595
       objectReference: {fileID: 0}
     - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
+      propertyPath: _networkBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
+      propertyPath: _networkBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 410529277842246777}
+    - target: {fileID: 770353692667717894, guid: 9ecb39063903b084286df5577e659489, type: 3}
       propertyPath: <ChildNetworkObjects>k__BackingField.Array.size
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1777671522851362135, guid: 9ecb39063903b084286df5577e659489, type: 3}
       propertyPath: m_UseFullKinematicContacts
@@ -630,3 +639,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ecb39063903b084286df5577e659489, type: 3}
+--- !u!114 &410529277842246777 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4172742858048035293, guid: 9ecb39063903b084286df5577e659489, type: 3}
+  m_PrefabInstance: {fileID: 410529277842246776}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a290907d05679fd42a1c24c670327df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

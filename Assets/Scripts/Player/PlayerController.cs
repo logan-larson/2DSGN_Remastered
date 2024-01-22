@@ -413,8 +413,30 @@ public class PlayerController : NetworkBehaviour
 
         moveData.Fire = _inputManager.FireInput;
 
-        // TODO: If it's a gamepad, use the aim direction from the right stick
-        moveData.AimDirection = _inputManager.Aim;
+        // Need to calculate the aim direction client side because the server doesn't know the mouse position or player camera.
+        if (_inputManager.InputDevice == "Keyboard&Mouse")
+        {
+            var mousePosition = Input.mousePosition;
+
+            mousePosition.z = Camera.main.transform.position.z * -1f;
+
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+            mouseWorldPosition.z = 0f;
+
+            moveData.AimDirection = (mouseWorldPosition - transform.position).normalized;
+        }
+        else if (_inputManager.InputDevice == "Gamepad")
+        {
+            if (_inputManager.Aim != Vector2.zero)
+            {
+                moveData.AimDirection = Camera.main.transform.rotation * new Vector3(_inputManager.Aim.x, _inputManager.Aim.y, 0f).normalized;
+            }
+        }
+        else
+        {
+            moveData.AimDirection = Vector2.zero;
+        }
     }
 
     /// <summary>
@@ -522,27 +544,7 @@ public class PlayerController : NetworkBehaviour
 
     private void UpdateAimDirection(MoveData moveData)
     {
-        if (_inputManager.InputDevice == "Keyboard&Mouse")
-        {
-            var mousePosition = Input.mousePosition;
-
-            mousePosition.z = Camera.main.transform.position.z * -1f;
-
-            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-
-            mouseWorldPosition.z = 0f;
-
-            _aimDirection = (mousePosition - transform.position).normalized;
-        }
-        else if (_inputManager.InputDevice == "Gamepad")
-        {
-            if (_inputManager.Aim != Vector2.zero)
-                _aimDirection = transform.localRotation * new Vector3(_inputManager.Aim.x, _inputManager.Aim.y, 0f).normalized;
-        }
-        else
-        {
-            _aimDirection = moveData.AimDirection;
-        }
+        PublicData.AimDirection = moveData.AimDirection;
     }
 
     private void UpdateFire()
@@ -669,8 +671,7 @@ public class PlayerController : NetworkBehaviour
                 _canShoot = false;
                 _timeSinceLastShot = 0f;
 
-                //_currentVelocity += -new Vector3(moveData.AimDirection.x, moveData.AimDirection.y, 0f) * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
-                _currentVelocity += -_aimDirection * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
+                _currentVelocity += -new Vector3(moveData.AimDirection.x, moveData.AimDirection.y, 0f) * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
 
                 _recalculateLanding = true;
             }

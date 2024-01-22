@@ -1,3 +1,5 @@
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,7 +7,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : NetworkBehaviour
 {
     public float HorizontalMoveInput { get; private set; }
 
@@ -22,7 +24,8 @@ public class InputManager : MonoBehaviour
 
     public bool CameraLockInput { get; private set; }
 
-    public string InputDevice { get; private set; } = "Keyboard&Mouse";
+    [SyncVar]
+    public string InputDevice = "Keyboard&Mouse";
 
     private PlayerInput _playerInput;
 
@@ -82,12 +85,16 @@ public class InputManager : MonoBehaviour
 
     public void OnControlsChanged()
     {
-        if (_playerInput == null)
-        {
-            InputDevice = "Keyboard&Mouse";
+        if (!base.IsClientInitialized || _playerInput == null)
             return;
-        }
 
-        InputDevice = _playerInput.currentControlScheme;
+        OnControlsChangedServerRpc(_playerInput.currentControlScheme);
+        //InputDevice = _playerInput.currentControlScheme;
+    }
+
+    [ServerRpc]
+    private void OnControlsChangedServerRpc(string inputDevice)
+    {
+        InputDevice = inputDevice;
     }
 }
