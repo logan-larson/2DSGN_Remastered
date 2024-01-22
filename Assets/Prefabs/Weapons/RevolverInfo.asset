@@ -15,15 +15,15 @@ MonoBehaviour:
   SpritePath: Sprites/Weapons/Revolver
   FireSoundPath: 
   BulletTrailRendererPath: 
-  FireRate: 1
-  Damage: 0
-  Range: 10
-  IsAutomatic: 0
+  FireRate: 0.4
+  Damage: 30
+  Range: 12
+  IsAutomatic: 1
   BulletsPerShot: 1
   SpreadAngle: 0
-  MaxBloomAngle: 0
-  BloomAngleIncreasePerShot: 0
+  MaxBloomAngle: 10
+  BloomAngleIncreasePerShot: 0.75
   Recoil: 0
   RecoilRecoveryRate: 0
-  AirborneKnockback: 5
-  MuzzleLength: 0.5
+  AirborneKnockback: 3
+  MuzzleLength: 1

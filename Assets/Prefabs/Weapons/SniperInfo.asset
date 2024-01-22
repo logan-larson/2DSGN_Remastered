@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: SniperInfo
   m_EditorClassIdentifier: 
   SpritePath: Sprites/Weapons/Sniper
-  FireRate: 0
-  Damage: 0
-  Range: 0
-  IsAutomatic: 0
-  BulletsPerShot: 0
+  FireSoundPath: 
+  BulletTrailRendererPath: 
+  FireRate: 2
+  Damage: 100
+  Range: 25
+  IsAutomatic: 1
+  BulletsPerShot: 1
   SpreadAngle: 0
-  MaxBloomAngle: 0
+  MaxBloomAngle: 1
   BloomAngleIncreasePerShot: 0
   Recoil: 0
   RecoilRecoveryRate: 0
-  AirborneKnockback: 0
+  AirborneKnockback: 8
+  MuzzleLength: 1.6

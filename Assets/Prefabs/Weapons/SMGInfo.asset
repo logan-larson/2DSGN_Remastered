@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: SMGInfo
   m_EditorClassIdentifier: 
   SpritePath: Sprites/Weapons/SMG
-  FireRate: 0
-  Damage: 0
-  Range: 0
-  IsAutomatic: 0
-  BulletsPerShot: 0
+  FireSoundPath: 
+  BulletTrailRendererPath: 
+  FireRate: 0.15
+  Damage: 20
+  Range: 12
+  IsAutomatic: 1
+  BulletsPerShot: 1
   SpreadAngle: 0
-  MaxBloomAngle: 0
-  BloomAngleIncreasePerShot: 0
+  MaxBloomAngle: 12
+  BloomAngleIncreasePerShot: 1
   Recoil: 0
   RecoilRecoveryRate: 0
-  AirborneKnockback: 0
+  AirborneKnockback: 2
+  MuzzleLength: 0.75

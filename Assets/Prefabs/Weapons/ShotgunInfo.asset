@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: ShotgunInfo
   m_EditorClassIdentifier: 
   SpritePath: Sprites/Weapons/Shotgun
-  FireRate: 0
-  Damage: 0
-  Range: 0
-  IsAutomatic: 0
-  BulletsPerShot: 0
-  SpreadAngle: 0
-  MaxBloomAngle: 0
+  FireSoundPath: 
+  BulletTrailRendererPath: 
+  FireRate: 0.6
+  Damage: 30
+  Range: 8
+  IsAutomatic: 1
+  BulletsPerShot: 4
+  SpreadAngle: 10
+  MaxBloomAngle: 30
   BloomAngleIncreasePerShot: 0
   Recoil: 0
   RecoilRecoveryRate: 0
-  AirborneKnockback: 0
+  AirborneKnockback: 4
+  MuzzleLength: 1.1
