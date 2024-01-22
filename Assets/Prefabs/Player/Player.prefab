@@ -726,6 +726,7 @@ MonoBehaviour:
   - {fileID: 6559925058770471689}
   - {fileID: 3276682624696573865}
   - {fileID: 8376055070018631659}
+  - {fileID: 8927696244155630835}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField:
   - {fileID: 7745946432842124585}
@@ -964,7 +965,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -995,8 +996,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.045455933
-        value: 0.121528625
+        time: 0
+        value: 0.11702156
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -1038,7 +1039,7 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 0
+    textureMode: 1
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
@@ -1055,9 +1056,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf0ec29f2e556943ada293c6c78f421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 7614852995303497732}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 7614852995303497732}
   _playerController: {fileID: 6559925058770471689}
   _line: {fileID: 5782690868989035729}
   lerpValue: 0.1
