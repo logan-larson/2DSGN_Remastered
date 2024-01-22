@@ -116,6 +116,31 @@ public class PlayerController : NetworkBehaviour
 
     public PublicMovementData PublicData;
 
+    /// <summary>
+    /// The amount of force applied to the player when they jump.
+    /// </summary>
+    [SerializeField]
+    public float JumpVelocity { get; private set; } = 10f;
+
+    /// <summary>
+    /// The worlds gravity
+    /// TODO: test with 9.81f and higher jump velocity.
+    /// </summary>
+    [SerializeField]
+    public float Gravity { get; private set; } = 10f;
+
+    /// <summary>
+    /// Fudge factor for predicting landings
+    /// </summary>
+    [SerializeField]
+    public float FFactor { get; private set; } = 7.5f;
+
+    /// <summary>
+    /// Layer mask for obstacles.
+    /// </summary>
+    [SerializeField]
+    public LayerMask ObstacleMask { get; private set; }
+
     #endregion
 
     #region Events
@@ -184,13 +209,6 @@ public class PlayerController : NetworkBehaviour
     private float _slideMultiplier = 1f;
 
     /// <summary>
-    /// The worlds gravity
-    /// TODO: test with 9.81f and higher jump velocity.
-    /// </summary>
-    [SerializeField]
-    private float _gravity = 10f;
-
-    /// <summary>
     /// The maximum angle the player can rotate at.
     [SerializeField]
     private float _maxRotationDegrees = 180f;
@@ -198,22 +216,10 @@ public class PlayerController : NetworkBehaviour
     [Header("Jumping")]
 
     /// <summary>
-    /// The amount of force applied to the player when they jump.
-    /// </summary>
-    [SerializeField]
-    private float _jumpVelocity = 10f;
-
-    /// <summary>
     /// The amount of time the player has to jump for before being able to be grounded again.
     /// </summary>
     [SerializeField]
     private float _minimumJumpTime = 0.1f;
-
-    /// <summary>
-    /// Fudge factor for predicting landings
-    /// </summary>
-    [SerializeField]
-    private float _fFactor = 7.5f;
 
     [Header("Grounded")]
 
@@ -222,12 +228,6 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     [SerializeField]
     private float _groundedHeight = 1.1f;
-
-    /// <summary>
-    /// Layer mask for obstacles.
-    /// </summary>
-    [SerializeField]
-    private LayerMask _obstacleMask;
 
     /// <summary>
     /// The length of the ray used to override player angle checks.
@@ -360,6 +360,8 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         _inputManager ??= GetComponent<InputManager>();
+
+        ObstacleMask = LayerMask.GetMask("Obstacle");
     }
 
     public override void OnStartServer()
@@ -544,7 +546,7 @@ public class PlayerController : NetworkBehaviour
         // If the player is currently grounded, check if they are still grounded and set ground distance
         if (_isGrounded || _timeSinceGrounded > _minimumJumpTime)
         {
-            RaycastHit2D groundedHit = Physics2D.Raycast(transform.position, -transform.up, _groundedHeight, _obstacleMask);
+            RaycastHit2D groundedHit = Physics2D.Raycast(transform.position, -transform.up, _groundedHeight, ObstacleMask);
             _isGrounded = groundedHit.collider != null;
             _groundDistance = groundedHit.distance;
             if (_isGrounded && _timeOnGround > _minimumJumpTime * 2f)
@@ -675,7 +677,7 @@ public class PlayerController : NetworkBehaviour
 
                 PublicData.IsJumping = true;
 
-                _currentVelocity += transform.up * _jumpVelocity;
+                _currentVelocity += transform.up * JumpVelocity;
 
                 RecalculateLandingPosition();
 
@@ -697,7 +699,7 @@ public class PlayerController : NetworkBehaviour
                 if (_currentMode == Mode.Slide)
                 {
                     // Apply gravity in direction of slope
-                    Vector3 gravity = new Vector3(0f, _gravity, 0f);
+                    Vector3 gravity = new Vector3(0f, Gravity, 0f);
 
                     Vector3 gravityParallel = Vector3.Project(gravity, transform.right);
 
@@ -708,7 +710,7 @@ public class PlayerController : NetworkBehaviour
         else
         {
             // Apply gravity
-            _currentVelocity += (Vector3.down * _gravity * (float)TimeManager.TickDelta);
+            _currentVelocity += (Vector3.down * Gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
             if (_isFiring)
@@ -771,11 +773,11 @@ public class PlayerController : NetworkBehaviour
             Ray2D leftRay = new Ray2D(_raycastOrigins.bottomLeft + (velocity * (float)TimeManager.TickDelta), -transform.up);
             Ray2D rightRay = new Ray2D(_raycastOrigins.bottomRight + (velocity * (float)TimeManager.TickDelta), -transform.up);
 
-            RaycastHit2D leftHit = Physics2D.Raycast(leftRay.origin, leftRay.direction, _groundedHeight, _obstacleMask);
-            RaycastHit2D rightHit = Physics2D.Raycast(rightRay.origin, rightRay.direction, _groundedHeight, _obstacleMask);
+            RaycastHit2D leftHit = Physics2D.Raycast(leftRay.origin, leftRay.direction, _groundedHeight, ObstacleMask);
+            RaycastHit2D rightHit = Physics2D.Raycast(rightRay.origin, rightRay.direction, _groundedHeight, ObstacleMask);
 
             // Use override hit to prevent clipping
-            RaycastHit2D overrideHit = Physics2D.Raycast((leftRay.origin + rightRay.origin) / 2, transform.right, _overrideRayLength * Mathf.Sign(_currentVelocity.x), _obstacleMask);
+            RaycastHit2D overrideHit = Physics2D.Raycast((leftRay.origin + rightRay.origin) / 2, transform.right, _overrideRayLength * Mathf.Sign(_currentVelocity.x), ObstacleMask);
             if (_currentVelocity.x < 0f && overrideHit.collider != null)
             {
                 leftHit = overrideHit;
@@ -818,7 +820,7 @@ public class PlayerController : NetworkBehaviour
         Vector2 pos = transform.position - (transform.up * 0.7f);
         Vector2 pos2 = transform.position + (transform.up * 0.7f);
 
-        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * _fFactor;
+        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * FFactor;
 
         int count = 0;
         while ((predictHit.collider == null && predictHit2.collider == null) && count < 100)
@@ -834,14 +836,14 @@ public class PlayerController : NetworkBehaviour
             Debug.DrawRay(ray2.origin, ray2.direction * velo.magnitude, randColor, 2f);
 
             // Update predictHit
-            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _obstacleMask);
-            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, _obstacleMask);
+            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, ObstacleMask);
+            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, ObstacleMask);
 
             // Update position to end of predictHit ray
             pos += (ray.direction * velo.magnitude);
             pos2 += (ray2.direction * velo.magnitude);
 
-            velo += (Vector2.down * _gravity * Time.fixedDeltaTime);
+            velo += (Vector2.down * Gravity * Time.fixedDeltaTime);
 
             count++;
         }
@@ -873,7 +875,7 @@ public class PlayerController : NetworkBehaviour
         Vector2 pos = transform.position - (transform.up * 0.7f);
         Vector2 pos2 = transform.position + (transform.up * 0.7f);
 
-        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * _fFactor;
+        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * FFactor;
 
         int count = 0;
         while ((predictHit.collider == null && predictHit2.collider == null) && count < 100)
@@ -889,14 +891,14 @@ public class PlayerController : NetworkBehaviour
             Debug.DrawRay(ray2.origin, ray2.direction * velo.magnitude, randColor, 2f);
 
             // Update predictHit
-            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _obstacleMask);
-            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, _obstacleMask);
+            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, ObstacleMask);
+            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, ObstacleMask);
 
             // Update position to end of predictHit ray
             pos += (ray.direction * velo.magnitude);
             pos2 += (ray2.direction * velo.magnitude);
 
-            velo += (Vector2.down * _gravity * Time.fixedDeltaTime);
+            velo += (Vector2.down * Gravity * Time.fixedDeltaTime);
 
             count++;
         }
