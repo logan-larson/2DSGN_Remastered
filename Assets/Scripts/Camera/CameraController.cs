@@ -51,7 +51,7 @@ public class CameraController : NetworkBehaviour
     #region Script References
 
     [SerializeField]
-    private MovementManager _movementManager;
+    private PlayerController _playerController;
 
     [SerializeField]
     private InputManager _inputManager;
@@ -121,7 +121,7 @@ public class CameraController : NetworkBehaviour
         _currentPlayer = player;
 
         // Set the local script references to the set player's script references
-        _movementManager = _currentPlayer.GetComponent<MovementManager>();
+        _playerController = _currentPlayer.GetComponent<PlayerController>();
         _inputManager = _currentPlayer.GetComponent<InputManager>();
     }
 
@@ -132,7 +132,7 @@ public class CameraController : NetworkBehaviour
 
         // Calculate the camera z position based on the player's velocity
         // Zoom out when moving faster
-        Vector3 velocity = _movementManager.PublicData.Velocity;
+        Vector3 velocity = _playerController.PublicData.Velocity;
 
         Vector3 targetPos = _currentPlayer.position;
         float posLerpValue = _posLerpValue;
@@ -145,7 +145,7 @@ public class CameraController : NetworkBehaviour
         Vector3 lerpedPos = Vector3.Lerp(this.transform.position, targetPos, posLerpValue);
 
         // Set the rotation lerp value based on whether the player is grounded or not
-        var rotLerpValue = _movementManager.PublicData.IsGrounded ? _groundedRotLerpValue : _airborneRotLerpValue;
+        var rotLerpValue = _playerController.PublicData.IsGrounded ? _groundedRotLerpValue : _airborneRotLerpValue;
 
         // Check if the player is holding the camera rotation lock button
         Quaternion lerpedRot = this.transform.rotation;
@@ -153,13 +153,13 @@ public class CameraController : NetworkBehaviour
         {
             var movementRot = Quaternion.identity;
                 
-            if (_movementManager.PublicData.DirectionLeft)
+            if (_playerController.PublicData.DirectionLeft)
             {
-                movementRot = Quaternion.Euler(0, 0, movementRotationFactor * _movementManager.PublicData.Velocity.magnitude);
+                movementRot = Quaternion.Euler(0, 0, movementRotationFactor * _playerController.PublicData.Velocity.magnitude);
             }
-            else if (_movementManager.PublicData.DirectionRight)
+            else if (_playerController.PublicData.DirectionRight)
             {
-                movementRot = Quaternion.Euler(0, 0, -movementRotationFactor * _movementManager.PublicData.Velocity.magnitude);
+                movementRot = Quaternion.Euler(0, 0, -movementRotationFactor * _playerController.PublicData.Velocity.magnitude);
             }
 
             lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);

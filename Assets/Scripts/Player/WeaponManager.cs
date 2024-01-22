@@ -8,6 +8,7 @@ public class WeaponManager : NetworkBehaviour
 {
     #region Public Fields
 
+    [Header("Public Fields")]
     public bool IsWeaponEquipped;
 
     public WeaponInfo CurrentWeaponInfo { get; private set; } = null;
@@ -15,6 +16,8 @@ public class WeaponManager : NetworkBehaviour
     #endregion
 
     #region Serialized Fields
+
+    [Header("Serialized Fields")]
 
     [SerializeField]
     private float _pickupRadius = 5.0f;
@@ -48,11 +51,13 @@ public class WeaponManager : NetworkBehaviour
 
     #region Script References
 
+    [Header("Script References")]
+
     [SerializeField]
     private InputManager _inputManager;
 
     [SerializeField]
-    private MovementManager _movementManager;
+    private PlayerController _playerController;
 
     #endregion
 
@@ -97,7 +102,7 @@ public class WeaponManager : NetworkBehaviour
     private void Awake()
     {
         _inputManager ??= GetComponent<InputManager>();
-        _movementManager ??= GetComponent<MovementManager>();
+        _playerController ??= GetComponent<PlayerController>();
     }
 
     public override void OnStartServer()
@@ -282,7 +287,7 @@ public class WeaponManager : NetworkBehaviour
         var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();
 
         // Call initialize on the weapon pickup.
-        weaponPickupManager.Initialize(CurrentWeaponInfo, _movementManager.PublicData.Velocity);
+        weaponPickupManager.Initialize(CurrentWeaponInfo, _playerController.PublicData.Velocity);
 
         InstanceFinder.ServerManager.Spawn(weaponPickup);
 

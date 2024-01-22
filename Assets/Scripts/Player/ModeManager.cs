@@ -33,7 +33,7 @@ public class ModeManager : NetworkBehaviour
     #region Script References
 
     [SerializeField]
-    private MovementManager _movementManager;
+    private PlayerController _playerController;
 
     #endregion
 
@@ -52,7 +52,7 @@ public class ModeManager : NetworkBehaviour
         if (!base.IsOwner)
             return;
 
-        UpdateModeClient(_movementManager.PublicData.Mode);
+        UpdateModeClient(_playerController.PublicData.Mode);
     }
 
     #endregion
@@ -100,16 +100,16 @@ public class ModeManager : NetworkBehaviour
             return;
 
         // If the mode changes we need to update the current mode.
-        if (_currentMode != _movementManager.PublicData.Mode)
+        if (_currentMode != _playerController.PublicData.Mode)
         {
             // Set the mode on the client then server
-            UpdateModeClient(_movementManager.PublicData.Mode);
+            UpdateModeClient(_playerController.PublicData.Mode);
         }
 
         // If the player direction changes we need to update the direction.
-        if (_currentDirectionLeft != _movementManager.PublicData.DirectionLeft || _currentDirectionRight != _movementManager.PublicData.DirectionRight)
+        if (_currentDirectionLeft != _playerController.PublicData.DirectionLeft || _currentDirectionRight != _playerController.PublicData.DirectionRight)
         {
-            UpdateDirectionClient(_movementManager.PublicData.DirectionLeft, _movementManager.PublicData.DirectionRight);
+            UpdateDirectionClient(_playerController.PublicData.DirectionLeft, _playerController.PublicData.DirectionRight);
         }
     }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MovementManager : NetworkBehaviour
+public class PlayerController : NetworkBehaviour
 {
     #region Types
 
