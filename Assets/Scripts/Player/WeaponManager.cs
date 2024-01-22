@@ -1,5 +1,9 @@
 using FishNet;
+using FishNet.Component.ColliderRollback;
+using FishNet.Connection;
+using FishNet.Managing.Timing;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +15,7 @@ public class WeaponManager : NetworkBehaviour
     [Header("Public Fields")]
     public bool IsWeaponEquipped;
 
-    public WeaponInfo CurrentWeaponInfo { get; private set; } = null;
+    public WeaponInfo CurrentWeaponInfo = null;
 
     #endregion
 
@@ -34,6 +38,9 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private float _pickupCooldown = 0.5f;
 
+    [SerializeField]
+    private TrailRenderer _bulletTrailRenderer;
+
     #endregion
 
     #region Private Fields
@@ -46,6 +53,13 @@ public class WeaponManager : NetworkBehaviour
     private (float, WeaponPickupManager) _closestWeaponPickup;
 
     private float _currentPickupCooldown = 0.0f;
+
+    private float _currentBloomAngle = 0.0f;
+
+    private float _bloomTimer = 0.0f;
+
+    [SyncVar]
+    private int _instanceID = -1;
 
     #endregion
 
@@ -109,7 +123,7 @@ public class WeaponManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        SetCurrentWeapon(_defaultWeaponInfo);
+        //SetCurrentWeapon(_defaultWeaponInfo);
 
         _weaponPickupsParent = GameObject.Find("WeaponPickups");
 
@@ -121,12 +135,19 @@ public class WeaponManager : NetworkBehaviour
         _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.PublicData.Mode == Mode.Shoot);
 
         _playerController.OnModeChange.AddListener(OnModeChange);
+
+        _instanceID = gameObject.GetInstanceID();
     }
 
     // When the client starts, set the weapon pickups parent.
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+        if (base.IsOwner)
+        {
+            SetCurrentWeaponServerRpc(_defaultWeaponInfo);
+        }
 
         _weaponPickupsParent = GameObject.Find("WeaponPickups");
 
@@ -172,6 +193,30 @@ public class WeaponManager : NetworkBehaviour
 
 
         // -- Weapon Firing --
+
+        /*
+        if (_weaponHolder.transform.localPosition != Vector3.zero)
+        {
+            // If the weapon holder is not at the player's position, move it to the player's position at a constant speed.
+            _weaponHolder.transform.localPosition = Vector3.MoveTowards(_weaponHolder.transform.localPosition, Vector3.zero, 12.0f * (float) TimeManager.TickDelta);
+        }
+        */
+
+        if (!_playerController.PublicData.IsFiring)
+        {
+            if (_bloomTimer < 0)
+            {
+                SubtractBloom();
+                if (CurrentWeaponInfo != null)
+                    _bloomTimer = CurrentWeaponInfo.FireRate;
+            }
+            else
+            {
+                _bloomTimer -= (float) TimeManager.TickDelta;
+            }
+        }
+
+
 
         /* TODO: Fix the movement for the weapon holder after picking up a weapon.
         // Move the weapon holder to the player's location at a constant speed if the weapon is not equipped.
@@ -320,7 +365,14 @@ public class WeaponManager : NetworkBehaviour
         CurrentWeaponInfo = weaponInfo;
 
         // TODO: Initialize other things like the weapon sprite, etc.
-        _weaponHolder.GetComponentInChildren<SpriteRenderer>().sprite = Resources.Load<Sprite>(weaponInfo.SpritePath);
+        _weaponHolder.GetComponentInChildren<SpriteRenderer>(true).sprite = Resources.Load<Sprite>(weaponInfo.SpritePath);
+    }
+
+    [ServerRpc]
+    private void SetCurrentWeaponServerRpc(WeaponInfo weaponInfo)
+    {
+        SetCurrentWeapon(weaponInfo);
+        SetCurrentWeaponObserversRpc(weaponInfo);
     }
 
     [ObserversRpc]
@@ -350,7 +402,196 @@ public class WeaponManager : NetworkBehaviour
 
     #region Weapon Firing
 
+    // Invoked by the player controller
+    public void Fire()
+    {
+        if (!base.IsOwner)
+            return;
 
+        // Need to set the bullet direction here because the player controller uses it to apply airborne knockback.
+
+        // Play the weapon's fire sound.
+
+        // Play the weapon's fire animation.
+
+
+        // -- Setup --
+        var bulletSpawnPosition = _weaponHolder.transform.position + (_playerController.PublicData.AimDirection * CurrentWeaponInfo.MuzzleLength);
+
+        // -- Calculate bullet direction(s) --
+        Vector3[] bulletDirections = new Vector3[CurrentWeaponInfo.BulletsPerShot];
+        if (CurrentWeaponInfo.BulletsPerShot == 1)
+        {
+            Vector3 bloomDir = Quaternion.Euler(0f, 0f, Random.Range(-_currentBloomAngle, _currentBloomAngle)) * _playerController.PublicData.AimDirection;
+            bulletDirections[0] = bloomDir;
+        }
+        else
+        {
+            for (int i = 0; i < CurrentWeaponInfo.BulletsPerShot; i++)
+            {
+                Vector3 randomDirection = Quaternion.Euler(0f, 0f, Random.Range(-CurrentWeaponInfo.SpreadAngle, CurrentWeaponInfo.SpreadAngle)) * _playerController.PublicData.AimDirection;
+
+                bulletDirections[i] = randomDirection;
+            }
+        }
+
+        // -- Draw the shot for the shooter --
+        LayerMask environment = LayerMask.GetMask("Obstacle");
+        for (int i = 0; i < bulletDirections.Length; i++)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, environment);
+            RaycastHit2D barrelStuff = Physics2D.Raycast(transform.position, bulletDirections[i], CurrentWeaponInfo.MuzzleLength, LayerMask.GetMask("Obstacle"));
+
+            if (barrelStuff.collider is not null) continue;
+
+            if (hit.collider is not null)
+            {
+                // -- Hit the environment, so draw a line to the hit point --
+                DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance);
+            }
+            else
+            {
+                // -- Didn't hit anything, so draw a line to the end of the range --
+                DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range);
+            }
+        }
+
+        PreciseTick pt = base.TimeManager.GetPreciseTick(base.TimeManager.LastPacketTick);
+
+        // -- Shoot on server -- 
+        ShootServer(pt, CurrentWeaponInfo, transform.position, bulletSpawnPosition, bulletDirections, _instanceID);
+
+        // -- Increase bloom --
+        AddBloom();
+
+    }
+
+    [ServerRpc]
+    public void ShootServer(PreciseTick pt, WeaponInfo weapon, Vector3 playerPosition, Vector3 bulletSpawnPosition, Vector3[] bulletDirections, int instanceID)
+    {
+        if (weapon == null) return;
+
+        // -- Play fire sound on observers --
+        /*
+        if (CurrentWeaponInfo.FireSoundPath != null)
+            PlayFireSoundObservers(CurrentWeaponInfo.FireSoundPath, playerPosition);
+        */
+
+        // -- Rollback the colliders --
+        base.RollbackManager.Rollback(pt, RollbackPhysicsType.Physics2D, base.IsOwner);
+
+        // -- Get all the environment hits --
+        LayerMask environment = LayerMask.GetMask("Obstacle");
+        for (int i = 0; i < bulletDirections.Length; i++)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(bulletSpawnPosition, bulletDirections[i], weapon.Range, environment);
+            RaycastHit2D barrelStuff = Physics2D.Raycast(playerPosition, bulletDirections[i], weapon.MuzzleLength, LayerMask.GetMask("Obstacle"));
+
+            if (barrelStuff.collider is not null) continue;
+
+            // -- Draw the shots for the other players --
+            if (hit.collider is not null)
+            {
+                // -- Hit the environment, so draw a line to the hit point --
+                if (!base.IsHost)
+                    DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance);
+
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], hit.distance);
+            }
+            else
+            {
+                // -- Didn't hit anything, so draw a line to the end of the range --
+                if (!base.IsHost)
+                    DrawShot(bulletSpawnPosition, bulletDirections[i], weapon.Range);
+
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], weapon.Range);
+            }
+        }
+
+        // -- Get all the player hits --
+        LayerMask hitbox = LayerMask.GetMask("Hitbox", "Obstacle");
+        for (int i = 0; i < bulletDirections.Length; i++)
+        {
+            RaycastHit2D[] hits = Physics2D.RaycastAll(bulletSpawnPosition, bulletDirections[i], weapon.Range, hitbox);
+            RaycastHit2D barrelStuff = Physics2D.Raycast(playerPosition, bulletDirections[i], weapon.MuzzleLength, LayerMask.GetMask("Obstacle"));
+
+            // -- Damage the players --
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider != null) // Maybe check if the username is the same as the shooter
+                {
+                    if (barrelStuff.collider is not null && hit.distance > barrelStuff.distance) break;
+
+                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Obstacle")) break;
+
+                    var player = hit.transform.parent;
+
+                    if (player.gameObject.GetInstanceID() == instanceID) continue;
+
+                    var nob = player.GetComponent<NetworkObject>();
+
+                    // -- Damage the player --
+                    //PlayerManager.Instance.DamagePlayer(player.gameObject.GetInstanceID(), weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
+                }
+            }
+        }
+
+        // -- Return the colliders --
+        base.RollbackManager.Return();
+    }
+
+
+    private void DrawShot(Vector3 origin, Vector3 direction, float distance)
+    {
+        TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
+
+        StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail));
+    }
+
+    [ObserversRpc]
+    public void DrawShotObservers(Vector3 origin, Vector3 direction, float distance)
+    {
+        // -- Owner of shot check --
+        if (base.IsOwner) return;
+
+        TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
+
+        StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail));
+    }
+
+    private IEnumerator ShootCoroutine(Vector3 position, Vector3 direction, float distance, TrailRenderer bulletTrail)
+    {
+        //_weaponEquipManager.CurrentWeapon.ShowMuzzleFlash();
+
+        float time = 0;
+        Vector3 startPosition = bulletTrail.transform.position;
+        Vector3 endPosition = position + direction * distance;
+
+        while (time < 1f)
+        {
+            bulletTrail.transform.position = Vector3.Lerp(startPosition, endPosition, time);
+            time += Time.deltaTime / bulletTrail.time;
+
+            yield return null;
+        }
+
+        Destroy(bulletTrail.gameObject, bulletTrail.time);
+    }
+
+
+    private void AddBloom()
+    {
+        if (CurrentWeaponInfo.BulletsPerShot != 1) return;
+
+        _currentBloomAngle = Mathf.Clamp(_currentBloomAngle + CurrentWeaponInfo.BloomAngleIncreasePerShot, 0f, CurrentWeaponInfo.MaxBloomAngle);
+    }
+
+    private void SubtractBloom()
+    {
+        if (CurrentWeaponInfo == null || CurrentWeaponInfo.BulletsPerShot != 1) return;
+
+        _currentBloomAngle = Mathf.Clamp(_currentBloomAngle - (CurrentWeaponInfo.BloomAngleIncreasePerShot * 1.5f), 0f, CurrentWeaponInfo.MaxBloomAngle);
+    }
 
     #endregion
 

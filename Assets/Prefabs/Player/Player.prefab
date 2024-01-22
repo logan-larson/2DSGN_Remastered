@@ -849,6 +849,12 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
+  OnModeChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFire:
+    m_PersistentCalls:
+      m_Calls: []
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
   _acceleration: 2
@@ -868,7 +874,7 @@ MonoBehaviour:
     m_Bits: 64
   _overrideRayLength: 0
   _currentMode: 0
-  _aimDirection: {x: 0, y: 0, z: 0}
+  _previousMode: 0
 --- !u!114 &3276682624696573865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,5 +911,7 @@ MonoBehaviour:
   _defaultWeaponInfo: {fileID: 11400000, guid: 53fd179e665b54a46b4544bff76bdd8f, type: 2}
   _weaponHolder: {fileID: 1374886415908552202}
   _pickupCooldown: 0.5
+  _bulletTrailRenderer: {fileID: 7365057579148312717, guid: 3317c5c6e40ad8341aea6d47b9d12f3d, type: 3}
+  _instanceID: -1
   _inputManager: {fileID: 3717805940115971261}
   _playerController: {fileID: 6559925058770471689}

@@ -101,6 +101,11 @@ public class PlayerController : NetworkBehaviour
         public bool DirectionLeft;
         public bool DirectionRight;
         public bool IsJumping;
+
+        /// <summary>
+        /// True when the player is holding the fire button.
+        /// </summary>
+        public bool IsFiring;
     }
 
     #endregion
@@ -116,6 +121,8 @@ public class PlayerController : NetworkBehaviour
     #region Events
 
     public UnityEvent<Mode> OnModeChange = new UnityEvent<Mode>();
+
+    public UnityEvent OnFire = new UnityEvent();
 
     #endregion
 
@@ -285,6 +292,11 @@ public class PlayerController : NetworkBehaviour
     private bool _canJump = true;
 
     /// <summary>
+    /// True if the player is currently firing their weapon.
+    /// </summary>
+    private bool _isFiring = false;
+
+    /// <summary>
     /// True if the player is allowed to shoot.
     /// </summary>
     private bool _canShoot = true;
@@ -341,18 +353,6 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public override void OnStartNetwork()
-    {
-        base.OnStartNetwork();
-        SubscribeToTimeManager(true);
-    }
-
-    public override void OnStopNetwork()
-    {
-        base.OnStopNetwork();
-        SubscribeToTimeManager(false);
-    }
-
     #endregion
 
     #region Initialization
@@ -360,6 +360,30 @@ public class PlayerController : NetworkBehaviour
     private void Awake()
     {
         _inputManager ??= GetComponent<InputManager>();
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        SubscribeToTimeManager(true);
+    }
+
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        SubscribeToTimeManager(false);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        SubscribeToTimeManager(true);
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        SubscribeToTimeManager(false);
     }
 
 
@@ -394,6 +418,9 @@ public class PlayerController : NetworkBehaviour
 
                 IsGrounded = _isGrounded,
                 TimeOnGround = _timeOnGround,
+
+                CanShoot = _canShoot,
+                TimeSinceLastShot = _timeSinceLastShot,
             };
 
             Reconciliation(reconcileData, true);
@@ -472,7 +499,7 @@ public class PlayerController : NetworkBehaviour
 
         UpdateAimDirection(moveData);
 
-        UpdateFire();
+        UpdateFire(moveData);
 
         UpdateVelocity(moveData, asServer);
 
@@ -554,9 +581,10 @@ public class PlayerController : NetworkBehaviour
         PublicData.AimDirection = moveData.AimDirection;
     }
 
-    private void UpdateFire()
+    private void UpdateFire(MoveData moveData)
     {
         _canShoot = false;
+        _isFiring = false;
 
         if (_weaponManager.CurrentWeaponInfo == null)
             return;
@@ -569,6 +597,16 @@ public class PlayerController : NetworkBehaviour
         else
         {
             _timeSinceLastShot += (float)TimeManager.TickDelta;
+        }
+
+        if (_canShoot && moveData.Fire)
+        {
+            OnFire.Invoke();
+            _isFiring = true;
+            _canShoot = false;
+            _timeSinceLastShot = 0f;
+
+            _weaponManager.Fire();
         }
     }
 
@@ -673,13 +711,9 @@ public class PlayerController : NetworkBehaviour
             _currentVelocity += (Vector3.down * _gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
-            if (_canShoot && moveData.Fire)
+            if (_isFiring)
             {
-                _canShoot = false;
-                _timeSinceLastShot = 0f;
-
                 _currentVelocity += -new Vector3(moveData.AimDirection.x, moveData.AimDirection.y, 0f) * _weaponManager.CurrentWeaponInfo.AirborneKnockback;
-
                 _recalculateLanding = true;
             }
         }

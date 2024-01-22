@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: RevolverInfo
   m_EditorClassIdentifier: 
   SpritePath: Sprites/Weapons/Revolver
+  FireSoundPath: 
+  BulletTrailRendererPath: 
   FireRate: 1
   Damage: 0
-  Range: 0
+  Range: 10
   IsAutomatic: 0
-  BulletsPerShot: 0
+  BulletsPerShot: 1
   SpreadAngle: 0
   MaxBloomAngle: 0
   BloomAngleIncreasePerShot: 0
   Recoil: 0
   RecoilRecoveryRate: 0
   AirborneKnockback: 5
+  MuzzleLength: 0.5

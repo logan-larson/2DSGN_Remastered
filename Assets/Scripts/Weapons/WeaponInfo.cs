@@ -7,6 +7,8 @@ public class WeaponInfo : ScriptableObject
 {
     //public Sprite Sprite;
     public string SpritePath;
+    public string FireSoundPath;
+    public string BulletTrailRendererPath;
 
     public float FireRate;
     public float Damage;
@@ -23,4 +25,6 @@ public class WeaponInfo : ScriptableObject
     public float RecoilRecoveryRate;
 
     public float AirborneKnockback;
+
+    public float MuzzleLength;
 }
