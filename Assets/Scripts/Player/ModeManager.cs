@@ -52,7 +52,7 @@ public class ModeManager : NetworkBehaviour
         if (!base.IsOwner)
             return;
 
-        UpdateModeClient(_playerController.PublicData.Mode);
+        UpdateModeClient(_playerController.MovementData.Mode);
     }
 
     #endregion
@@ -100,16 +100,16 @@ public class ModeManager : NetworkBehaviour
             return;
 
         // If the mode changes we need to update the current mode.
-        if (_currentMode != _playerController.PublicData.Mode)
+        if (_currentMode != _playerController.MovementData.Mode)
         {
             // Set the mode on the client then server
-            UpdateModeClient(_playerController.PublicData.Mode);
+            UpdateModeClient(_playerController.MovementData.Mode);
         }
 
         // If the player direction changes we need to update the direction.
-        if (_currentDirectionLeft != _playerController.PublicData.DirectionLeft || _currentDirectionRight != _playerController.PublicData.DirectionRight)
+        if (_currentDirectionLeft != _playerController.MovementData.DirectionLeft || _currentDirectionRight != _playerController.MovementData.DirectionRight)
         {
-            UpdateDirectionClient(_playerController.PublicData.DirectionLeft, _playerController.PublicData.DirectionRight);
+            UpdateDirectionClient(_playerController.MovementData.DirectionLeft, _playerController.MovementData.DirectionRight);
         }
     }
 

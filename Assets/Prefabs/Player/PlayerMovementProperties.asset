@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1947823cfa8230f4fad902957665f243, type: 3}
+  m_Name: PlayerMovementProperties
+  m_EditorClassIdentifier: 
+  JumpVelocity: 10
+  Gravity: 10
+  FFactor: 7.5
+  ObstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  Acceleration: 2
+  Friction: 1
+  MaxSpeed: 5
+  SprintMultiplier: 2
+  ShootMultiplier: 0.75
+  SlideMultiplier: 1
+  MaxRotationDegrees: 180
+  MinimumJumpTime: 0.1
+  GroundedHeight: 1.1
+  OverrideRayLength: 0

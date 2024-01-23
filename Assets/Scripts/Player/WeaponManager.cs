@@ -132,7 +132,7 @@ public class WeaponManager : NetworkBehaviour
             Debug.LogError("WeaponPickups parent not found.");
         }
 
-        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.PublicData.Mode == Mode.Shoot);
+        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.MovementData.Mode == Mode.Shoot);
 
         _playerController.OnModeChange.AddListener(OnModeChange);
 
@@ -156,7 +156,7 @@ public class WeaponManager : NetworkBehaviour
             Debug.LogError("WeaponPickups parent not found.");
         }
 
-        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.PublicData.Mode == Mode.Shoot);
+        _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.MovementData.Mode == Mode.Shoot);
     }
 
     #endregion
@@ -202,7 +202,7 @@ public class WeaponManager : NetworkBehaviour
         }
         */
 
-        if (!_playerController.PublicData.IsFiring)
+        if (!_playerController.MovementData.IsFiring)
         {
             if (_bloomTimer < 0)
             {
@@ -351,7 +351,7 @@ public class WeaponManager : NetworkBehaviour
         var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();
 
         // Call initialize on the weapon pickup.
-        weaponPickupManager.Initialize(CurrentWeaponInfo, _playerController.PublicData.Velocity);
+        weaponPickupManager.Initialize(CurrentWeaponInfo, _playerController.MovementData.Velocity);
 
         InstanceFinder.ServerManager.Spawn(weaponPickup);
 
@@ -395,7 +395,7 @@ public class WeaponManager : NetworkBehaviour
     private void UpdateWeaponHolderDirection()
     {
         // If the player is not aiming, return.
-        _weaponHolder.rotation = Quaternion.LookRotation(Vector3.forward, _playerController.PublicData.AimDirection) * Quaternion.Euler(0f, 0f, 90f);
+        _weaponHolder.rotation = Quaternion.LookRotation(Vector3.forward, _playerController.MovementData.AimDirection) * Quaternion.Euler(0f, 0f, 90f);
     }
 
     #endregion
@@ -416,20 +416,20 @@ public class WeaponManager : NetworkBehaviour
 
 
         // -- Setup --
-        var bulletSpawnPosition = _weaponHolder.transform.position + (_playerController.PublicData.AimDirection * CurrentWeaponInfo.MuzzleLength);
+        var bulletSpawnPosition = _weaponHolder.transform.position + (_playerController.MovementData.AimDirection * CurrentWeaponInfo.MuzzleLength);
 
         // -- Calculate bullet direction(s) --
         Vector3[] bulletDirections = new Vector3[CurrentWeaponInfo.BulletsPerShot];
         if (CurrentWeaponInfo.BulletsPerShot == 1)
         {
-            Vector3 bloomDir = Quaternion.Euler(0f, 0f, Random.Range(-_currentBloomAngle, _currentBloomAngle)) * _playerController.PublicData.AimDirection;
+            Vector3 bloomDir = Quaternion.Euler(0f, 0f, Random.Range(-_currentBloomAngle, _currentBloomAngle)) * _playerController.MovementData.AimDirection;
             bulletDirections[0] = bloomDir;
         }
         else
         {
             for (int i = 0; i < CurrentWeaponInfo.BulletsPerShot; i++)
             {
-                Vector3 randomDirection = Quaternion.Euler(0f, 0f, Random.Range(-CurrentWeaponInfo.SpreadAngle, CurrentWeaponInfo.SpreadAngle)) * _playerController.PublicData.AimDirection;
+                Vector3 randomDirection = Quaternion.Euler(0f, 0f, Random.Range(-CurrentWeaponInfo.SpreadAngle, CurrentWeaponInfo.SpreadAngle)) * _playerController.MovementData.AimDirection;
 
                 bulletDirections[i] = randomDirection;
             }

@@ -859,18 +859,7 @@ MonoBehaviour:
       m_Calls: []
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
-  _acceleration: 2
-  _friction: 1
-  _maxSpeed: 5
-  _sprintMultiplier: 2
-  _shootMultiplier: 0.75
-  _slideMultiplier: 1
-  _maxRotationDegrees: 180
-  _minimumJumpTime: 0.1
-  _groundedHeight: 1.1
-  _overrideRayLength: 0
-  _currentMode: 0
-  _previousMode: 0
+  _movementProperties: {fileID: 11400000, guid: 344dda0007784ff4eab18c9031c9ed58, type: 2}
 --- !u!114 &3276682624696573865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -983,8 +972,8 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 514513761
-  m_SortingLayer: 2
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -1060,5 +1049,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
   _playerController: {fileID: 6559925058770471689}
+  _playerMovementProperties: {fileID: 11400000, guid: 344dda0007784ff4eab18c9031c9ed58, type: 2}
   _line: {fileID: 5782690868989035729}
   lerpValue: 0.1

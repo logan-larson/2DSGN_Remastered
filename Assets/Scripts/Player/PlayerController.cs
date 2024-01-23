@@ -91,6 +91,9 @@ public class PlayerController : NetworkBehaviour
         public Vector2 bottomLeft, bottomRight;
     }
 
+    /// <summary>
+    /// Public data about the player's movement.
+    /// </summary>
     public struct PublicMovementData
     {
         public Vector3 Position;
@@ -110,43 +113,16 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
-    #region Public Fields
-
-    [Header("Public Fields")]
-
-    public PublicMovementData PublicData;
-
-    /// <summary>
-    /// The amount of force applied to the player when they jump.
-    /// </summary>
-    [SerializeField]
-    public float JumpVelocity { get; private set; } = 10f;
-
-    /// <summary>
-    /// The worlds gravity
-    /// TODO: test with 9.81f and higher jump velocity.
-    /// </summary>
-    [SerializeField]
-    public float Gravity { get; private set; } = 10f;
-
-    /// <summary>
-    /// Fudge factor for predicting landings
-    /// </summary>
-    [SerializeField]
-    public float FFactor { get; private set; } = 7.5f;
-
-    /// <summary>
-    /// Layer mask for obstacles.
-    /// </summary>
-    [SerializeField]
-    public LayerMask ObstacleMask { get; private set; }
-
-    #endregion
-
     #region Events
 
+    /// <summary>
+    /// Event invoked when the player's mode changes.
+    /// </summary>
     public UnityEvent<Mode> OnModeChange = new UnityEvent<Mode>();
 
+    /// <summary>
+    /// Event invoked when the player fires their weapon.
+    /// </summary>
     public UnityEvent OnFire = new UnityEvent();
 
     #endregion
@@ -163,93 +139,30 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
+    #region Public Variables
+
+    /// <summary>
+    /// Public data about the player's movement.
+    /// </summary>
+    public PublicMovementData MovementData;
+
+    #endregion
+
     #region Inspector Variables
 
     [Header("Movement")]
+
     /// <summary>
-    /// The amount by which the player's speed is changed when they move.
+    /// Properties for the player's movement.
     /// </summary>
     [SerializeField]
-    private float _acceleration = 2f;
-
-    /// <summary>
-    /// The amount by which the player's speed is changed when they stop moving.
-    /// </summary>
-    [SerializeField]
-    private float _friction = 1f;
-
-    /// <summary>
-    /// The maximum speed at which the player can move.
-    /// </summary>
-    [SerializeField]
-    private float _maxSpeed = 5f;
-
-    /// <summary>
-    /// The maximum speed at which the player can move while in the air.
-    /// </summary>
-    //[SerializeField]
-    //private float _maxAirborneSpeed = 10f;
-
-    /// <summary>
-    /// The amount by which the player's speed is changed when they are in sprint mode.
-    /// </summary>
-    [SerializeField]
-    private float _sprintMultiplier = 2f;
-
-    /// <summary>
-    /// The amount by which the player's speed is changed when they are in shoot mode.
-    /// </summary>
-    [SerializeField]
-    private float _shootMultiplier = 0.75f;
-
-    /// <summary>
-    /// The amount by which the player's speed is changed when they are in slide mode.
-    /// </summary>
-    [SerializeField]
-    private float _slideMultiplier = 1f;
-
-    /// <summary>
-    /// The maximum angle the player can rotate at.
-    [SerializeField]
-    private float _maxRotationDegrees = 180f;
-
-    [Header("Jumping")]
-
-    /// <summary>
-    /// The amount of time the player has to jump for before being able to be grounded again.
-    /// </summary>
-    [SerializeField]
-    private float _minimumJumpTime = 0.1f;
-
-    [Header("Grounded")]
-
-    /// <summary>
-    /// The height above the ground at which the player is considered to be grounded.
-    /// </summary>
-    [SerializeField]
-    private float _groundedHeight = 1.1f;
-
-    /// <summary>
-    /// The length of the ray used to override player angle checks.
-    /// </summary>
-    [SerializeField]
-    private float _overrideRayLength = 0;
-
-    /// <summary>
-    /// Current mode of the player.
-    /// </summary>
-    [SerializeField]
-    private Mode _currentMode = Mode.Sprint;
-
-    /// <summary>
-    /// Previous mode of the player.
-    /// </summary>
-    [SerializeField]
-    private Mode _previousMode = Mode.Sprint;
+    private PlayerMovementProperties _movementProperties;
 
     #endregion
 
     #region Private Variables
+
+    // TODO: Organize these variables into distinct sections.
 
     /// <summary>
     /// The current airborne velocity of the player.
@@ -317,11 +230,28 @@ public class PlayerController : NetworkBehaviour
     private Vector3 _predictedNormal = new Vector3();
 
     /// <summary>
+    /// Current mode of the player.
+    /// </summary>
+    private Mode _currentMode = Mode.Sprint;
+
+    /// <summary>
+    /// Previous mode of the player.
+    /// </summary>
+    private Mode _previousMode = Mode.Sprint;
+
+    /// <summary>
     /// True if the predicted landing position and normal should be recalculated.
     /// </summary>
     private bool _recalculateLanding = false;
 
+    /// <summary>
+    /// Coroutine for recalculating the predicted landing position and normal.
+    /// </summary>
     private IEnumerator _recalculateLandingCoroutine;
+
+    /// <summary>
+    /// True if the recalculate landing coroutine is running.
+    /// </summary>
     private bool _recalculateLandingCoroutineIsRunning;
 
     /// <summary>
@@ -361,7 +291,7 @@ public class PlayerController : NetworkBehaviour
     {
         _inputManager ??= GetComponent<InputManager>();
 
-        ObstacleMask = LayerMask.GetMask("Obstacle");
+        //ObstacleMask = LayerMask.GetMask("Obstacle");
     }
 
     public override void OnStartServer()
@@ -431,7 +361,6 @@ public class PlayerController : NetworkBehaviour
         SetPublicMovementData();
     }
 
-
     /// <summary>
     /// Use player input to build move data that will be used in the move function.
     /// </summary>
@@ -450,6 +379,7 @@ public class PlayerController : NetworkBehaviour
         moveData.Fire = _inputManager.FireInput;
 
         // Need to calculate the aim direction client side because the server doesn't know the mouse position or player camera.
+        // I guess this could leave room for aimbot hacks, but I don't think it's a big deal. When we start an esport for SGN we can worry about it LOL.
         if (_inputManager.InputDevice == "Keyboard&Mouse")
         {
             var mousePosition = Input.mousePosition;
@@ -538,21 +468,21 @@ public class PlayerController : NetworkBehaviour
 
     private void UpdateGrounded()
     {
-        if (_isGrounded && _timeOnGround <= _minimumJumpTime * 2f)
+        if (_isGrounded && _timeOnGround <= _movementProperties.MinimumJumpTime * 2f)
             _timeOnGround += (float)TimeManager.TickDelta;
         else if (!_isGrounded)
             _timeOnGround = 0f;
 
         // If the player is currently grounded, check if they are still grounded and set ground distance
-        if (_isGrounded || _timeSinceGrounded > _minimumJumpTime)
+        if (_isGrounded || _timeSinceGrounded > _movementProperties.MinimumJumpTime)
         {
-            RaycastHit2D groundedHit = Physics2D.Raycast(transform.position, -transform.up, _groundedHeight, ObstacleMask);
+            RaycastHit2D groundedHit = Physics2D.Raycast(transform.position, -transform.up, _movementProperties.GroundedHeight, _movementProperties.ObstacleMask);
             _isGrounded = groundedHit.collider != null;
             _groundDistance = groundedHit.distance;
-            if (_isGrounded && _timeOnGround > _minimumJumpTime * 2f)
+            if (_isGrounded && _timeOnGround > _movementProperties.MinimumJumpTime * 2f)
                 _canJump = true;
 
-            PublicData.IsJumping = false;
+            MovementData.IsJumping = false;
         }
         // Otherwise, increase the time since grounded
         else
@@ -580,7 +510,7 @@ public class PlayerController : NetworkBehaviour
 
     private void UpdateAimDirection(MoveData moveData)
     {
-        PublicData.AimDirection = moveData.AimDirection;
+        MovementData.AimDirection = moveData.AimDirection;
     }
 
     private void UpdateFire(MoveData moveData)
@@ -619,13 +549,13 @@ public class PlayerController : NetworkBehaviour
         switch (_currentMode)
         {
             case Mode.Sprint:
-                modeMultiplier = _sprintMultiplier;
+                modeMultiplier = _movementProperties.SprintMultiplier;
                 break;
             case Mode.Shoot:
-                modeMultiplier = _shootMultiplier;
+                modeMultiplier = _movementProperties.ShootMultiplier;
                 break;
             case Mode.Slide:
-                modeMultiplier = _slideMultiplier;
+                modeMultiplier = _movementProperties.SlideMultiplier;
                 break;
         }
 
@@ -644,12 +574,12 @@ public class PlayerController : NetworkBehaviour
                 // If horizontal input is given, add velocity
                 if (moveData.Horizontal != 0f)
                 {
-                    _currentVelocity += transform.right * moveData.Horizontal * _acceleration * modeMultiplier;
+                    _currentVelocity += transform.right * moveData.Horizontal * _movementProperties.Acceleration * modeMultiplier;
                 }
                 else
                 {
                     // If no horizontal input is given, decrease velocity by friction
-                    _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _friction);
+                    _currentVelocity = Vector3.MoveTowards(_currentVelocity, Vector3.zero, _movementProperties.Friction);
                 }
             }
         }
@@ -657,7 +587,7 @@ public class PlayerController : NetworkBehaviour
         // Limit top speed
         //float maxSpeed = _isGrounded ? MovementProperties.MaxSpeed : MovementProperties.MaxAirborneSpeed;
         // Sliding tweaks lol
-        float maxSpeed = _isGrounded && _currentMode != Mode.Slide ? _maxSpeed : 100f;
+        float maxSpeed = _isGrounded && _currentMode != Mode.Slide ? _movementProperties.MaxSpeed : 100f;
 
         if (_isGrounded && _currentVelocity.magnitude > maxSpeed * modeMultiplier)
         {
@@ -675,9 +605,9 @@ public class PlayerController : NetworkBehaviour
                 _isGrounded = false;
                 _timeSinceGrounded = 0f;
 
-                PublicData.IsJumping = true;
+                MovementData.IsJumping = true;
 
-                _currentVelocity += transform.up * JumpVelocity;
+                _currentVelocity += transform.up * _movementProperties.JumpVelocity;
 
                 RecalculateLandingPosition();
 
@@ -699,7 +629,7 @@ public class PlayerController : NetworkBehaviour
                 if (_currentMode == Mode.Slide)
                 {
                     // Apply gravity in direction of slope
-                    Vector3 gravity = new Vector3(0f, Gravity, 0f);
+                    Vector3 gravity = new Vector3(0f, _movementProperties.Gravity, 0f);
 
                     Vector3 gravityParallel = Vector3.Project(gravity, transform.right);
 
@@ -710,7 +640,7 @@ public class PlayerController : NetworkBehaviour
         else
         {
             // Apply gravity
-            _currentVelocity += (Vector3.down * Gravity * (float)TimeManager.TickDelta);
+            _currentVelocity += (Vector3.down * _movementProperties.Gravity * (float)TimeManager.TickDelta);
 
             // This is where airborne movement forces can be applied
             if (_isFiring)
@@ -773,11 +703,11 @@ public class PlayerController : NetworkBehaviour
             Ray2D leftRay = new Ray2D(_raycastOrigins.bottomLeft + (velocity * (float)TimeManager.TickDelta), -transform.up);
             Ray2D rightRay = new Ray2D(_raycastOrigins.bottomRight + (velocity * (float)TimeManager.TickDelta), -transform.up);
 
-            RaycastHit2D leftHit = Physics2D.Raycast(leftRay.origin, leftRay.direction, _groundedHeight, ObstacleMask);
-            RaycastHit2D rightHit = Physics2D.Raycast(rightRay.origin, rightRay.direction, _groundedHeight, ObstacleMask);
+            RaycastHit2D leftHit = Physics2D.Raycast(leftRay.origin, leftRay.direction, _movementProperties.GroundedHeight, _movementProperties.ObstacleMask);
+            RaycastHit2D rightHit = Physics2D.Raycast(rightRay.origin, rightRay.direction, _movementProperties.GroundedHeight, _movementProperties.ObstacleMask);
 
             // Use override hit to prevent clipping
-            RaycastHit2D overrideHit = Physics2D.Raycast((leftRay.origin + rightRay.origin) / 2, transform.right, _overrideRayLength * Mathf.Sign(_currentVelocity.x), ObstacleMask);
+            RaycastHit2D overrideHit = Physics2D.Raycast((leftRay.origin + rightRay.origin) / 2, transform.right, _movementProperties.OverrideRayLength * Mathf.Sign(_currentVelocity.x), _movementProperties.ObstacleMask);
             if (_currentVelocity.x < 0f && overrideHit.collider != null)
             {
                 leftHit = overrideHit;
@@ -794,7 +724,7 @@ public class PlayerController : NetworkBehaviour
                 Vector2 avgNorm = (leftHit.normal + rightHit.normal) / 2;
 
                 Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, avgNorm);
-                finalRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _maxRotationDegrees);
+                finalRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _movementProperties.MaxRotationDegrees);
             }
 
             transform.SetPositionAndRotation(finalPosition, finalRotation);
@@ -803,7 +733,7 @@ public class PlayerController : NetworkBehaviour
         {
             // And rotate to the predicted landing spots normal
             Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, _predictedNormal);
-            Quaternion finalRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _maxRotationDegrees);
+            Quaternion finalRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _movementProperties.MaxRotationDegrees);
 
             transform.SetPositionAndRotation(finalPosition, finalRotation);
         }
@@ -820,7 +750,7 @@ public class PlayerController : NetworkBehaviour
         Vector2 pos = transform.position - (transform.up * 0.7f);
         Vector2 pos2 = transform.position + (transform.up * 0.7f);
 
-        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * FFactor;
+        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * _movementProperties.FFactor;
 
         int count = 0;
         while ((predictHit.collider == null && predictHit2.collider == null) && count < 100)
@@ -836,14 +766,14 @@ public class PlayerController : NetworkBehaviour
             Debug.DrawRay(ray2.origin, ray2.direction * velo.magnitude, randColor, 2f);
 
             // Update predictHit
-            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, ObstacleMask);
-            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, ObstacleMask);
+            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _movementProperties.ObstacleMask);
+            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, _movementProperties.ObstacleMask);
 
             // Update position to end of predictHit ray
             pos += (ray.direction * velo.magnitude);
             pos2 += (ray2.direction * velo.magnitude);
 
-            velo += (Vector2.down * Gravity * Time.fixedDeltaTime);
+            velo += (Vector2.down * _movementProperties.Gravity * Time.fixedDeltaTime);
 
             count++;
         }
@@ -875,7 +805,7 @@ public class PlayerController : NetworkBehaviour
         Vector2 pos = transform.position - (transform.up * 0.7f);
         Vector2 pos2 = transform.position + (transform.up * 0.7f);
 
-        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * FFactor;
+        Vector2 velo = new Vector2(_currentVelocity.x, _currentVelocity.y) * Time.fixedDeltaTime * _movementProperties.FFactor;
 
         int count = 0;
         while ((predictHit.collider == null && predictHit2.collider == null) && count < 100)
@@ -891,14 +821,14 @@ public class PlayerController : NetworkBehaviour
             Debug.DrawRay(ray2.origin, ray2.direction * velo.magnitude, randColor, 2f);
 
             // Update predictHit
-            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, ObstacleMask);
-            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, ObstacleMask);
+            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _movementProperties.ObstacleMask);
+            predictHit2 = Physics2D.Raycast(ray2.origin, ray2.direction, velo.magnitude, _movementProperties.ObstacleMask);
 
             // Update position to end of predictHit ray
             pos += (ray.direction * velo.magnitude);
             pos2 += (ray2.direction * velo.magnitude);
 
-            velo += (Vector2.down * Gravity * Time.fixedDeltaTime);
+            velo += (Vector2.down * _movementProperties.Gravity * Time.fixedDeltaTime);
 
             count++;
         }
@@ -925,24 +855,24 @@ public class PlayerController : NetworkBehaviour
 
     private void SetPublicMovementData()
     {
-        PublicData.Position = transform.position;
-        PublicData.Velocity = _currentVelocity;
-        PublicData.IsGrounded = _isGrounded;
+        MovementData.Position = transform.position;
+        MovementData.Velocity = _currentVelocity;
+        MovementData.IsGrounded = _isGrounded;
 
-        PublicData.Mode = _currentMode;
+        MovementData.Mode = _currentMode;
 
-        var angle = Vector3.SignedAngle(PublicData.Velocity, transform.right, transform.up);
-        if (PublicData.Velocity.magnitude != 0f)
+        var angle = Vector3.SignedAngle(MovementData.Velocity, transform.right, transform.up);
+        if (MovementData.Velocity.magnitude != 0f)
         {
             if (angle < 5f || angle > 355f)
             {
-                PublicData.DirectionLeft = false;
-                PublicData.DirectionRight = true;
+                MovementData.DirectionLeft = false;
+                MovementData.DirectionRight = true;
             }
             else if (angle > 175f && angle < 185f)
             {
-                PublicData.DirectionLeft = true;
-                PublicData.DirectionRight = false;
+                MovementData.DirectionLeft = true;
+                MovementData.DirectionRight = false;
             }
         }
 

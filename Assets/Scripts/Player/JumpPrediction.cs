@@ -14,6 +14,9 @@ public class JumpPrediction : NetworkBehaviour
     private PlayerController _playerController;
 
     [SerializeField]
+    private PlayerMovementProperties _playerMovementProperties;
+
+    [SerializeField]
     private LineRenderer _line;
 
     //private float fFactor = 6.75f;
@@ -70,27 +73,27 @@ public class JumpPrediction : NetworkBehaviour
         float theta = Vector2.SignedAngle(Vector2.right, transform.up) * Mathf.Deg2Rad;
         float gamma = Vector2.SignedAngle(Vector2.right, transform.right) * Mathf.Deg2Rad;
 
-        float xComponentOfYVelo = Mathf.Cos(theta) * _playerController.JumpVelocity;
-        float yComponentOfYVelo = Mathf.Sin(theta) * _playerController.JumpVelocity;
+        float xComponentOfYVelo = Mathf.Cos(theta) * _playerMovementProperties.JumpVelocity;
+        float yComponentOfYVelo = Mathf.Sin(theta) * _playerMovementProperties.JumpVelocity;
 
-        float xComponentOfXVelo = Mathf.Cos(gamma) * _playerController.PublicData.Velocity.x;
-        float yComponentOfXVelo = Mathf.Sin(gamma) * _playerController.PublicData.Velocity.x;
+        float xComponentOfXVelo = Mathf.Cos(gamma) * _playerController.MovementData.Velocity.x;
+        float yComponentOfXVelo = Mathf.Sin(gamma) * _playerController.MovementData.Velocity.x;
 
         Vector2 predVelo;
-        if (_playerController.PublicData.IsGrounded)
+        if (_playerController.MovementData.IsGrounded)
         {
             //predVelo = new Vector2(xComponentOfXVelo + xComponentOfYVelo, yComponentOfXVelo + yComponentOfYVelo);
-            predVelo = _playerController.PublicData.Velocity + (transform.up * _playerController.JumpVelocity);
+            predVelo = _playerController.MovementData.Velocity + (transform.up * _playerMovementProperties.JumpVelocity);
         }
         else
         {
-            predVelo = _playerController.PublicData.Velocity;
+            predVelo = _playerController.MovementData.Velocity;
         }
 
         RaycastHit2D predictHit = new RaycastHit2D();
         Vector2 pos = transform.position;
 
-        Vector2 velo = new Vector2(predVelo.x, predVelo.y) * Time.fixedDeltaTime * _playerController.FFactor;
+        Vector2 velo = new Vector2(predVelo.x, predVelo.y) * Time.fixedDeltaTime * _playerMovementProperties.FFactor;
 
         int count = 0;
         List<Vector3> points = new List<Vector3>();
@@ -110,12 +113,12 @@ public class JumpPrediction : NetworkBehaviour
 
 
             // Update predictHit
-            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _playerController.ObstacleMask);
+            predictHit = Physics2D.Raycast(ray.origin, ray.direction, velo.magnitude, _playerMovementProperties.ObstacleMask);
 
             // Update position to end of predictHit ray
             pos += (ray.direction * velo.magnitude);
 
-            velo += (Vector2.down * _playerController.Gravity * Time.fixedDeltaTime);
+            velo += (Vector2.down * _playerMovementProperties.Gravity * Time.fixedDeltaTime);
 
             count++;
         }
