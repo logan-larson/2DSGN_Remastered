@@ -135,6 +135,11 @@ public class CameraController : NetworkBehaviour
         _inputManager = _currentPlayer.GetComponent<InputManager>();
     }
 
+    public void ResetToLocal()
+    {
+        SetPlayer(_clientPlayer);
+    }
+
 
     void OnTick()
     {

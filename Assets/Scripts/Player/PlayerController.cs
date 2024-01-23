@@ -1,3 +1,4 @@
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Prediction;
 using FishNet.Transporting;
@@ -323,8 +324,6 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
         SubscribeToTimeManager(true);
-
-        SetHeavenServerRpc();
     }
 
     public override void OnStopClient()
@@ -333,33 +332,53 @@ public class PlayerController : NetworkBehaviour
         SubscribeToTimeManager(false);
     }
 
-    [ServerRpc]
-    private void SetHeavenServerRpc()
-    {
-        _heaven ??= GameObject.Find("Environment").transform;
-
-        Debug.Assert(_heaven != null, "Heaven not found.");
-    }
-
     #endregion
 
     #region Server-Side Methods
 
-    public void OnDeath(Transform heaven)
+    public void OnDeath(Transform heaven, NetworkConnection targetConn, NetworkObject killer)
     {
         _isDead = true;
 
         transform.position = heaven.position;
         transform.rotation = heaven.rotation;
+
+        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        {
+            cameraController.SetPlayer(killer.transform);
+        }
+
+        SetPlayerToFollowTargetRpc(targetConn, killer);
     }
 
-    public void OnRespawn(Transform spawnPoint)
+    public void OnRespawn(Transform spawnPoint, Player player)
     {
+
         // Set the player's position to the spawn position.
         transform.position = spawnPoint.position;
         transform.rotation = spawnPoint.rotation;
 
         _isDead = false;
+
+        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        {
+            cameraController.ResetToLocal();
+        }
+
+        SetPlayerToFollowTargetRpc(player.Connection, player.Nob);
+    }
+
+    #endregion
+
+    #region Client-Side Methods
+
+    [TargetRpc]
+    public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)
+    {
+        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        {
+            cameraController.SetPlayer(target.transform);
+        }
     }
 
     #endregion
