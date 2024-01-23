@@ -17,6 +17,8 @@ public class WeaponManager : NetworkBehaviour
 
     public WeaponInfo CurrentWeaponInfo = null;
 
+    public float Bloom => _currentBloomAngle;
+
     #endregion
 
     #region Serialized Fields
@@ -54,6 +56,7 @@ public class WeaponManager : NetworkBehaviour
 
     private float _currentPickupCooldown = 0.0f;
 
+    [SerializeField]
     private float _currentBloomAngle = 0.0f;
 
     private float _bloomTimer = 0.0f;
@@ -202,9 +205,9 @@ public class WeaponManager : NetworkBehaviour
         }
         */
 
-        if (!_playerController.MovementData.IsFiring)
+        if (!_inputManager.FireInput)
         {
-            if (_bloomTimer < 0)
+            if (_bloomTimer <= 0)
             {
                 SubtractBloom();
                 if (CurrentWeaponInfo != null)

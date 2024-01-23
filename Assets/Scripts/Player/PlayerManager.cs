@@ -40,6 +40,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject _jumpPredictionLine;
 
+    [SerializeField]
+    private GameObject _crosshair;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -58,6 +61,7 @@ public class PlayerManager : NetworkBehaviour
             _jumpPredictionLine.SetActive(false);
             
             // Disable the crosshair.
+            _crosshair.SetActive(false);
         }
     }
 
