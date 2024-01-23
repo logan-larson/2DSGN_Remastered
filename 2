@@ -40,24 +40,42 @@ public class PlayerManager : NetworkBehaviour
     {
         base.OnStartClient();
 
+        // Initialize the player for all clients.
+
+        Initialize();
+
+        if (!base.IsOwner)
+            return;
+
+        // Initialize the player for the owner.
+
+        SetUserNameServerRpc(base.LocalConnection, _userInfo.Username);
+    }
+
+    private void Initialize()
+    {
         // Set the username UI.
         _usernameText.color = base.IsOwner ? Color.green : Color.red;
 
-        if (!base.IsOwner) return;
-
         // Set the health UI.
-        InitializeServerRpc(base.LocalConnection, _userInfo.Username);
+        InitializeServerRpc(_userInfo.Username);
     }
 
     [ServerRpc]
-    private void InitializeServerRpc(NetworkConnection conn, string username)
+    private void InitializeServerRpc(string username)
     {
+        //_username = _userInfo.Username;
         _username = username;
 
         _health = 100f;
 
         OnHealthChanged(_health, _health, true);
+    }
 
+    [ServerRpc]
+    private void SetUserNameServerRpc(NetworkConnection conn, string username)
+    {
+        // Set the name of the player in the PlayersManager.
         PlayersManager.Instance.SetUsername(conn, username);
     }
 

@@ -13,6 +13,6 @@ public class Player
     /// </summary>
     public NetworkConnection Connection { get; set; }
     public string Username { get; set; } = "user123";
-    public int Health { get; set; } = 100;
+    public float Health { get; set; } = 100f;
     public bool IsDead { get; set; } = false;
 }

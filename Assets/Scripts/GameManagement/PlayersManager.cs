@@ -80,7 +80,7 @@ public class PlayersManager : NetworkBehaviour
     private void PlayerSpawner_OnSpawned(NetworkObject nob)
     {
         // Get the connection.
-        NetworkConnection conn = nob.LocalConnection;
+        NetworkConnection conn = nob.Owner;
 
         Players[conn.ClientId].Nob = nob;
     }
@@ -130,10 +130,31 @@ public class PlayersManager : NetworkBehaviour
     }
 
     [Server]
-    public void DamagePlayer(NetworkConnection attacker, NetworkConnection target, WeaponInfo weapon)
+    public void DamagePlayer(NetworkConnection attackerConn, NetworkConnection targetConn, WeaponInfo weapon)
     {
         // TEMP: Debug log the attacker username and target username with the weapon name.
-        Debug.Log($"{Players[attacker.ClientId].Username} has damaged {Players[target.ClientId].Username} with {weapon.Name}.");
+        //Debug.Log($"{Players[attackerConn.ClientId].Username} has damaged {Players[targetConn.ClientId].Username} with {weapon.Name}.");
+
+        var attacker = Players[attackerConn.ClientId];
+        var target = Players[targetConn.ClientId];
+
+        if (target.IsDead)
+            return;
+
+        // Reduce the health of the target.
+        target.Health -= weapon.Damage;
+
+        target.Nob.GetComponent<PlayerManager>().TakeDamage(weapon.Damage, target.Health);
+
+        // If the target's health is less than or equal to 0, then they are dead.
+        if (target.Health <= 0)
+        {
+            target.IsDead = true;
+
+            // TEMP: Debug log the attacker username and target username with the weapon name.
+            Debug.Log($"{Players[attackerConn.ClientId].Username} has killed {Players[targetConn.ClientId].Username} with {weapon.Name}.");
+        }
+
     }
 
     public void SetUsername(NetworkConnection conn, string username)

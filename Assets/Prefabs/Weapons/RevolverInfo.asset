@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa9e32290791c84a9ec91434da2b3f6, type: 3}
   m_Name: RevolverInfo
   m_EditorClassIdentifier: 
+  Name: Revolver
   SpritePath: Sprites/Weapons/Revolver
   FireSoundPath: 
   BulletTrailRendererPath: 
