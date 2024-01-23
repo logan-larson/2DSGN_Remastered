@@ -146,6 +146,8 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     public PublicMovementData MovementData;
 
+    public int numShots = 0;
+
     #endregion
 
     #region Inspector Variables
@@ -431,7 +433,7 @@ public class PlayerController : NetworkBehaviour
 
         UpdateAimDirection(moveData);
 
-        UpdateFire(moveData, replaying);
+        UpdateFire(moveData, asServer, replaying);
 
         UpdateVelocity(moveData, asServer);
 
@@ -452,7 +454,7 @@ public class PlayerController : NetworkBehaviour
         _currentVelocity = new Vector3(data.Velocity.x, data.Velocity.y, data.Velocity.z);
         _isGrounded = data.IsGrounded;
         _timeOnGround = data.TimeOnGround;
-        _canShoot = data.CanShoot;
+        //_canShoot = data.CanShoot;
         _timeSinceLastShot = data.TimeSinceLastShot;
     }
 
@@ -513,9 +515,10 @@ public class PlayerController : NetworkBehaviour
         MovementData.AimDirection = moveData.AimDirection;
     }
 
-    private void UpdateFire(MoveData moveData, bool replaying)
+    private void UpdateFire(MoveData moveData, bool asServer, bool replaying)
     {
-        _canShoot = false;
+        //_canShoot = false;
+        var canShoot = false;
         _isFiring = false;
 
         if (_weaponManager.CurrentWeaponInfo == null)
@@ -524,21 +527,26 @@ public class PlayerController : NetworkBehaviour
         // If the player can shoot, check if they are shooting
         if (_timeSinceLastShot >= _weaponManager.CurrentWeaponInfo.FireRate)
         {
-            _canShoot = true;
+           // _canShoot = true;
+            canShoot = true;
         }
         else
         {
             _timeSinceLastShot += (float)TimeManager.TickDelta;
         }
 
-        if (_canShoot && moveData.Fire && !replaying)
+        //if (_canShoot && moveData.Fire)
+        if (canShoot && moveData.Fire)
         {
             OnFire.Invoke();
             _isFiring = true;
-            _canShoot = false;
+            //_canShoot = false;
             _timeSinceLastShot = 0f;
 
-            _weaponManager.Fire();
+            if (!asServer && !replaying)
+                _weaponManager.Fire();
+
+            numShots++;
         }
     }
 

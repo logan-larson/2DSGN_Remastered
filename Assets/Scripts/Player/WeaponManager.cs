@@ -403,6 +403,7 @@ public class WeaponManager : NetworkBehaviour
     #region Weapon Firing
 
     // Invoked by the player controller
+    [Client]
     public void Fire()
     {
         if (!base.IsOwner)
