@@ -165,7 +165,7 @@ public class PlayersManager : NetworkBehaviour
             Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
 
             // Send the player to heaven.
-            target.Nob.GetComponent<PlayerController>().OnDeath(_heaven, target.Connection, attacker.Nob);
+            target.Nob.GetComponent<PlayerManager>().OnDeath(_heaven, target.Connection, attacker.Nob);
 
 
             // Start the respawn coroutine.
@@ -201,7 +201,7 @@ public class PlayersManager : NetworkBehaviour
         player.IsDead = false;
 
         // Respawn the player.
-        player.Nob.GetComponent<PlayerController>().OnRespawn(spawnPoint, player);
+        player.Nob.GetComponent<PlayerManager>().OnRespawn(spawnPoint, player);
     }
 
     #endregion

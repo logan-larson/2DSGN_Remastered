@@ -138,6 +138,9 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private WeaponManager _weaponManager;
 
+    [SerializeField]
+    private PlayerManager _playerManager;
+
     #endregion
 
     #region Public Variables
@@ -268,11 +271,6 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private bool _movementDisabled = false;
 
-    /// <summary>
-    /// True if the player is dead.
-    /// </summary>
-    private bool _isDead = false;
-
     #endregion
 
     #region Time Management
@@ -305,6 +303,8 @@ public class PlayerController : NetworkBehaviour
     {
         _inputManager ??= GetComponent<InputManager>();
 
+        _playerManager ??= GetComponent<PlayerManager>();
+
         //ObstacleMask = LayerMask.GetMask("Obstacle");
     }
 
@@ -334,55 +334,6 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
-    #region Server-Side Methods
-
-    public void OnDeath(Transform heaven, NetworkConnection targetConn, NetworkObject killer)
-    {
-        _isDead = true;
-
-        transform.position = heaven.position;
-        transform.rotation = heaven.rotation;
-
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
-        {
-            cameraController.SetPlayer(killer.transform);
-        }
-
-        SetPlayerToFollowTargetRpc(targetConn, killer);
-    }
-
-    public void OnRespawn(Transform spawnPoint, Player player)
-    {
-
-        // Set the player's position to the spawn position.
-        transform.position = spawnPoint.position;
-        transform.rotation = spawnPoint.rotation;
-
-        _isDead = false;
-
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
-        {
-            cameraController.ResetToLocal();
-        }
-
-        SetPlayerToFollowTargetRpc(player.Connection, player.Nob);
-    }
-
-    #endregion
-
-    #region Client-Side Methods
-
-    [TargetRpc]
-    public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)
-    {
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
-        {
-            cameraController.SetPlayer(target.transform);
-        }
-    }
-
-    #endregion
-
     #region Frame Updates
 
     /// <summary>
@@ -390,7 +341,7 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private void OnTick()
     {
-        if (_isDead) return;
+        if (_playerManager.IsDead) return;
 
         if (base.IsOwner)
         {
