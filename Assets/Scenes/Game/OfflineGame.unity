@@ -702,12 +702,54 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5232804222510909945, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
-      propertyPath: <SceneId>k__BackingField
-      value: 9703286528720419911
+      propertyPath: _scenePathHash
+      value: 2259222448
       objectReference: {fileID: 0}
+    - target: {fileID: 5232804222510909945, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 9703286532327976849
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232804222510909945, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: _networkBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5232804222510909945, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: _networkBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 5232804221646448701}
     - target: {fileID: 5232804222510909950, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
       propertyPath: m_Name
       value: MatchManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7266054430107025921, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
+      objectReference: {fileID: 5232804221646448702}
+    - target: {fileID: 7266054430107025921, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: _componentIndexCache
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+--- !u!114 &5232804221646448701 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7266054430107025921, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+  m_PrefabInstance: {fileID: 5232804221646448700}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0098eeda55c35ca4ab775047f4e2456c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5232804221646448702 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5232804222510909945, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+  m_PrefabInstance: {fileID: 5232804221646448700}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

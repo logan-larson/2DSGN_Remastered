@@ -503,7 +503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8817e3663c2db849b45582b6d81e4a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
   _username: 
@@ -873,6 +873,7 @@ GameObject:
   - component: {fileID: 6559925058770471689}
   - component: {fileID: 3276682624696573865}
   - component: {fileID: 8376055070018631659}
+  - component: {fileID: 6187821288535414075}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -920,6 +921,7 @@ MonoBehaviour:
   - {fileID: 6559925058770471689}
   - {fileID: 3276682624696573865}
   - {fileID: 8376055070018631659}
+  - {fileID: 6187821288535414075}
   - {fileID: 8927696244155630835}
   - {fileID: 7068070163283698580}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
@@ -1097,6 +1099,22 @@ MonoBehaviour:
   _instanceID: -1
   _inputManager: {fileID: 3717805940115971261}
   _playerController: {fileID: 6559925058770471689}
+--- !u!114 &6187821288535414075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8224984725197528771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9312e57491c20f43bbb9323b61de04d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 7614852995303497732}
+  _networkObjectCache: {fileID: 7614852995303497732}
+  _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
 --- !u!1 &8639079816381434075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,7 +1259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf0ec29f2e556943ada293c6c78f421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 7614852995303497732}
   _networkObjectCache: {fileID: 7614852995303497732}
   _playerController: {fileID: 6559925058770471689}

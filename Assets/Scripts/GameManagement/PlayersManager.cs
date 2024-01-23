@@ -5,17 +5,18 @@ using FishNet.Demo.AdditiveScenes;
 using FishNet.Managing;
 using FishNet.Object;
 using FishNet.Transporting;
+using HathoraCloud.Models.Operations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class PlayerManager : NetworkBehaviour
+public class PlayersManager : NetworkBehaviour
 {
     #region Public Fields
 
-    public static PlayerManager Instance { get; private set; }
+    public static PlayersManager Instance { get; private set; }
 
     public Dictionary<int, Player> Players = new Dictionary<int, Player>();
 
@@ -81,37 +82,7 @@ public class PlayerManager : NetworkBehaviour
         // Get the connection.
         NetworkConnection conn = nob.LocalConnection;
 
-        // Create a new player.
-        /*
-        Player player = new Player()
-        {
-            Connection = conn,
-            Nob = nob,
-            Username = "Request Username",
-            Health = 100,
-            IsDead = false
-        };
-        */
-
-        // Get the player from the list.
-        //Player player = Players[conn.ClientId];
-
-        // Send a target rpc to the player to set their username.
-        if (base.IsHost)
-        {
-            Players[conn.ClientId].Username = _userInfo.Username;
-        }
-        else
-        {
-            SetUsernameTargetRpc(conn);
-        }
-
         Players[conn.ClientId].Nob = nob;
-
-        // Add the player to the list.
-        //Players.Add(conn.ClientId, player);
-
-        //Debug.Log($"Player {conn.ClientId} has joined the game.");
     }
 
     private void ServerManager_OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
@@ -145,18 +116,6 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
-    [TargetRpc]
-    private void SetUsernameTargetRpc(NetworkConnection conn)
-    {
-        SetUsernameServerRpc(base.Owner, _userInfo.Username);
-    }
-
-    [ServerRpc]
-    private void SetUsernameServerRpc(NetworkConnection conn, string username)
-    {
-        Players[conn.ClientId].Username = username;
-    }
-
     #endregion
 
     #region Public Methods
@@ -175,6 +134,13 @@ public class PlayerManager : NetworkBehaviour
     {
         // TEMP: Debug log the attacker username and target username with the weapon name.
         Debug.Log($"{Players[attacker.ClientId].Username} has damaged {Players[target.ClientId].Username} with {weapon.Name}.");
+    }
+
+    public void SetUsername(NetworkConnection conn, string username)
+    {
+        Debug.Log($"Player {conn.ClientId} has set their username to {username}.");
+
+        Players[conn.ClientId].Username = username;
     }
 
     #endregion
