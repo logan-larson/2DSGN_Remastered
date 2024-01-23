@@ -33,6 +33,12 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private ServerInfo _serverInfo;
 
+    [SerializeField]
+    private TMP_Text _usernameText;
+
+    [SerializeField]
+    private UserInfo _userInfo;
+
     private HathoraCloudSDK hathora;
 
     private void Start()
@@ -46,6 +52,8 @@ public class RoomManager : MonoBehaviour
         );
 
         _joinInputErrorText.gameObject.SetActive(false);
+
+        _usernameText.text = _userInfo.Username;
     }
 
     public async void OnHost()

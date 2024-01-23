@@ -23,6 +23,8 @@ public class ServerBuildManager : MonoBehaviour
         if (_buildInfo.IsServer)
         {
             _networkManager.ServerManager.StartConnection();
+
+            // Query the lobby ID for the initial player list.
         }
         else
         {

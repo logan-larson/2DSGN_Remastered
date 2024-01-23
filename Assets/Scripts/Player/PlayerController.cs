@@ -431,7 +431,7 @@ public class PlayerController : NetworkBehaviour
 
         UpdateAimDirection(moveData);
 
-        UpdateFire(moveData);
+        UpdateFire(moveData, replaying);
 
         UpdateVelocity(moveData, asServer);
 
@@ -513,7 +513,7 @@ public class PlayerController : NetworkBehaviour
         MovementData.AimDirection = moveData.AimDirection;
     }
 
-    private void UpdateFire(MoveData moveData)
+    private void UpdateFire(MoveData moveData, bool replaying)
     {
         _canShoot = false;
         _isFiring = false;
@@ -531,7 +531,7 @@ public class PlayerController : NetworkBehaviour
             _timeSinceLastShot += (float)TimeManager.TickDelta;
         }
 
-        if (_canShoot && moveData.Fire)
+        if (_canShoot && moveData.Fire && !replaying)
         {
             OnFire.Invoke();
             _isFiring = true;
@@ -660,31 +660,6 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    private IEnumerator RecalculateNextLandingCoroutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.1f);
-
-            Vector2? normal = RecalculateNextLandingNormal();
-
-            if (normal != null)
-            {
-                Vector2 diff = (Vector2)_predictedNormal - (Vector2)normal;
-
-                if (diff.magnitude > 0.1f)
-                {
-                    _predictedNormal = (Vector2)normal;
-                }
-                else
-                {
-                    yield break;
-                }
-            }
-        }
-
-    }
-
     private void UpdatePosition(MoveData moveData)
     {
         Vector3 changeGround = Vector3.zero;
@@ -737,6 +712,35 @@ public class PlayerController : NetworkBehaviour
 
             transform.SetPositionAndRotation(finalPosition, finalRotation);
         }
+    }
+
+    #region Recalculate Landing
+
+    // TODO: This whole section needs to be simplified/optomized
+
+    private IEnumerator RecalculateNextLandingCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            Vector2? normal = RecalculateNextLandingNormal();
+
+            if (normal != null)
+            {
+                Vector2 diff = (Vector2)_predictedNormal - (Vector2)normal;
+
+                if (diff.magnitude > 0.1f)
+                {
+                    _predictedNormal = (Vector2)normal;
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+        }
+
     }
 
     private void RecalculateLandingPosition()
@@ -882,4 +886,7 @@ public class PlayerController : NetworkBehaviour
             _previousMode = _currentMode;
         }
     }
+
+    #endregion
+
 }

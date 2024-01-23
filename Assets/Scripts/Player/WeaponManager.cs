@@ -447,12 +447,12 @@ public class WeaponManager : NetworkBehaviour
             if (hit.collider is not null)
             {
                 // -- Hit the environment, so draw a line to the hit point --
-                DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance);
+                DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, CurrentWeaponInfo.Range);
             }
             else
             {
                 // -- Didn't hit anything, so draw a line to the end of the range --
-                DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range);
+                DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, CurrentWeaponInfo.Range);
             }
         }
 
@@ -494,17 +494,17 @@ public class WeaponManager : NetworkBehaviour
             {
                 // -- Hit the environment, so draw a line to the hit point --
                 if (!base.IsHost)
-                    DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance);
+                    DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon.Range);
 
-                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], hit.distance);
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon.Range);
             }
             else
             {
                 // -- Didn't hit anything, so draw a line to the end of the range --
                 if (!base.IsHost)
-                    DrawShot(bulletSpawnPosition, bulletDirections[i], weapon.Range);
+                    DrawShot(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon.Range);
 
-                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], weapon.Range);
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon.Range);
             }
         }
 
@@ -541,20 +541,22 @@ public class WeaponManager : NetworkBehaviour
     }
 
 
-    private void DrawShot(Vector3 origin, Vector3 direction, float distance)
+    private void DrawShot(Vector3 origin, Vector3 direction, float distance, float weaponRange)
     {
         TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
+        bulletTrail.time = (distance / weaponRange) * 0.1f;
 
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail));
     }
 
     [ObserversRpc]
-    public void DrawShotObservers(Vector3 origin, Vector3 direction, float distance)
+    public void DrawShotObservers(Vector3 origin, Vector3 direction, float distance, float weaponRange)
     {
         // -- Owner of shot check --
         if (base.IsOwner) return;
 
         TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
+        bulletTrail.time = (distance / weaponRange) * 0.1f;
 
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail));
     }
