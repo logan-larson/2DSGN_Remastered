@@ -27,7 +27,9 @@ public class PlayersManager : NetworkBehaviour
     [Header("Serialized Fields")]
 
     [SerializeField]
-    private List<Vector3> _spawnPositions = new List<Vector3>();
+    private List<Transform> _spawnPoints = new List<Transform>();
+
+    private Transform _heaven;
 
     [SerializeField]
     private UserInfo _userInfo;
@@ -75,6 +77,21 @@ public class PlayersManager : NetworkBehaviour
 
         // Subscribe to the remote connection state disconnects.
         ServerManager.OnRemoteConnectionState += ServerManager_OnRemoteConnectionState;
+
+        GameObject spawnPoints = GameObject.Find("SpawnPoints");
+
+        if (spawnPoints == null)
+        {
+            Debug.LogError("SpawnPoints not found.");
+            return;
+        }
+
+        foreach (Transform child in spawnPoints.transform)
+        {
+            _spawnPoints.Add(child);
+        }
+
+        _heaven = GameObject.Find("Heaven").transform;
     }
 
     private void PlayerSpawner_OnSpawned(NetworkObject nob)
@@ -120,15 +137,6 @@ public class PlayersManager : NetworkBehaviour
 
     #region Public Methods
 
-    /// <summary>
-    /// This is called by the game manager when the map is generated.
-    /// </summary>
-    /// <param name="spawnPositions"></param>
-    public void SetSpawnPositions(List<Vector3> spawnPositions)
-    {
-        _spawnPositions = spawnPositions;
-    }
-
     [Server]
     public void DamagePlayer(NetworkConnection attackerConn, NetworkConnection targetConn, WeaponInfo weapon)
     {
@@ -151,6 +159,18 @@ public class PlayersManager : NetworkBehaviour
         {
             target.IsDead = true;
 
+            // Initiate the respawn.
+
+            // Get a random spawn point.
+            Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
+
+            // Send the player to heaven.
+            target.Nob.GetComponent<PlayerController>().OnDeath(_heaven);
+
+            // Start the respawn coroutine.
+            StartCoroutine(RespawnPlayer(target, spawnPoint));
+
+
             // TEMP: Debug log the attacker username and target username with the weapon name.
             Debug.Log($"{Players[attackerConn.ClientId].Username} has killed {Players[targetConn.ClientId].Username} with {weapon.Name}.");
         }
@@ -162,6 +182,25 @@ public class PlayersManager : NetworkBehaviour
         Debug.Log($"Player {conn.ClientId} has set their username to {username}.");
 
         Players[conn.ClientId].Username = username;
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private IEnumerator RespawnPlayer(Player player, Transform spawnPoint)
+    {
+        // Wait for 3 seconds.
+        yield return new WaitForSeconds(3f);
+
+        // Reset the player's health.
+        player.Health = 100;
+
+        // Reset the player's death state.
+        player.IsDead = false;
+
+        // Respawn the player.
+        player.Nob.GetComponent<PlayerController>().OnRespawn(spawnPoint);
     }
 
     #endregion

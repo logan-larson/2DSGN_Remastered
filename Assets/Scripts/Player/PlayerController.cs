@@ -150,7 +150,7 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
-    #region Inspector Variables
+    #region Serialized Variables
 
     [Header("Movement")]
 
@@ -159,6 +159,12 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     [SerializeField]
     private PlayerMovementProperties _movementProperties;
+
+    /// <summary>
+    /// The transform of heaven.
+    /// </summary>
+    [SerializeField]
+    private Transform _heaven;
 
     #endregion
 
@@ -261,6 +267,11 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private bool _movementDisabled = false;
 
+    /// <summary>
+    /// True if the player is dead.
+    /// </summary>
+    private bool _isDead = false;
+
     #endregion
 
     #region Time Management
@@ -312,6 +323,8 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
         SubscribeToTimeManager(true);
+
+        SetHeavenServerRpc();
     }
 
     public override void OnStopClient()
@@ -320,6 +333,34 @@ public class PlayerController : NetworkBehaviour
         SubscribeToTimeManager(false);
     }
 
+    [ServerRpc]
+    private void SetHeavenServerRpc()
+    {
+        _heaven ??= GameObject.Find("Environment").transform;
+
+        Debug.Assert(_heaven != null, "Heaven not found.");
+    }
+
+    #endregion
+
+    #region Server-Side Methods
+
+    public void OnDeath(Transform heaven)
+    {
+        _isDead = true;
+
+        transform.position = heaven.position;
+        transform.rotation = heaven.rotation;
+    }
+
+    public void OnRespawn(Transform spawnPoint)
+    {
+        // Set the player's position to the spawn position.
+        transform.position = spawnPoint.position;
+        transform.rotation = spawnPoint.rotation;
+
+        _isDead = false;
+    }
 
     #endregion
 
@@ -330,6 +371,8 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private void OnTick()
     {
+        if (_isDead) return;
+
         if (base.IsOwner)
         {
             Reconciliation(default, false);
