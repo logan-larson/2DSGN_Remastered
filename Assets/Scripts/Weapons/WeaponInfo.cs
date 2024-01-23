@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WeaponInfo", menuName = "SGN/WeaponInfo", order = 4)]
 public class WeaponInfo : ScriptableObject
 {
+    public string Name;
+
     //public Sprite Sprite;
     public string SpritePath;
     public string FireSoundPath;

@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1977804780153819352}
   - component: {fileID: 5307455412761941436}
-  - component: {fileID: 3002098003876281277}
-  m_Layer: 0
+  - component: {fileID: 744777874643087676}
+  m_Layer: 7
   m_Name: Sprint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,8 +85,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &3002098003876281277
-BoxCollider2D:
+--- !u!70 &744777874643087676
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -95,22 +95,12 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3, y: 1.5}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 3, y: 1.5}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0.5194872, y: 0.042567406}
+  m_Size: {x: 1.8065286, y: 0.76733494}
+  m_Direction: 1
 --- !u!1 &2663496105243714586
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,8 +283,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6519200333399432197}
   - component: {fileID: 8466851863595783087}
-  - component: {fileID: 274204987380768307}
-  m_Layer: 0
+  - component: {fileID: 2296893548519117289}
+  m_Layer: 7
   m_Name: Slide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,8 +358,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &274204987380768307
-BoxCollider2D:
+--- !u!70 &2296893548519117289
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -378,22 +368,12 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3, y: 1.5}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 3, y: 1.5}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0.5194872, y: -0.33}
+  m_Size: {x: 1.8065286, y: 0.76733494}
+  m_Direction: 1
 --- !u!1 &4972716913053713070
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,8 +631,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4611344045982665476}
   - component: {fileID: 271489859240082958}
-  - component: {fileID: 7300487177244499245}
-  m_Layer: 0
+  - component: {fileID: 5257202902839049977}
+  m_Layer: 7
   m_Name: Shoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -726,8 +706,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &7300487177244499245
-BoxCollider2D:
+--- !u!70 &5257202902839049977
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -736,22 +716,12 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.7518674, y: 0.3562092}
-    oldSize: {x: 2.4615386, y: 2.4615386}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 3, y: 1.5}
-  m_EdgeRadius: 0
+  m_Offset: {x: -0.007019043, y: 0.4492798}
+  m_Size: {x: 0.82995605, y: 1.8323975}
+  m_Direction: 0
 --- !u!1 &7776748232152094869
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,6 +1054,7 @@ MonoBehaviour:
       m_Calls: []
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
+  numShots: 0
   _movementProperties: {fileID: 11400000, guid: 344dda0007784ff4eab18c9031c9ed58, type: 2}
 --- !u!114 &3276682624696573865
 MonoBehaviour:

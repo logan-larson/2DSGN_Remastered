@@ -82,6 +82,7 @@ public class PlayerManager : NetworkBehaviour
         NetworkConnection conn = nob.LocalConnection;
 
         // Create a new player.
+        /*
         Player player = new Player()
         {
             Connection = conn,
@@ -90,26 +91,50 @@ public class PlayerManager : NetworkBehaviour
             Health = 100,
             IsDead = false
         };
+        */
+
+        // Get the player from the list.
+        //Player player = Players[conn.ClientId];
 
         // Send a target rpc to the player to set their username.
         if (base.IsHost)
         {
-            player.Username = _userInfo.Username;
+            Players[conn.ClientId].Username = _userInfo.Username;
         }
         else
         {
             SetUsernameTargetRpc(conn);
         }
 
-        // Add the player to the list.
-        Players.Add(conn.ClientId, player);
+        Players[conn.ClientId].Nob = nob;
 
-        Debug.Log($"Player {conn.ClientId} has joined the game.");
+        // Add the player to the list.
+        //Players.Add(conn.ClientId, player);
+
+        //Debug.Log($"Player {conn.ClientId} has joined the game.");
     }
 
     private void ServerManager_OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
-        if (args.ConnectionState == RemoteConnectionState.Stopped)
+        if (args.ConnectionState == RemoteConnectionState.Started)
+        {
+            // Create a new player.
+            Player player = new Player()
+            {
+                Connection = conn,
+                Nob = null,
+                Username = "Request Username",
+                Health = 100,
+                IsDead = false
+            };
+
+            // Add the player to the list.
+            Players.Add(conn.ClientId, player);
+
+            Debug.Log($"Player {conn.ClientId} has joined the game.");
+
+        }
+        else if (args.ConnectionState == RemoteConnectionState.Stopped)
         {
             if (Players.Count == 0) return;
 
@@ -145,6 +170,12 @@ public class PlayerManager : NetworkBehaviour
         _spawnPositions = spawnPositions;
     }
 
+    [Server]
+    public void DamagePlayer(NetworkConnection attacker, NetworkConnection target, WeaponInfo weapon)
+    {
+        // TEMP: Debug log the attacker username and target username with the weapon name.
+        Debug.Log($"{Players[attacker.ClientId].Username} has damaged {Players[target.ClientId].Username} with {weapon.Name}.");
+    }
 
     #endregion
 

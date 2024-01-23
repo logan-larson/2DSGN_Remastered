@@ -525,14 +525,17 @@ public class WeaponManager : NetworkBehaviour
 
                     if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Obstacle")) break;
 
-                    var player = hit.transform.parent;
+                    var player = hit.transform.parent.parent;
 
-                    if (player.gameObject.GetInstanceID() == instanceID) continue;
+                    //if (player.gameObject.GetInstanceID() == instanceID) continue;
 
                     var nob = player.GetComponent<NetworkObject>();
 
+                    if (nob.Owner == base.Owner) continue;
+
                     // -- Damage the player --
-                    //PlayerManager.Instance.DamagePlayer(player.gameObject.GetInstanceID(), weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
+                    //PlayerManager.Instance.DamagePlayer(nob.Owner, weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
+                    PlayerManager.Instance.DamagePlayer(base.Owner, nob.Owner, weapon);
                 }
             }
         }
