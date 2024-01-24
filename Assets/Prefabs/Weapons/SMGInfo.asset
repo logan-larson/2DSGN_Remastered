@@ -24,7 +24,7 @@ MonoBehaviour:
   SpreadAngle: 0
   MaxBloomAngle: 12
   BloomAngleIncreasePerShot: 1
-  Recoil: 0
-  RecoilRecoveryRate: 0
+  Recoil: 1
+  RecoilRecoveryRate: 0.08
   AirborneKnockback: 2
   MuzzleLength: 0.75

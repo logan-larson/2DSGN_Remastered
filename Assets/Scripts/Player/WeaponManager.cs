@@ -76,6 +76,9 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private PlayerController _playerController;
 
+    [SerializeField]
+    private WeaponHolderController _weaponHolderController;
+
     #endregion
 
     #region Time Management
@@ -468,6 +471,8 @@ public class WeaponManager : NetworkBehaviour
         // -- Increase bloom --
         AddBloom();
 
+        // Get direction of all the bullets
+        _weaponHolderController.OnFire(bulletDirections[0], CurrentWeaponInfo.Recoil, CurrentWeaponInfo.RecoilRecoveryRate);
     }
 
     [ServerRpc]

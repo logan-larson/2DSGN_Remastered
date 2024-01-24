@@ -1015,6 +1015,7 @@ GameObject:
   - component: {fileID: 1374886415908552202}
   - component: {fileID: 4464178955767322347}
   - component: {fileID: 6442418275770234338}
+  - component: {fileID: 8102376201190440948}
   m_Layer: 0
   m_Name: WeaponHolder
   m_TagString: Untagged
@@ -1055,6 +1056,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 6442418275770234338}
+  - {fileID: 8102376201190440948}
   <ParentNetworkObject>k__BackingField: {fileID: 7614852995303497732}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -1116,6 +1118,22 @@ MonoBehaviour:
     X: 0
     Y: 0
     Z: 0
+--- !u!114 &8102376201190440948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7264720968969372115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d396321cb680e249acb64f82e063201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 4464178955767322347}
+  _networkObjectCache: {fileID: 4464178955767322347}
+  TargetPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &7464203539986217859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,6 +1654,7 @@ MonoBehaviour:
   _instanceID: -1
   _inputManager: {fileID: 3717805940115971261}
   _playerController: {fileID: 6559925058770471689}
+  _weaponHolderController: {fileID: 8102376201190440948}
 --- !u!114 &6187821288535414075
 MonoBehaviour:
   m_ObjectHideFlags: 0
