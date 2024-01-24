@@ -48,3 +48,6 @@ TagManager:
   - name: Weapon
     uniqueID: 514513761
     locked: 0
+  - name: Crosshair
+    uniqueID: 3050637993
+    locked: 0

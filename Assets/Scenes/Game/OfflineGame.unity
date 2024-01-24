@@ -225,6 +225,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 119172114}
   _networkObjectCache: {fileID: 119172114}
   CurrentZ: 0
+  CrosshairPosition: {x: 0, y: 0, z: 0}
   _posLerpValue: 0.05
   _airborneRotLerpValue: 0.05
   _groundedRotLerpValue: 0.05

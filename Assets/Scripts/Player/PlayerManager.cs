@@ -43,6 +43,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject _crosshair;
 
+    [SerializeField]
+    private GameObject _damageIndicatorPrefab;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -81,9 +84,26 @@ public class PlayerManager : NetworkBehaviour
     public void TakeDamage(float damage, float newHealth)
     {
         // Take damage.
+
         _health = newHealth;
 
         // Spawn damage indicator.
+        var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
+        damageIndicator.GetComponent<DamageIndicatorManager>().SetDamageValue((int)damage);
+
+        // Spawn hit particles.
+
+        // Play hit sound based on health remaining.
+
+        TakeDamageObserversRpc(damage, newHealth);
+    }
+
+    [ObserversRpc (ExcludeServer = true)]
+    private void TakeDamageObserversRpc(float damage, float newHealth)
+    {
+        // Spawn damage indicator.
+        var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
+        damageIndicator.GetComponent<DamageIndicatorManager>().SetDamageValue((int)damage);
 
         // Spawn hit particles.
 

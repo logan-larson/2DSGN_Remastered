@@ -1072,7 +1072,6 @@ MonoBehaviour:
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
   _playerManager: {fileID: 0}
-  numShots: 0
   _movementProperties: {fileID: 11400000, guid: 344dda0007784ff4eab18c9031c9ed58, type: 2}
   _heaven: {fileID: 0}
 --- !u!114 &3276682624696573865
@@ -1113,6 +1112,7 @@ MonoBehaviour:
   _weaponHolder: {fileID: 1374886415908552202}
   _pickupCooldown: 0.5
   _bulletTrailRenderer: {fileID: 7365057579148312717, guid: 3317c5c6e40ad8341aea6d47b9d12f3d, type: 3}
+  _currentBloomAngle: 0
   _instanceID: -1
   _inputManager: {fileID: 3717805940115971261}
   _playerController: {fileID: 6559925058770471689}
@@ -1138,7 +1138,8 @@ MonoBehaviour:
   _healthText: {fileID: 3523399878857526172}
   _health: 100
   _jumpPredictionLine: {fileID: 8639079816381434075}
-  _crosshair: {fileID: 0}
+  _crosshair: {fileID: 63285075294266221}
+  _damageIndicatorPrefab: {fileID: 5569836438895531722, guid: 5712ae94916c7cd4c9811bb1c2070fb8, type: 3}
 --- !u!1 &8480687756122604619
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,7 +1485,7 @@ PrefabInstance:
     - target: {fileID: 1058332941952659524, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _networkBehaviours.Array.data[0]
       value: 
-      objectReference: {fileID: 8189514137311215050}
+      objectReference: {fileID: 8777006623937484511}
     - target: {fileID: 1058332941952659524, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: <ParentNetworkObject>k__BackingField
       value: 
@@ -1573,9 +1574,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1058332943687859233, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1244329303
+      objectReference: {fileID: 0}
+    - target: {fileID: 1058332943687859234, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1058332943687859244, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: m_Name
       value: CrosshairCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _inputManager
+      value: 
+      objectReference: {fileID: 3717805940115971261}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _weaponManager
+      value: 
+      objectReference: {fileID: 8376055070018631659}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _networkObjectCache
+      value: 
+      objectReference: {fileID: 63285075294266217}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _componentIndexCache
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1058332941952659526, guid: a758bb5eadf766c46b50d09806600583, type: 3}
@@ -1601,11 +1626,10 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1058332941952659520, guid: a758bb5eadf766c46b50d09806600583, type: 3}
   m_PrefabInstance: {fileID: 1031079418909496109}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8189514137311215050
+--- !u!114 &8777006623937484511 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+  m_PrefabInstance: {fileID: 1031079418909496109}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63285075294266221}
   m_Enabled: 1
@@ -1613,10 +1637,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a73e784c8175f4e8e99b463a62e1ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 63285075294266217}
-  _networkObjectCache: {fileID: 63285075294266217}
-  _weaponManager: {fileID: 8376055070018631659}
-  _inputManager: {fileID: 3717805940115971261}
-  _minSize: 5
-  _sizeMultiplier: 15

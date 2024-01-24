@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class CrosshairController : NetworkBehaviour
 {
+    [SerializeField]
     private RectTransform _crosshair;
 
     [SerializeField]
