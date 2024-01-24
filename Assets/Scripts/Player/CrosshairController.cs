@@ -7,13 +7,16 @@ using UnityEngine.InputSystem;
 public class CrosshairController : NetworkBehaviour
 {
     private RectTransform _crosshair;
+
     [SerializeField]
     private WeaponManager _weaponManager;
-    private WeaponInfo _weapon;
+
     private CameraController _cameraController;
+
     [SerializeField]
     private InputManager _inputManager;
-    //private InputSystem _input;
+
+    private bool _subscribedToTimeManager = false;
 
     [SerializeField]
     private float _minSize = 5f;
@@ -21,15 +24,9 @@ public class CrosshairController : NetworkBehaviour
     [SerializeField]
     private float _sizeMultiplier = 15f;
 
-    private void ChangeWeapon()
-    {
-        _weapon = _weaponManager.CurrentWeaponInfo;
-    }
-
     private void Start()
     {
         _crosshair = GetComponent<RectTransform>();
-        //_input = GetComponentInParent<InputManager>();
 
         _cameraController = Camera.main.GetComponent<CameraController>();
     }
@@ -38,18 +35,41 @@ public class CrosshairController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        //_crosshair = GetComponent<RectTransform>();
-
-        //_weaponManager = _weaponManager ?? GetComponentInParent<WeaponEquipManager>();
-
-        //_weaponManager.ChangeWeapon.AddListener(ChangeWeapon);
-
-        //ChangeWeapon();
-
-        //_camera = _weaponManager.transform.GetComponent<CameraManager>().Camera;
+        SubscribeToTimeManager(true);
     }
 
-    private void Update()
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        SubscribeToTimeManager(false);
+    }
+
+    #region Time Management
+
+    private void SubscribeToTimeManager(bool subscribe)
+    {
+        if (base.TimeManager == null)
+            return;
+
+        if (subscribe == _subscribedToTimeManager)
+            return;
+
+        _subscribedToTimeManager = subscribe;
+
+        if (subscribe)
+        {
+            base.TimeManager.OnTick += OnTick;
+        }
+        else
+        {
+            base.TimeManager.OnTick -= OnTick;
+        }
+    }
+
+    #endregion
+
+    private void OnTick()
     {
         if (_weaponManager.CurrentWeaponInfo == null) return;
 
@@ -63,11 +83,9 @@ public class CrosshairController : NetworkBehaviour
             {
                 var aimDirection = Camera.main.transform.rotation * _inputManager.Aim.normalized;
 
-                var aimMagnitude = _inputManager.Aim.magnitude;
+                var maxMagnitude = _inputManager.CameraLockInput ? 10f : 5f;
 
-                aimMagnitude = aimMagnitude > 0.3f ? aimMagnitude : 0.3f;
-
-                aimDirection *= 5f;
+                var aimMagnitude = Mathf.Clamp(_inputManager.Aim.magnitude * maxMagnitude, 0.25f, maxMagnitude);
 
                 _crosshair.parent.position = transform.parent.parent.position + (aimDirection * aimMagnitude);
             }
@@ -85,6 +103,9 @@ public class CrosshairController : NetworkBehaviour
             mouseWorldPosition.z = 0f;
 
             _crosshair.parent.position = mouseWorldPosition;
+
         }
+
+        _cameraController.CrosshairPosition = _crosshair.parent.position;
     }
 }

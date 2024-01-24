@@ -13,6 +13,8 @@ public class CameraController : NetworkBehaviour
 
     public float CurrentZ;
 
+    public Vector3 CrosshairPosition;
+
     #endregion
 
     #region Serialized Fields
@@ -150,6 +152,12 @@ public class CameraController : NetworkBehaviour
         Vector3 velocity = _playerController.MovementData.Velocity;
 
         Vector3 targetPos = _currentPlayer.position;
+
+        if (_inputManager.CameraLockInput)
+        {
+            targetPos = (_currentPlayer.position + CrosshairPosition) / 2f;
+        }
+        
         float posLerpValue = _posLerpValue;
 
         targetPos.z = startingZ - (velocity.magnitude * zFactor);
