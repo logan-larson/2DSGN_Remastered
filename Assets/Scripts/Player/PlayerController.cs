@@ -150,8 +150,6 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     public PublicMovementData MovementData;
 
-    public int numShots = 0;
-
     #endregion
 
     #region Serialized Variables
@@ -270,6 +268,12 @@ public class PlayerController : NetworkBehaviour
     /// Set to true when the player's movement should be disabled.
     /// </summary>
     private bool _movementDisabled = false;
+
+    /// <summary>
+    /// Direction the player is aiming in the previous tick.
+    /// </summary>
+    private Vector3 _previousAimDirection = new Vector3();
+    
 
     #endregion
 
@@ -413,11 +417,17 @@ public class PlayerController : NetworkBehaviour
             {
                 moveData.AimDirection = Camera.main.transform.rotation * new Vector3(_inputManager.Aim.x, _inputManager.Aim.y, 0f).normalized;
             }
+            else
+            {
+                moveData.AimDirection = _previousAimDirection;
+            }
         }
         else
         {
             moveData.AimDirection = Vector2.zero;
         }
+
+        _previousAimDirection = moveData.AimDirection;
     }
 
     /// <summary>
@@ -558,8 +568,6 @@ public class PlayerController : NetworkBehaviour
 
             if (!asServer && !replaying)
                 _weaponManager.Fire();
-
-            numShots++;
         }
     }
 

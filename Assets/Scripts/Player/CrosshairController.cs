@@ -61,13 +61,13 @@ public class CrosshairController : NetworkBehaviour
         {
             if (_inputManager.Aim != Vector2.zero)
             {
-                var aimDirection = transform.parent.parent.localRotation * _inputManager.Aim.normalized;
+                var aimDirection = Camera.main.transform.rotation * _inputManager.Aim.normalized;
 
                 var aimMagnitude = _inputManager.Aim.magnitude;
 
                 aimMagnitude = aimMagnitude > 0.3f ? aimMagnitude : 0.3f;
 
-                aimDirection *= 10f;
+                aimDirection *= 5f;
 
                 _crosshair.parent.position = transform.parent.parent.position + (aimDirection * aimMagnitude);
             }
