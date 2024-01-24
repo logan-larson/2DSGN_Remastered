@@ -28,8 +28,6 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnHealthChanged(float oldValue, float newValue, bool asServer)
     {
-        // Update the health UI.
-        _healthText.text = newValue.ToString();
     }
 
     #region Constants
@@ -48,10 +46,6 @@ public class PlayerManager : NetworkBehaviour
 
     [SerializeField]
     private TMP_Text _usernameText;
-
-    // TEMP
-    [SerializeField]
-    private TMP_Text _healthText;
 
     [SerializeField]
     private GameObject _jumpPredictionLine;
@@ -231,6 +225,8 @@ public class PlayerManager : NetworkBehaviour
         {
             cameraController.ResetToLocal();
         }
+
+        _health = MAX_HEALTH;
 
         SetPlayerToFollowTargetRpc(player.Connection, player.Nob);
     }
