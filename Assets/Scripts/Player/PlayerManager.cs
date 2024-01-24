@@ -5,15 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerManager : NetworkBehaviour
 {
 
     [SerializeField]
     private UserInfo _userInfo;
-
-    [SerializeField]
-    private TMP_Text _usernameText;
 
     [SyncVar (OnChange = nameof(OnUsernameChanged))]
     private string _username;
@@ -25,9 +23,6 @@ public class PlayerManager : NetworkBehaviour
         _usernameText.text = newValue;
     }
 
-    [SerializeField]
-    private TMP_Text _healthText;
-
     [SyncVar (OnChange = nameof(OnHealthChanged))]
     private float _health = 100f;
 
@@ -36,6 +31,27 @@ public class PlayerManager : NetworkBehaviour
         // Update the health UI.
         _healthText.text = newValue.ToString();
     }
+
+    #region Constants
+
+    const float MAX_HEALTH = 100f;
+
+    #endregion
+
+    #region Object References
+
+    [SerializeField]
+    private Image _redDamagedSprite;
+
+    [SerializeField]
+    private Image _whiteDamagedSprite;
+
+    [SerializeField]
+    private TMP_Text _usernameText;
+
+    // TEMP
+    [SerializeField]
+    private TMP_Text _healthText;
 
     [SerializeField]
     private GameObject _jumpPredictionLine;
@@ -46,12 +62,62 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject _damageIndicatorPrefab;
 
+    #endregion
+
+    #region Script References
+
+    [SerializeField]
+    private PlayerController _playerController;
+
+    [SerializeField]
+    private ModeManager _modeManager;
+
+    #endregion
+
+    #region Private Fields
+
+    private bool _subscribedToTimeManager = false;
+
+    #endregion
+
+    #region Time Management
+
+    private void SubscribeToTimeManager(bool subscribe)
+    {
+        if (base.TimeManager == null)
+            return;
+
+        if (subscribe == _subscribedToTimeManager)
+            return;
+
+        _subscribedToTimeManager = subscribe;
+
+        if (subscribe)
+        {
+            base.TimeManager.OnTick += OnTick;
+        }
+        else
+        {
+            base.TimeManager.OnTick -= OnTick;
+        }
+    }
+
+    #endregion
+
+    #region Initialization
+
     public override void OnStartClient()
     {
         base.OnStartClient();
 
         // Set the username UI.
         _usernameText.color = base.IsOwner ? Color.green : Color.red;
+
+        _modeManager.OnModeChanged.AddListener(OnModeChanged);
+
+        OnModeChanged(_modeManager.CurrentMode);
+
+        SubscribeToTimeManager(true);
 
         if (base.IsOwner)
         {
@@ -79,6 +145,30 @@ public class PlayerManager : NetworkBehaviour
 
         PlayersManager.Instance.SetUsername(conn, username);
     }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        SubscribeToTimeManager(false);
+    }
+
+    #endregion
+
+    #region Frame Updates
+
+    private void OnTick()
+    {
+        // Red damaged sprite fill should lerp to MAX_HEALTH - _health.
+        _redDamagedSprite.fillAmount = Mathf.Lerp(_redDamagedSprite.fillAmount, (MAX_HEALTH - _health) / 100f, 0.1f);
+
+        // White damaged sprite should be equal to MAX_HEALTH - _health.
+        _whiteDamagedSprite.fillAmount = (MAX_HEALTH - _health) / 100f;
+    }
+
+    #endregion
+
+    #region Player State Events
 
     [Server]
     public void TakeDamage(float damage, float newHealth)
@@ -109,6 +199,7 @@ public class PlayerManager : NetworkBehaviour
 
         // Play hit sound based on health remaining.
     }
+
 
     [Server]
     public void OnDeath(Transform heaven, NetworkConnection targetConn, NetworkObject killer)
@@ -144,6 +235,36 @@ public class PlayerManager : NetworkBehaviour
         SetPlayerToFollowTargetRpc(player.Connection, player.Nob);
     }
 
+    private void OnModeChanged(Mode mode)
+    {
+        var currentRedFillAmount = _redDamagedSprite != null ? _redDamagedSprite.fillAmount : 0f;
+        var currentWhiteFillAmount = _whiteDamagedSprite != null ? _whiteDamagedSprite.fillAmount : 0f;
+
+        switch (mode)
+        {
+            case Mode.Sprint:
+                _redDamagedSprite = _modeManager.RedSprintDamage;
+                _whiteDamagedSprite = _modeManager.WhiteSprintDamage;
+                break;
+            case Mode.Shoot:
+                _redDamagedSprite = _modeManager.RedShootDamage;
+                _whiteDamagedSprite = _modeManager.WhiteShootDamage;
+                break;
+            case Mode.Slide:
+                _redDamagedSprite = _modeManager.RedSlideDamage;
+                _whiteDamagedSprite = _modeManager.WhiteSlideDamage;
+                break;
+
+        }
+
+        _redDamagedSprite.fillAmount = currentRedFillAmount;
+        _whiteDamagedSprite.fillAmount = currentWhiteFillAmount;
+    }
+
+    #endregion
+
+    #region Camera
+
     [TargetRpc]
     public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)
     {
@@ -152,5 +273,7 @@ public class PlayerManager : NetworkBehaviour
             cameraController.SetPlayer(target.transform);
         }
     }
+
+    #endregion
 
 }

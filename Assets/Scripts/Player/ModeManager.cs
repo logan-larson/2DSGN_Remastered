@@ -2,6 +2,8 @@ using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class ModeManager : NetworkBehaviour
 {
@@ -18,11 +20,24 @@ public class ModeManager : NetworkBehaviour
 
     #endregion
 
+    #region Public Fields
+
+    public Image RedSprintDamage;
+    public Image WhiteSprintDamage;
+
+    public Image RedShootDamage;
+    public Image WhiteShootDamage;
+
+    public Image RedSlideDamage;
+    public Image WhiteSlideDamage;
+
+    public Mode CurrentMode = Mode.Sprint;
+
+    #endregion
+
     #region Private Fields
 
     private bool _subscribedToTimeManager = false;
-
-    private Mode _currentMode = Mode.Sprint;
 
     private bool _currentDirectionLeft = false;
 
@@ -34,6 +49,12 @@ public class ModeManager : NetworkBehaviour
 
     [SerializeField]
     private PlayerController _playerController;
+
+    #endregion
+
+    #region Events
+
+    public UnityEvent<Mode> OnModeChanged = new UnityEvent<Mode>();
 
     #endregion
 
@@ -53,6 +74,16 @@ public class ModeManager : NetworkBehaviour
             return;
 
         UpdateModeClient(_playerController.MovementData.Mode);
+
+        // Set the damage images.
+        RedSprintDamage = _sprintMode.transform.Find("RedDamage").GetComponent<Image>();
+        WhiteSprintDamage = _sprintMode.transform.Find("WhiteDamage").GetComponent<Image>();
+
+        RedShootDamage = _shootMode.transform.Find("RedDamage").GetComponent<Image>();
+        WhiteShootDamage = _shootMode.transform.Find("WhiteDamage").GetComponent<Image>();
+
+        RedSlideDamage = _slideMode.transform.Find("RedDamage").GetComponent<Image>();
+        WhiteSlideDamage = _slideMode.transform.Find("WhiteDamage").GetComponent<Image>();
     }
 
     #endregion
@@ -100,7 +131,7 @@ public class ModeManager : NetworkBehaviour
             return;
 
         // If the mode changes we need to update the current mode.
-        if (_currentMode != _playerController.MovementData.Mode)
+        if (CurrentMode != _playerController.MovementData.Mode)
         {
             // Set the mode on the client then server
             UpdateModeClient(_playerController.MovementData.Mode);
@@ -116,7 +147,7 @@ public class ModeManager : NetworkBehaviour
     private void SetMode(Mode mode)
     {
         // Set the mode for the client
-        _currentMode = mode;
+        CurrentMode = mode;
 
         // Disable all modes.
         _sprintMode.SetActive(false);
@@ -124,16 +155,19 @@ public class ModeManager : NetworkBehaviour
         _slideMode.SetActive(false);
 
         // Enable the current mode.
-        switch (_currentMode)
+        switch (CurrentMode)
         {
             case Mode.Sprint:
                 _sprintMode.SetActive(true);
+                OnModeChanged.Invoke(Mode.Sprint);
                 break;
             case Mode.Shoot:
                 _shootMode.SetActive(true);
+                OnModeChanged.Invoke(Mode.Shoot);
                 break;
             case Mode.Slide:
                 _slideMode.SetActive(true);
+                OnModeChanged.Invoke(Mode.Slide);
                 break;
         }
     }
