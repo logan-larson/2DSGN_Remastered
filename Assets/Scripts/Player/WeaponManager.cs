@@ -53,6 +53,9 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private TrailRenderer _bulletTrailRenderer;
 
+    [SerializeField]
+    private GameObject _muzzleFlashPrefab;
+
     #endregion
 
     #region Private Fields
@@ -153,6 +156,14 @@ public class WeaponManager : NetworkBehaviour
         _playerController.OnModeChange.AddListener(OnModeChange);
 
         _instanceID = gameObject.GetInstanceID();
+    }
+
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+
+        //_playerController.OnModeChange.RemoveListener(OnModeChange);
+        DropCurrentWeapon();
     }
 
     // When the client starts, set the weapon pickups parent.
@@ -569,6 +580,13 @@ public class WeaponManager : NetworkBehaviour
         TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
         bulletTrail.time = (distance / weaponRange) * 0.1f;
 
+        float shotAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        var muzzleFlash = Instantiate(_muzzleFlashPrefab, origin, Quaternion.identity);
+        ParticleSystem.ShapeModule shape = muzzleFlash.GetComponentInChildren<ParticleSystem>().shape;
+        shape.rotation = new Vector3(-shotAngle, 90f, 0f);
+
+        Destroy(muzzleFlash, 0.1f);
+
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail, hitSomething));
     }
 
@@ -580,6 +598,13 @@ public class WeaponManager : NetworkBehaviour
 
         TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
         bulletTrail.time = (distance / weaponRange) * 0.1f;
+
+        float shotAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        var muzzleFlash = Instantiate(_muzzleFlashPrefab, origin, Quaternion.identity);
+        ParticleSystem.ShapeModule shape = muzzleFlash.GetComponentInChildren<ParticleSystem>().shape;
+        shape.rotation = new Vector3(-shotAngle, 90f, 0f);
+
+        Destroy(muzzleFlash, 0.1f);
 
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail, hitSomething));
     }
@@ -611,7 +636,6 @@ public class WeaponManager : NetworkBehaviour
 
         Destroy(bulletTrail.gameObject, bulletTrail.time);
     }
-
 
     private void AddBloom()
     {

@@ -27,4 +27,4 @@ MonoBehaviour:
   Recoil: 2
   RecoilRecoveryRate: 0.1
   AirborneKnockback: 4
-  MuzzleLength: 1.1
+  MuzzleLength: 1

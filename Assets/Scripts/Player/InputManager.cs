@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class InputManager : NetworkBehaviour
@@ -28,6 +29,8 @@ public class InputManager : NetworkBehaviour
     public string InputDevice = "Keyboard&Mouse";
 
     private PlayerInput _playerInput;
+
+    public UnityEvent TogglePause = new UnityEvent();
 
     private void Awake()
     {
@@ -96,5 +99,10 @@ public class InputManager : NetworkBehaviour
     private void OnControlsChangedServerRpc(string inputDevice)
     {
         InputDevice = inputDevice;
+    }
+
+    public void OnPause(InputValue value)
+    {
+        TogglePause.Invoke();
     }
 }
