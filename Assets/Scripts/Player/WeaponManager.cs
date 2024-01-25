@@ -15,7 +15,17 @@ public class WeaponManager : NetworkBehaviour
     [Header("Public Fields")]
     public bool IsWeaponEquipped;
 
+    [SyncVar (OnChange = nameof(OnCurrentWeaponInfoChange))]
     public WeaponInfo CurrentWeaponInfo = null;
+
+    private void OnCurrentWeaponInfoChange(WeaponInfo oldValue, WeaponInfo newValue, bool asServer)
+    {
+        // TODO: Initialize other things like the weapon sprite, etc.
+        if (!asServer && newValue != null)
+        {
+            _weaponHolder.GetComponentInChildren<SpriteRenderer>(true).sprite = Resources.Load<Sprite>(newValue.SpritePath);
+        }
+    }
 
     public float Bloom => _currentBloomAngle;
 
@@ -129,7 +139,7 @@ public class WeaponManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        //SetCurrentWeapon(_defaultWeaponInfo);
+        SetCurrentWeapon(_defaultWeaponInfo);
 
         _weaponPickupsParent = GameObject.Find("WeaponPickups");
 
@@ -150,12 +160,9 @@ public class WeaponManager : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (base.IsOwner)
-        {
-            SetCurrentWeaponServerRpc(_defaultWeaponInfo);
-        }
+        var map = GameObject.Find("Map");
 
-        _weaponPickupsParent = GameObject.Find("WeaponPickups");
+        _weaponPickupsParent = map.transform.GetChild(1).gameObject;
 
         if (_weaponPickupsParent == null)
         {
@@ -320,7 +327,7 @@ public class WeaponManager : NetworkBehaviour
 
         // Set the player's weapon info to the pickup info.
         SetCurrentWeapon(weaponPickupManager.WeaponInfo);
-        SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
+        //SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
 
         /* TODO: Fix the movement for the weapon holder after picking up a weapon.
         IsWeaponEquipped = false;
@@ -344,10 +351,10 @@ public class WeaponManager : NetworkBehaviour
     /// Called when the player dies and during pickups
     /// </summary>
     [Server]
-    private void DropCurrentWeapon()
+    public void DropCurrentWeapon()
     {
         // If the player has no current weapon or if the current weapon is the default weapon, return.
-        if (CurrentWeaponInfo == null || CurrentWeaponInfo == _defaultWeaponInfo)
+        if (CurrentWeaponInfo == null || CurrentWeaponInfo.Name == _defaultWeaponInfo.Name)
             return;
 
         // Create a new weapon pickup based on the current weapon's info.
@@ -365,26 +372,30 @@ public class WeaponManager : NetworkBehaviour
         CurrentWeaponInfo = null;
     }
 
+    [Server]
+    public void EquipDefaultWeapon()
+    {
+        SetCurrentWeapon(_defaultWeaponInfo);
+    }
+
+    [Server]
     private void SetCurrentWeapon(WeaponInfo weaponInfo)
     {
         // Set the current weapon to the weapon info.
         CurrentWeaponInfo = weaponInfo;
-
-        // TODO: Initialize other things like the weapon sprite, etc.
-        _weaponHolder.GetComponentInChildren<SpriteRenderer>(true).sprite = Resources.Load<Sprite>(weaponInfo.SpritePath);
     }
 
     [ServerRpc]
     private void SetCurrentWeaponServerRpc(WeaponInfo weaponInfo)
     {
-        SetCurrentWeapon(weaponInfo);
-        SetCurrentWeaponObserversRpc(weaponInfo);
+        //SetCurrentWeapon(weaponInfo);
+        //SetCurrentWeaponObserversRpc(weaponInfo);
     }
 
     [ObserversRpc]
     private void SetCurrentWeaponObserversRpc(WeaponInfo weaponInfo)
     {
-        SetCurrentWeapon(weaponInfo);
+        //SetCurrentWeapon(weaponInfo);
     }
 
     private void EquipWeapon()

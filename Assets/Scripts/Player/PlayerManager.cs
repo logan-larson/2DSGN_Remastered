@@ -69,6 +69,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private ModeManager _modeManager;
 
+    [SerializeField]
+    private WeaponManager _weaponManager;
+
     #endregion
 
     #region Private Fields
@@ -137,6 +140,8 @@ public class PlayerManager : NetworkBehaviour
         _username = username;
 
         _health = 100f;
+
+        OnModeChanged(_modeManager.CurrentMode);
 
         OnHealthChanged(_health, _health, true);
 
@@ -207,9 +212,14 @@ public class PlayerManager : NetworkBehaviour
         var deathIndicatorPosition = transform.position;
         Instantiate(_deathIndicatorPrefab, deathIndicatorPosition, Quaternion.identity);
 
+        // Drop current weapon.
+        _weaponManager.DropCurrentWeapon();
+
+        // Set the player's position to the heaven position.
         transform.position = heaven.position;
         transform.rotation = heaven.rotation;
 
+        // Set the player's camera to follow the killer.
         if (Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.SetPlayer(killer.transform);
@@ -229,6 +239,7 @@ public class PlayerManager : NetworkBehaviour
     [Server]
     public void OnRespawn(Transform spawnPoint, Player player)
     {
+        _weaponManager.EquipDefaultWeapon();
 
         // Set the player's position to the spawn position.
         transform.position = spawnPoint.position;

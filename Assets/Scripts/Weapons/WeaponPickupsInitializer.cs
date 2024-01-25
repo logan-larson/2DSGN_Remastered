@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponPickupInitializer : NetworkBehaviour
+public class WeaponPickupsInitializer : NetworkBehaviour
 {
     public override void OnStartServer()
     {

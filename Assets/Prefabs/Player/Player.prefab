@@ -246,7 +246,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1673982982535222082
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1155,7 +1155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4489146819188766183
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1329,6 +1329,8 @@ MonoBehaviour:
   RedSlideDamage: {fileID: 8816612875267105865}
   WhiteSlideDamage: {fileID: 6779613271844489385}
   CurrentMode: 0
+  _currentDirectionLeft: 0
+  _currentDirectionRight: 0
   _playerController: {fileID: 6559925058770471689}
   OnModeChanged:
     m_PersistentCalls:
@@ -1686,6 +1688,7 @@ MonoBehaviour:
   _deathIndicatorPrefab: {fileID: 3914275941705013947, guid: 54360931213f54b47ab766e0a8077f42, type: 3}
   _playerController: {fileID: 6559925058770471689}
   _modeManager: {fileID: 1385860131232617773}
+  _weaponManager: {fileID: 8376055070018631659}
 --- !u!1 &8639079816381434075
 GameObject:
   m_ObjectHideFlags: 0

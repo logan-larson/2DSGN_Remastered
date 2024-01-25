@@ -345,7 +345,13 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private void OnTick()
     {
-        if (_playerManager.IsDead) return;
+        if (_playerManager.IsDead)
+        {
+            // Set mode to sprint if dead.
+            _currentMode = Mode.Sprint;
+
+            return;
+        }
 
         if (base.IsOwner)
         {
