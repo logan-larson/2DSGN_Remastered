@@ -273,6 +273,21 @@ public class PlayerController : NetworkBehaviour
     /// Direction the player is aiming in the previous tick.
     /// </summary>
     private Vector3 _previousAimDirection = new Vector3();
+
+    /// <summary>
+    /// True if the server should override the player's transform.
+    /// </summary>
+    private bool _overrideTransform = false;
+
+    /// <summary>
+    /// Position to override the player with.
+    /// </summary>
+    private Vector3 _overridePosition = Vector3.zero;
+
+    /// <summary>
+    /// Rotation to override the player with.
+    /// </summary>
+    private Quaternion _overrideRotation = Quaternion.identity;
     
 
     #endregion
@@ -345,11 +360,16 @@ public class PlayerController : NetworkBehaviour
     /// </summary>
     private void OnTick()
     {
+        if (_overrideTransform && base.IsServer)
+        {
+            transform.SetPositionAndRotation(_overridePosition, _overrideRotation);
+            _overrideTransform = false;
+        }
+
         if (_playerManager.IsDead)
         {
             // Set mode to sprint if dead.
             _currentMode = Mode.Sprint;
-
             return;
         }
 
@@ -923,5 +943,15 @@ public class PlayerController : NetworkBehaviour
     }
 
     #endregion
+    
+    #region Public Methods
 
+    public void OverrideTransform(Vector3 spawnPosition, Quaternion spawnRotation)
+    {
+        _overrideTransform = true;
+        _overridePosition = spawnPosition;
+        _overrideRotation = spawnRotation;
+    }
+
+    #endregion
 }

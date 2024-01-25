@@ -216,8 +216,7 @@ public class PlayerManager : NetworkBehaviour
         _weaponManager.DropCurrentWeapon();
 
         // Set the player's position to the heaven position.
-        transform.position = heaven.position;
-        transform.rotation = heaven.rotation;
+        _playerController.OverrideTransform(heaven.position, heaven.rotation);
 
         // Set the player's camera to follow the killer.
         if (Camera.main.TryGetComponent(out CameraController cameraController))
@@ -241,9 +240,7 @@ public class PlayerManager : NetworkBehaviour
     {
         _weaponManager.EquipDefaultWeapon();
 
-        // Set the player's position to the spawn position.
-        transform.position = spawnPoint.position;
-        transform.rotation = spawnPoint.rotation;
+        _playerController.OverrideTransform(spawnPoint.position, spawnPoint.rotation);
 
         IsDead = false;
 
