@@ -56,6 +56,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject _damageIndicatorPrefab;
 
+    [SerializeField]
+    private GameObject _deathIndicatorPrefab;
+
     #endregion
 
     #region Script References
@@ -200,6 +203,10 @@ public class PlayerManager : NetworkBehaviour
     {
         IsDead = true;
 
+        // Spawn death indicator prefab.
+        var deathIndicatorPosition = transform.position;
+        Instantiate(_deathIndicatorPrefab, deathIndicatorPosition, Quaternion.identity);
+
         transform.position = heaven.position;
         transform.rotation = heaven.rotation;
 
@@ -209,6 +216,14 @@ public class PlayerManager : NetworkBehaviour
         }
 
         SetPlayerToFollowTargetRpc(targetConn, killer);
+
+        OnDeathObserversRpc(deathIndicatorPosition);
+    }
+
+    [ObserversRpc (ExcludeServer = true)]
+    private void OnDeathObserversRpc(Vector3 deathIndicatorPosition)
+    {
+        Instantiate(_deathIndicatorPrefab, deathIndicatorPosition, Quaternion.identity);
     }
 
     [Server]

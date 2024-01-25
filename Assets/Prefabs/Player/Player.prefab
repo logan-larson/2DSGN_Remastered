@@ -1683,6 +1683,7 @@ MonoBehaviour:
   _jumpPredictionLine: {fileID: 8639079816381434075}
   _crosshair: {fileID: 63285075294266221}
   _damageIndicatorPrefab: {fileID: 5569836438895531722, guid: 5712ae94916c7cd4c9811bb1c2070fb8, type: 3}
+  _deathIndicatorPrefab: {fileID: 3914275941705013947, guid: 54360931213f54b47ab766e0a8077f42, type: 3}
   _playerController: {fileID: 6559925058770471689}
   _modeManager: {fileID: 1385860131232617773}
 --- !u!1 &8639079816381434075
