@@ -1134,6 +1134,9 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4464178955767322347}
   _networkObjectCache: {fileID: 4464178955767322347}
   TargetPosition: {x: 0, y: 0, z: 0}
+  _weaponSprite: {fileID: 6571099630282843190}
+  _crosshair: {fileID: 63285074913308429}
+  _flipY: 0
 --- !u!1 &7464203539986217859
 GameObject:
   m_ObjectHideFlags: 0

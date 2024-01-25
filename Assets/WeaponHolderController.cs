@@ -1,4 +1,5 @@
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,25 @@ public class WeaponHolderController : NetworkBehaviour
 
     private bool _subscribedToTimeManager = false;
 
+    [SerializeField]
+    private SpriteRenderer _weaponSprite;
+
+    [SerializeField]
+    private RectTransform _crosshair;
+
     #endregion
 
-    #region Time Management
+    private bool _previousFlipY = false;
 
+    [SyncVar (OnChange = nameof(OnFlipYChanged))]
+    private bool _flipY = false;
+
+    private void OnFlipYChanged(bool oldValue, bool newValue, bool asServer)
+    {
+        _weaponSprite.flipY = newValue;
+    }
+
+    #region Time Management
 
     private void SubscribeToTimeManager(bool subscribe)
     {
@@ -65,6 +81,30 @@ public class WeaponHolderController : NetworkBehaviour
 
     private void OnTick()
     {
+        // Update the flipY based on the crosshair position relative to the player rotation
+        // If the crosshair is to the left of the player, flip the weapon
+        // If the crosshair is to the right of the player, don't flip the weapon
+        if (!base.IsOwner)
+            return;
+
+        var flipY = _crosshair.localPosition.x < 0;
+
+        if (_previousFlipY != flipY)
+        {
+            if (base.IsServer)
+                _flipY = flipY;
+            else
+                SetFlipYServerRpc(flipY);
+
+            _previousFlipY = flipY;
+        }
+
+    }
+
+    [ServerRpc]
+    private void SetFlipYServerRpc(bool flipY)
+    {
+        _flipY = flipY;
     }
 
     #endregion
