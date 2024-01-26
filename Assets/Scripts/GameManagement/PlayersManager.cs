@@ -37,6 +37,16 @@ public class PlayersManager : NetworkBehaviour
 
     #endregion
 
+    #region Events
+
+    public event Action<Player> OnPlayerJoined;
+
+    public event Action<Player> OnPlayerLeft;
+
+    public event Action<Player, Player, WeaponInfo> OnPlayerKilled;
+
+    #endregion
+
     #region Private Fields
 
     /// <summary>
@@ -159,6 +169,8 @@ public class PlayersManager : NetworkBehaviour
         if (target.Health <= 0)
         {
             target.IsDead = true;
+
+            OnPlayerKilled?.Invoke(attacker, target, weapon);
 
             // Initiate the respawn.
 
