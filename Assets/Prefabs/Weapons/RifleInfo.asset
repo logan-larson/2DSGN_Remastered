@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Rifle
   SpritePath: Sprites/Weapons/Rifle
-  FireSoundPath: Sounds/Weapons/Rifle
+  FireSoundPath: Sounds/Weapons/SMG
   BulletTrailRendererPath: 
   FireRate: 0.2
   Damage: 23

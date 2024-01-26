@@ -11,7 +11,16 @@ public class DamageIndicatorManager : MonoBehaviour
     private float _initialXVelocityRange = 2f;
     private float _lifetime = 0.5f;
 
+    [SerializeField]
+    private float _basePitch = 0.5f;
+
     private Vector3 _velocity;
+
+    [SerializeField]
+    private AudioSource _hit;
+
+    [SerializeField]
+    private AudioSource _death;
 
     private void Awake()
     {
@@ -31,9 +40,20 @@ public class DamageIndicatorManager : MonoBehaviour
         transform.SetPositionAndRotation(position, Quaternion.identity);
     }
 
-    public void SetDamageValue(int damage)
+    public void Initialize(int damage, float health)
     {
         _damageValue.text = damage.ToString();
+
+        if (health <= 0f)
+        {
+            _death.Play();
+            return;
+            //_hit.volume = 0.75f;
+        }
+
+        //_hit.pitch = ((100f - health) / 100f) + _basePitch;
+
+        _hit.Play();
     }
 
     public void SetColor(Color color)

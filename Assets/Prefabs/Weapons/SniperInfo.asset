@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sniper
   SpritePath: Sprites/Weapons/Sniper
-  FireSoundPath: Sounds/Weapons/Sniper
+  FireSoundPath: Sounds/Weapons/Shotgun
   BulletTrailRendererPath: 
   FireRate: 2
   Damage: 100

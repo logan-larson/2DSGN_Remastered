@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: SMG
   SpritePath: Sprites/Weapons/SMG
-  FireSoundPath: Sounds/Weapons/SMG
+  FireSoundPath: Sounds/Weapons/untitled
   BulletTrailRendererPath: 
   FireRate: 0.15
   Damage: 20

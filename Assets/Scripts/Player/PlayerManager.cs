@@ -181,7 +181,7 @@ public class PlayerManager : NetworkBehaviour
 
         // Spawn damage indicator.
         var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
-        damageIndicator.GetComponent<DamageIndicatorManager>().SetDamageValue((int)damage);
+        damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth);
 
         // Spawn hit particles.
 
@@ -195,7 +195,7 @@ public class PlayerManager : NetworkBehaviour
     {
         // Spawn damage indicator.
         var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
-        damageIndicator.GetComponent<DamageIndicatorManager>().SetDamageValue((int)damage);
+        damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth);
 
         // Spawn hit particles.
 
