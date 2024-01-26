@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class AuthenticationManager : MonoBehaviour
+public class AuthenticationUIManager : MonoBehaviour
 {
 
     [SerializeField]

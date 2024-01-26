@@ -202,6 +202,14 @@ public class PlayerManager : NetworkBehaviour
         // Play hit sound based on health remaining.
     }
 
+    [Server]
+    public void SetHealth(float health)
+    {
+        // Add health.
+        _health = health;
+
+        // Spawn heal effect??
+    }
 
     [Server]
     public void OnDeath(Transform heaven, NetworkConnection targetConn, NetworkObject killer)

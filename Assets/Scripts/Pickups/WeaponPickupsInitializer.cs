@@ -9,8 +9,10 @@ public class WeaponPickupsInitializer : NetworkBehaviour
     {
         foreach (Transform pickup in transform)
         {
-            var weaponPickupManager = pickup.GetComponent<WeaponPickupManager>();
-            weaponPickupManager.Initialize(weaponPickupManager.WeaponInfo, Vector2.zero);
+            if (pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
+            {
+                weaponPickupManager.Initialize(weaponPickupManager.WeaponInfo, Vector2.zero);
+            }
         }
         
     }

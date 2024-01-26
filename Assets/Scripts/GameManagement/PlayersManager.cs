@@ -9,6 +9,7 @@ using HathoraCloud.Models.Operations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -161,8 +162,8 @@ public class PlayersManager : NetworkBehaviour
 
             // Initiate the respawn.
 
-            // Get a random spawn point.
-            Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Count)];
+            // Get a spawn point that is furhest away from each enemy player.
+            Transform spawnPoint = GetSpawnPoint();
 
             // Send the player to heaven.
             target.Nob.GetComponent<PlayerManager>().OnDeath(_heaven, target.Connection, attacker.Nob);
@@ -178,6 +179,28 @@ public class PlayersManager : NetworkBehaviour
 
     }
 
+    [Server]
+    public void HealPlayer(NetworkConnection conn, float amount)
+    {
+        // TEMP: Debug log the target username and amount.
+        //Debug.Log($"{Players[conn.ClientId].Username} has been healed for {amount}.");
+
+        // Increase the health of the target.
+        var player = Players[conn.ClientId];
+        player.Health += amount;
+
+        // TEMP: Debug log the target username and amount.
+        //Debug.Log($"{Players[conn.ClientId].Username} has been healed for {amount}.");
+
+        // If the target's health is greater than 100, then set it to 100.
+        if (player.Health > 100)
+        {
+            player.Health = 100;
+        }
+
+        player.Nob.GetComponent<PlayerManager>().SetHealth(player.Health);
+    }
+
     public void SetUsername(NetworkConnection conn, string username)
     {
         Debug.Log($"Player {conn.ClientId} has set their username to {username}.");
@@ -188,6 +211,38 @@ public class PlayersManager : NetworkBehaviour
     #endregion
 
     #region Private Methods
+
+    private Transform GetSpawnPoint()
+    {
+        // Get a spawn point that is furthest away from each enemy player.
+
+        Transform[] playerPositions = Players.Values.Where(p => !p.IsDead).Select(p => p.Nob.transform).ToArray();
+
+        // Find spawn point furthest away from all players
+        Transform furthestSpawnPoint = _spawnPoints[0];
+        float maxDistance = 0f;
+
+        foreach (Transform spawnPoint in _spawnPoints)
+        {
+            // Calculate the distance from each player to the spawn point
+            float distanceSum = 0f;
+
+            foreach (Transform playerPos in playerPositions)
+            {
+                distanceSum += Vector3.Distance(spawnPoint.position, playerPos.position);
+            }
+
+            // Check if the distance is greater than the previous max distance
+            if (distanceSum > maxDistance)
+            {
+                maxDistance = distanceSum;
+                furthestSpawnPoint = spawnPoint;
+            }
+        }
+
+        // furthestSpawnPoint will contain the spawn point furthest from all players
+        return furthestSpawnPoint;
+    }
 
     private IEnumerator RespawnPlayer(Player player, Transform spawnPoint)
     {

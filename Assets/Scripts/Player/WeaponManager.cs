@@ -63,9 +63,9 @@ public class WeaponManager : NetworkBehaviour
     private bool _subscribedToTimeManager = false;
 
     // The parent object of all weapon pickups.
-    private GameObject _weaponPickupsParent;
+    private GameObject _pickupsParent;
 
-    private (float, WeaponPickupManager) _closestWeaponPickup;
+    private (float, Pickup) _closestPickup;
 
     private float _currentPickupCooldown = 0.0f;
 
@@ -91,6 +91,9 @@ public class WeaponManager : NetworkBehaviour
 
     [SerializeField]
     private WeaponHolderController _weaponHolderController;
+
+    [SerializeField]
+    private PlayerManager _playerManager;
 
     #endregion
 
@@ -136,6 +139,7 @@ public class WeaponManager : NetworkBehaviour
     {
         _inputManager ??= GetComponent<InputManager>();
         _playerController ??= GetComponent<PlayerController>();
+        _playerManager ??= GetComponent<PlayerManager>();
     }
 
     public override void OnStartServer()
@@ -144,9 +148,9 @@ public class WeaponManager : NetworkBehaviour
 
         SetCurrentWeapon(_defaultWeaponInfo);
 
-        _weaponPickupsParent = GameObject.Find("WeaponPickups");
+        _pickupsParent = GameObject.Find("WeaponPickups");
 
-        if (_weaponPickupsParent == null)
+        if (_pickupsParent == null)
         {
             Debug.LogError("WeaponPickups parent not found.");
         }
@@ -173,9 +177,9 @@ public class WeaponManager : NetworkBehaviour
 
         var map = GameObject.Find("Map");
 
-        _weaponPickupsParent = map.transform.GetChild(1).gameObject;
+        _pickupsParent = map.transform.GetChild(1).gameObject;
 
-        if (_weaponPickupsParent == null)
+        if (_pickupsParent == null)
         {
             Debug.LogError("WeaponPickups parent not found.");
         }
@@ -263,22 +267,30 @@ public class WeaponManager : NetworkBehaviour
 
     private void HighlightClosestPickup()
     {
-        if (_weaponPickupsParent == null)
+        if (_pickupsParent == null)
             return;
 
-        _closestWeaponPickup = (float.MaxValue, null);
+        _closestPickup = (float.MaxValue, null);
 
         // Iterate through all the children of the weapon pickups parent.
-        foreach (Transform pickup in _weaponPickupsParent.transform)
+        foreach (Transform pickup in _pickupsParent.transform)
         {
-            // Check if the child is a weapon pickup, continue if not.
-            if (!pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
+            // TODO: Figure out how to make use of the common Pickup class.
+            // Check if the child is a pickup, continue if not.
+            if (pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
             {
-                continue;
+                // Set the pickup as not highlighted.
+                weaponPickupManager.SetHighlight(false);
             }
 
-            // Set the pickup as not highlighted.
-            weaponPickupManager.SetHighlight(false);
+            if (pickup.TryGetComponent<HealthNutPickupManager>(out var healthNutManager))
+            {
+                // Set the pickup as not highlighted.
+                healthNutManager.SetHighlight(false);
+            }
+
+            if (weaponPickupManager == null && healthNutManager == null)
+                continue;
 
             // Get the distance to the pickup.
             float distance = Vector3.Distance(pickup.position, transform.position);
@@ -288,27 +300,27 @@ public class WeaponManager : NetworkBehaviour
                 continue;
 
             // If the distance  is less than the current closest distance, set the current pickup as the closest.
-            if (distance < _closestWeaponPickup.Item1)
+            if (distance < _closestPickup.Item1)
             {
-                _closestWeaponPickup = (distance, weaponPickupManager);
+                _closestPickup = (distance, weaponPickupManager == null ? healthNutManager : weaponPickupManager);
             }
         }
 
         // If there is a closest pickup, highlight it.
-        if (_closestWeaponPickup.Item2 != null)
+        if (_closestPickup.Item2 != null)
         {
-            _closestWeaponPickup.Item2.SetHighlight(true);
+            _closestPickup.Item2.SetHighlight(true);
         }
         else
         {
-            _closestWeaponPickup= (float.MaxValue, null);
+            _closestPickup= (float.MaxValue, null);
         }
     }
 
     private void CheckPickup()
     {
         // If there is no closest weapon pickup or the player is not pressing the interact button, return.
-        if (_closestWeaponPickup.Item2 == null || !_inputManager.InteractInput)
+        if (_closestPickup.Item2 == null || !_inputManager.InteractInput)
             return;
 
         _currentPickupCooldown = 0.0f;
@@ -316,46 +328,53 @@ public class WeaponManager : NetworkBehaviour
         // Send the pickup request to the server.
         if (base.IsHost)
         {
-            PickupWeapon(_closestWeaponPickup.Item2.transform);
+            PickupItem(_closestPickup.Item2.transform);
         }
         else
         {
-            PickupWeaponServerRpc(_closestWeaponPickup.Item2.transform);
+            PickupItemServerRpc(_closestPickup.Item2.transform);
         }
     }
 
     [Server]
-    private void PickupWeapon(Transform pickup)
+    private void PickupItem(Transform pickup)
     {
         // Try to get the weapon pickup manager from the pickup.
-        if (!pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
+        if (pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
         {
-            return;
+            // Drop the current weapon.
+            DropCurrentWeapon();
+
+            // Set the player's weapon info to the pickup info.
+            SetCurrentWeapon(weaponPickupManager.WeaponInfo);
+            //SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
+
+            /* TODO: Fix the movement for the weapon holder after picking up a weapon.
+            IsWeaponEquipped = false;
+            _weaponHolder.parent = null;
+            _weaponHolder.position = pickup.position;
+            _weaponHolder.rotation = pickup.rotation;
+            */
+
+            // Destroy the pickup.
+            //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
+            Destroy(pickup.gameObject);
         }
+        else if (pickup.TryGetComponent<HealthNutPickupManager>(out var healthNutManager))
+        {
+            // Add health to the player.
+            PlayersManager.Instance.HealPlayer(base.Owner, healthNutManager.HealthAmount);
 
-        // Drop the current weapon.
-        DropCurrentWeapon();
+            //_playerManager.AddHealth(healthNutManager.HealthAmount);
 
-        // Set the player's weapon info to the pickup info.
-        SetCurrentWeapon(weaponPickupManager.WeaponInfo);
-        //SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
-
-        /* TODO: Fix the movement for the weapon holder after picking up a weapon.
-        IsWeaponEquipped = false;
-        _weaponHolder.parent = null;
-        _weaponHolder.position = pickup.position;
-        _weaponHolder.rotation = pickup.rotation;
-        */
-
-        // Destroy the pickup.
-        //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
-        Destroy(pickup.gameObject);
+            healthNutManager.Pickup();
+        }
     }
 
     [ServerRpc]
-    private void PickupWeaponServerRpc(Transform pickup)
+    private void PickupItemServerRpc(Transform pickup)
     {
-        PickupWeapon(pickup);
+        PickupItem(pickup);
     }
 
     /// <summary>
@@ -369,7 +388,7 @@ public class WeaponManager : NetworkBehaviour
             return;
 
         // Create a new weapon pickup based on the current weapon's info.
-        GameObject weaponPickup = Instantiate(_weaponPickupPrefab, transform.position, Quaternion.identity, _weaponPickupsParent.transform);
+        GameObject weaponPickup = Instantiate(_weaponPickupPrefab, transform.position, Quaternion.identity, _pickupsParent.transform);
 
         // Set the weapon pickup's info.
         var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();

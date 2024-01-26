@@ -7,7 +7,7 @@ using TMPro;
 using System.Collections;
 using System.Threading.Tasks;
 
-public class RoomManager : MonoBehaviour
+public class RoomUIManager : MonoBehaviour
 {
     [SerializeField]
     private HathoraServerConfig _serverConfig;

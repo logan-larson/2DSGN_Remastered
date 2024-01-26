@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponPickupManager : NetworkBehaviour
+public class WeaponPickupManager : Pickup
 {
     #region Public Fields
 
@@ -18,9 +18,6 @@ public class WeaponPickupManager : NetworkBehaviour
     #endregion
 
     #region Serialized Fields
-
-    [SerializeField]
-    private SpriteRenderer _spriteRenderer;
 
     [SerializeField]
     private Rigidbody2D _rigidbody;
@@ -43,7 +40,7 @@ public class WeaponPickupManager : NetworkBehaviour
         base.OnSpawnServer(connection);
 
         _rigidbody.AddForce(InitialVelocity, ForceMode2D.Impulse);
-        _spriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
+        base.SpriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
 
         SetSpriteObserversRpc();
     }
@@ -54,14 +51,8 @@ public class WeaponPickupManager : NetworkBehaviour
         if (WeaponInfo == null)
             return;
 
-        _spriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
+        base.SpriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
     }
 
     #endregion
-
-    public void SetHighlight(bool highlight)
-    {
-        _spriteRenderer.color = highlight ? Color.yellow : Color.white;
-    }
-
 }
