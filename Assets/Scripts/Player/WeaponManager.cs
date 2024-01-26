@@ -495,19 +495,19 @@ public class WeaponManager : NetworkBehaviour
             if (hit.collider is not null)
             {
                 // -- Hit the environment, so draw a line to the hit point --
-                DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, CurrentWeaponInfo.Range, true);
+                DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, CurrentWeaponInfo, true);
             }
             else
             {
                 // -- Didn't hit anything, so draw a line to the end of the range --
-                DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, CurrentWeaponInfo.Range, false);
+                DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, CurrentWeaponInfo, false);
             }
         }
 
         PreciseTick pt = base.TimeManager.GetPreciseTick(base.TimeManager.LastPacketTick);
 
         // -- Shoot on server -- 
-        ShootServer(pt, CurrentWeaponInfo, transform.position, bulletSpawnPosition, bulletDirections, _instanceID);
+        FireServer(pt, CurrentWeaponInfo, transform.position, bulletSpawnPosition, bulletDirections, _instanceID);
 
         // -- Increase bloom --
         AddBloom();
@@ -517,7 +517,7 @@ public class WeaponManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void ShootServer(PreciseTick pt, WeaponInfo weapon, Vector3 playerPosition, Vector3 bulletSpawnPosition, Vector3[] bulletDirections, int instanceID)
+    public void FireServer(PreciseTick pt, WeaponInfo weapon, Vector3 playerPosition, Vector3 bulletSpawnPosition, Vector3[] bulletDirections, int instanceID)
     {
         if (weapon == null) return;
 
@@ -543,18 +543,18 @@ public class WeaponManager : NetworkBehaviour
             if (hit.collider is not null)
             {
                 // -- Hit the environment, so draw a line to the hit point --
-                if (!base.IsHost)
-                    DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon.Range, true);
+                //if (!base.IsHost)
+                    //DrawShot(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon.Range, true);
 
-                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon.Range, true);
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], hit.distance, weapon, true);
             }
             else
             {
                 // -- Didn't hit anything, so draw a line to the end of the range --
-                if (!base.IsHost)
-                    DrawShot(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon.Range, false);
+                //if (!base.IsHost)
+                    //DrawShot(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon.Range, false);
 
-                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon.Range, false);
+                DrawShotObservers(bulletSpawnPosition, bulletDirections[i], weapon.Range, weapon, false);
             }
         }
 
@@ -594,10 +594,10 @@ public class WeaponManager : NetworkBehaviour
     }
 
 
-    private void DrawShot(Vector3 origin, Vector3 direction, float distance, float weaponRange, bool hitSomething)
+    private void DrawShot(Vector3 origin, Vector3 direction, float distance, WeaponInfo weaponInfo, bool hitSomething)
     {
         TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
-        bulletTrail.time = (distance / weaponRange) * 0.1f;
+        bulletTrail.time = (distance / weaponInfo.Range) * 0.1f;
 
         float shotAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         var muzzleFlash = Instantiate(_muzzleFlashPrefab, origin, Quaternion.identity);
@@ -605,19 +605,31 @@ public class WeaponManager : NetworkBehaviour
         shape.rotation = new Vector3(-shotAngle, 90f, 0f);
 
         Destroy(muzzleFlash, 0.1f);
+
+        // Play shot sound
+        if (weaponInfo.FireSoundPath != null)
+        {
+            AudioClip shotSound = Resources.Load<AudioClip>(weaponInfo.FireSoundPath);
+            AudioSource.PlayClipAtPoint(shotSound, origin);
+        }
 
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail, hitSomething));
     }
 
     [ObserversRpc]
-    public void DrawShotObservers(Vector3 origin, Vector3 direction, float distance, float weaponRange, bool hitSomething)
+    public void DrawShotObservers(Vector3 origin, Vector3 direction, float distance, WeaponInfo weaponInfo, bool hitSomething)
     {
         // -- Owner of shot check --
         if (base.IsOwner) return;
 
-        TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
-        bulletTrail.time = (distance / weaponRange) * 0.1f;
+        DrawShot(origin, direction, distance, weaponInfo, hitSomething);
 
+        /*
+        // Draw bullet trail
+        TrailRenderer bulletTrail = Instantiate(_bulletTrailRenderer, origin, Quaternion.identity);
+        bulletTrail.time = (distance / weaponInfo.Range) * 0.1f;
+
+        // Draw muzzle flash
         float shotAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         var muzzleFlash = Instantiate(_muzzleFlashPrefab, origin, Quaternion.identity);
         ParticleSystem.ShapeModule shape = muzzleFlash.GetComponentInChildren<ParticleSystem>().shape;
@@ -625,7 +637,15 @@ public class WeaponManager : NetworkBehaviour
 
         Destroy(muzzleFlash, 0.1f);
 
+        // Play shot sound
+        if (CurrentWeaponInfo.FireSoundPath != null)
+        {
+            AudioClip shotSound = Resources.Load<AudioClip>(CurrentWeaponInfo.FireSoundPath);
+            AudioSource.PlayClipAtPoint(shotSound, origin);
+        }
+
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail, hitSomething));
+        */
     }
 
     private IEnumerator ShootCoroutine(Vector3 position, Vector3 direction, float distance, TrailRenderer bulletTrail, bool hitSomething)

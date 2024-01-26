@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Revolver
   SpritePath: Sprites/Weapons/Revolver
-  FireSoundPath: 
+  FireSoundPath: Sounds/Weapons/Revolver
   BulletTrailRendererPath: 
   FireRate: 0.4
   Damage: 30

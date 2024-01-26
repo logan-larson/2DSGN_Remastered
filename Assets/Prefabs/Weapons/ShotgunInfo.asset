@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Shotgun
   SpritePath: Sprites/Weapons/Shotgun
-  FireSoundPath: 
+  FireSoundPath: Sounds/Weapons/Shotgun
   BulletTrailRendererPath: 
   FireRate: 0.6
   Damage: 30
