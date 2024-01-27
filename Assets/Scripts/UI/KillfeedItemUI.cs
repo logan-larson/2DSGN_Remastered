@@ -17,8 +17,12 @@ public class KillfeedItemUI : MonoBehaviour
     {
         _playerKilledUsername.text = playerKilledUsername;
 
-        _weaponImage.sprite = Resources.Load<Sprite>(weaponSpritePath);
+        if (weaponSpritePath != null)
+            _weaponImage.sprite = Resources.Load<Sprite>(weaponSpritePath);
 
-        _killerUsername.text = killerUsername;
+        if (killerUsername != null)
+            _killerUsername.text = killerUsername;
+        else
+            _killerUsername.text = "";
     }
 }

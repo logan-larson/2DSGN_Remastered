@@ -149,28 +149,29 @@ public class PlayersManager : NetworkBehaviour
     #region Public Methods
 
     [Server]
-    public void DamagePlayer(NetworkConnection attackerConn, NetworkConnection targetConn, WeaponInfo weapon)
+    public void DamagePlayer(NetworkConnection targetConn, NetworkConnection attackerConn = null, WeaponInfo weapon = null)
     {
         // TEMP: Debug log the attacker username and target username with the weapon name.
         //Debug.Log($"{Players[attackerConn.ClientId].Username} has damaged {Players[targetConn.ClientId].Username} with {weapon.Name}.");
-
-        var attacker = Players[attackerConn.ClientId];
         var target = Players[targetConn.ClientId];
+
+        var attacker = attackerConn == null ? null : Players[attackerConn.ClientId];
+        var damage = weapon == null ? 1000f : weapon.Damage;
 
         if (target.IsDead)
             return;
 
         // Reduce the health of the target.
-        target.Health -= weapon.Damage;
+        target.Health -= damage;
 
-        target.Nob.GetComponent<PlayerManager>().TakeDamage(weapon.Damage, target.Health);
+        target.Nob.GetComponent<PlayerManager>().TakeDamage(damage, target.Health);
 
         // If the target's health is less than or equal to 0, then they are dead.
         if (target.Health <= 0)
         {
             target.IsDead = true;
 
-            OnPlayerKilled?.Invoke(attacker, target, weapon);
+            OnPlayerKilled?.Invoke(target, attacker, weapon);
 
             // Initiate the respawn.
 
@@ -178,15 +179,11 @@ public class PlayersManager : NetworkBehaviour
             Transform spawnPoint = GetSpawnPoint();
 
             // Send the player to heaven.
-            target.Nob.GetComponent<PlayerManager>().OnDeath(_heaven, target.Connection, attacker.Nob);
+            target.Nob.GetComponent<PlayerManager>().OnDeath(_heaven, target.Connection, attacker != null ? attacker.Nob : null);
 
 
             // Start the respawn coroutine.
             StartCoroutine(RespawnPlayer(target, spawnPoint));
-
-
-            // TEMP: Debug log the attacker username and target username with the weapon name.
-            Debug.Log($"{Players[attackerConn.ClientId].Username} has killed {Players[targetConn.ClientId].Username} with {weapon.Name}.");
         }
 
     }

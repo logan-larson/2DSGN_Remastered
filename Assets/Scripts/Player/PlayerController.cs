@@ -507,6 +507,8 @@ public class PlayerController : NetworkBehaviour
         _timeSinceLastShot = data.TimeSinceLastShot;
     }
 
+
+
     #endregion
 
     #region Movement

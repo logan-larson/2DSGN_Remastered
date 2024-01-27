@@ -33,7 +33,10 @@ public class KillfeedUIManager : NetworkBehaviour
 
         KillfeedItemUI killfeedItemUI = killfeedItem.GetComponent<KillfeedItemUI>();
 
-        killfeedItemUI.Setup(playerKilled.Username, killer.Username, weaponInfo.SpritePath);
+        var killerUsername = killer != null ? killer.Username : null;
+        var weaponSpritePath = weaponInfo != null ? weaponInfo.SpritePath : null;
+
+        killfeedItemUI.Setup(playerKilled.Username, killerUsername, weaponSpritePath);
 
         Destroy(killfeedItem, 5f);
 
@@ -50,7 +53,10 @@ public class KillfeedUIManager : NetworkBehaviour
 
         KillfeedItemUI killfeedItemUI = killfeedItem.GetComponent<KillfeedItemUI>();
 
-        killfeedItemUI.Setup(playerKilled.Username, killer.Username, weaponInfo.SpritePath);
+        var killerUsername = killer != null ? killer.Username : null;
+        var weaponSpritePath = weaponInfo != null ? weaponInfo.SpritePath : null;
+
+        killfeedItemUI.Setup(playerKilled.Username, killerUsername, weaponSpritePath);
 
         Destroy(killfeedItem, 5f);
     }

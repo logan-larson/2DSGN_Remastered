@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Heaven
   - WeaponPickups
+  - HealthNut
+  - DeathBarrier
   layers:
   - Default
   - TransparentFX

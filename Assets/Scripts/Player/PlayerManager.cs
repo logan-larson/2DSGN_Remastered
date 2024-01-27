@@ -59,6 +59,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private GameObject _deathIndicatorPrefab;
 
+    [SerializeField]
+    private GameObject _audioListener;
+
     #endregion
 
     #region Script References
@@ -131,6 +134,8 @@ public class PlayerManager : NetworkBehaviour
             
             // Disable the crosshair.
             _crosshair.SetActive(false);
+
+            _audioListener.SetActive(false);
         }
     }
 
@@ -227,7 +232,7 @@ public class PlayerManager : NetworkBehaviour
         _playerController.OverrideTransform(heaven.position, heaven.rotation);
 
         // Set the player's camera to follow the killer.
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        if (killer != null && Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.SetPlayer(killer.transform);
         }
@@ -295,7 +300,7 @@ public class PlayerManager : NetworkBehaviour
     [TargetRpc]
     public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)
     {
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        if (target != null && Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.SetPlayer(target.transform);
         }
