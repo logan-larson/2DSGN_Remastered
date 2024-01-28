@@ -32,6 +32,12 @@ public class ServerBuildManager : MonoBehaviour
             _tugboat.SetPort(_serverInfo.Port);
             _tugboat.SetClientAddress(_serverInfo.Address);
 
+            if (_networkManager.ClientManager == null)
+            {
+                //Debug.LogError("ClientManager is null.");
+                return;
+            }
+
             _networkManager.ClientManager.StartConnection();
         }
     }

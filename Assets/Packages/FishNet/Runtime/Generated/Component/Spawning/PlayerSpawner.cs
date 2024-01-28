@@ -1,7 +1,9 @@
 ﻿using FishNet.Connection;
 using FishNet.Managing;
+using FishNet.Managing.Scened;
 using FishNet.Object;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -79,10 +81,13 @@ namespace FishNet.Component.Spawning
             }
 
             _networkManager.SceneManager.OnClientLoadedStartScenes += SceneManager_OnClientLoadedStartScenes;
+
+            _networkManager.SceneManager.OnClientPresenceChangeEnd += SceneManager_OnClientPresenceChangeEnd;
         }
 
         /// <summary>
-        /// Called when a client loads initial scenes after connecting.
+        /// Called when a client loads initial scenes after connecting. Typically this is when the players
+        /// join the game scene directly from the lobby search. Join in progress.
         /// </summary>
         private void SceneManager_OnClientLoadedStartScenes(NetworkConnection conn, bool asServer)
         {
@@ -93,6 +98,49 @@ namespace FishNet.Component.Spawning
                 Debug.LogWarning($"Player prefab is empty and cannot be spawned for connection {conn.ClientId}.");
                 return;
             }
+
+            // If the current scene is OnlineGame then spawn the player.
+            var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName == "OnlineGame" || sceneName == "OfflineGame")
+                SpawnPlayer(conn);
+        }
+
+        /// <summary>
+        /// Called when a client changes scenes. Typically this is when the players join the game scene from the lobby.
+        /// </summary>
+        /// <param name="args"></param>
+        private void SceneManager_OnClientPresenceChangeEnd(ClientPresenceChangeEventArgs args)
+        {
+            if (_playerPrefab == null)
+            {
+                Debug.LogWarning($"Player prefab is empty and cannot be spawned for connection {args.Connection.ClientId}.");
+                return;
+            }
+
+            // If the current scene is OnlineGame then spawn the player.
+            var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (sceneName == "OnlineGame" || sceneName == "OfflineGame")
+                SpawnPlayer(args.Connection);
+        }
+
+        private void SpawnPlayer(NetworkConnection conn)
+        {
+            GameObject spawnPoints = GameObject.Find("SpawnPoints");
+
+            if (spawnPoints == null)
+            {
+                Debug.LogError("SpawnPoints not found.");
+                return;
+            }
+
+            List<Transform> spawns = new List<Transform>();
+
+            foreach (Transform child in spawnPoints.transform)
+            {
+                spawns.Add(child);
+            }
+
+            Spawns = spawns.ToArray();
 
             Vector3 position;
             Quaternion rotation;

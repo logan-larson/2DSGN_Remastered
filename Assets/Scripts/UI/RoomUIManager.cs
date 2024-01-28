@@ -154,7 +154,7 @@ public class RoomUIManager : MonoBehaviour
         _serverInfo.Address = _serverAddressInput.text;
         _serverInfo.Port = ushort.Parse(_serverPortInput.text);
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("OnlineGame");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("PreGameLobby");
     }
 
     public void OnMainMenu()
