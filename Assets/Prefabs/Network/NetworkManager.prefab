@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 6030808624407447611}
   - component: {fileID: 6030808624407447608}
   - component: {fileID: 3818472558827858206}
-  - component: {fileID: 6030808624407447606}
   - component: {fileID: 3818472558376582984}
   - component: {fileID: 3818472558376582985}
   - component: {fileID: 3818472558376582962}
   - component: {fileID: 3583834901183877028}
+  - component: {fileID: 8074955569133304615}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -75,22 +75,6 @@ MonoBehaviour:
   _updateHostVisibility: 1
   _defaultConditions:
   - {fileID: 11400000, guid: 2033f54fd2794464bae08fa5a55c8996, type: 2}
---- !u!114 &6030808624407447606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6030808624407447609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 211a9f6ec51ddc14f908f5acc0cd0423, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 7614852995303497732, guid: 515f812d612a0fd4794501e41055b199, type: 3}
-  _addToDefaultScene: 1
-  Spawns:
-  - {fileID: 0}
 --- !u!114 &3818472558376582984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +141,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42e8376f8af2e3347bfc31516b6103cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnPlayerListUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  _userInfo: {fileID: 0}
+--- !u!114 &8074955569133304615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6030808624407447609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3efea331692acb9499594dc425d811fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerPrefab: {fileID: 7614852995303497732, guid: 515f812d612a0fd4794501e41055b199, type: 3}
+  _addToDefaultScene: 1
+  Spawns: []
 --- !u!1001 &3818472560023089832
 PrefabInstance:
   m_ObjectHideFlags: 0

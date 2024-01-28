@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class SessionManager : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class SessionManager : MonoBehaviour
     public Dictionary<int, Player> Players = new Dictionary<int, Player>();
 
     public UnityEvent<PlayerListUpdateBroadcast> OnPlayerListUpdate = new UnityEvent<PlayerListUpdateBroadcast>();
+
+    public SessionState SessionState { get; private set; } = SessionState.InLobby;
 
     #endregion
 
@@ -47,11 +50,14 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.OnRemoteConnectionState += OnRemoteConnectionState;
         _networkManager.ClientManager.OnClientConnectionState += OnClientConnectionState;
 
-        // Register broadcasts
+        // Server broadcast receivers
 
         _networkManager.ServerManager.RegisterBroadcast<UsernameBroadcast>(OnUsernameBroadcast, false);
-        _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
         _networkManager.ServerManager.RegisterBroadcast<StartGameBroadcast>(OnStartGameBroadcast, false);
+
+        // Client broadcast receivers
+
+        _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
     }
 
     #endregion
@@ -134,6 +140,29 @@ public class SessionManager : MonoBehaviour
 
     private void OnLoadEnd(SceneLoadEndEventArgs args)
     {
+        // TODO: It seems like there should be a better solution than this for unloading the pre-game lobby scene
+        // when a player joins a game in progress.
+
+        //Scene[] scenes = UnityEngine.SceneManagement.SceneManager.GetAllScenes();
+        var preGameLobbyIndex = -1;
+        var onlineGameIndex = -1;
+
+        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+        {
+            if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name == "PreGameLobby")
+            {
+                preGameLobbyIndex = i;
+            }
+            else if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name == "OnlineGame")
+            {
+                onlineGameIndex = i;
+            }
+        }
+
+        if (preGameLobbyIndex != -1 && onlineGameIndex != -1)
+        {
+            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("PreGameLobby");
+        }
     }
 
     #region Client Broadcast Receivers
@@ -191,9 +220,12 @@ public class SessionManager : MonoBehaviour
     {
         SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
         SceneUnloadData preGameLobbyScene = new SceneUnloadData("PreGameLobby");
+        preGameLobbyScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
 
         _networkManager.SceneManager.LoadGlobalScenes(onlineGameScene);
         _networkManager.SceneManager.UnloadGlobalScenes(preGameLobbyScene);
+
+        SessionState = SessionState.InGame;
     }
 
     #endregion
@@ -216,3 +248,9 @@ public struct PlayerListUpdateBroadcast : IBroadcast
 }
 
 public struct  StartGameBroadcast : IBroadcast { }
+
+public enum SessionState
+{
+    InLobby,
+    InGame
+}

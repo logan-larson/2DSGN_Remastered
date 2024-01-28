@@ -1,4 +1,5 @@
-﻿using FishNet.Connection;
+﻿using FishNet;
+using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Managing.Scened;
 using FishNet.Object;
@@ -50,6 +51,7 @@ namespace FishNet.Component.Spawning
         /// NetworkManager on this object or within this objects parents.
         /// </summary>
         private NetworkManager _networkManager;
+
         /// <summary>
         /// Next spawns to use.
         /// </summary>
@@ -201,6 +203,4 @@ namespace FishNet.Component.Spawning
         }
 
     }
-
-
 }
