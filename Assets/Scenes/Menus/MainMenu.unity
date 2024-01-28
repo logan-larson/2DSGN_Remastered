@@ -1495,6 +1495,7 @@ GameObject:
   - component: {fileID: 928726631}
   - component: {fileID: 928726630}
   - component: {fileID: 928726634}
+  - component: {fileID: 928726635}
   m_Layer: 5
   m_Name: MainMenuCanvas
   m_TagString: Untagged
@@ -1605,6 +1606,18 @@ MonoBehaviour:
   JoinMenu: {fileID: 146650482}
   UsernameText: {fileID: 413270459}
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
+--- !u!114 &928726635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928726629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079346312c06d7c48bbd695a5b181e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1037280840
 GameObject:
   m_ObjectHideFlags: 0
