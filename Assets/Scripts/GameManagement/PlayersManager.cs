@@ -19,8 +19,6 @@ public class PlayersManager : NetworkBehaviour
 
     public static PlayersManager Instance { get; private set; }
 
-    public Dictionary<int, Player> Players = new Dictionary<int, Player>();
-
     #endregion
 
     #region Serialized Fields
@@ -54,6 +52,11 @@ public class PlayersManager : NetworkBehaviour
     /// </summary>
     private PlayerSpawner _playerSpawner;
 
+    /// <summary>
+    /// Reference to the session manager.
+    /// </summary>
+    private SessionManager _sessionManager;
+
     #endregion
 
     #region Initialization
@@ -76,10 +79,16 @@ public class PlayersManager : NetworkBehaviour
         }
 
         _playerSpawner = networkManager.GetComponent<PlayerSpawner>();
+        _sessionManager = networkManager.GetComponent<SessionManager>();
 
         if (_playerSpawner == null)
         {
             Debug.LogError("PlayerSpawner not found.");
+            return;
+        }
+        else if (_sessionManager == null)
+        {
+            Debug.LogError("SessionManager not found.");
             return;
         }
 
@@ -110,38 +119,11 @@ public class PlayersManager : NetworkBehaviour
         // Get the connection.
         NetworkConnection conn = nob.Owner;
 
-        Players[conn.ClientId].Nob = nob;
+        _sessionManager.Players[conn.ClientId].Nob = nob;
     }
 
     private void ServerManager_OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
-        if (args.ConnectionState == RemoteConnectionState.Started)
-        {
-            // Create a new player.
-            Player player = new Player()
-            {
-                Connection = conn,
-                Nob = null,
-                Username = "Request Username",
-                Health = 100,
-                IsDead = false
-            };
-
-            // Add the player to the list.
-            Players.Add(conn.ClientId, player);
-
-            Debug.Log($"Player {conn.ClientId} has joined the game.");
-
-        }
-        else if (args.ConnectionState == RemoteConnectionState.Stopped)
-        {
-            if (Players.Count == 0) return;
-
-            // Remove the player from the list.
-            Players.Remove(conn.ClientId);
-
-            Debug.Log($"Player {conn.ClientId} has left the game.");
-        }
     }
 
     #endregion
@@ -153,9 +135,9 @@ public class PlayersManager : NetworkBehaviour
     {
         // TEMP: Debug log the attacker username and target username with the weapon name.
         //Debug.Log($"{Players[attackerConn.ClientId].Username} has damaged {Players[targetConn.ClientId].Username} with {weapon.Name}.");
-        var target = Players[targetConn.ClientId];
+        var target = _sessionManager.Players[targetConn.ClientId];
 
-        var attacker = attackerConn == null ? null : Players[attackerConn.ClientId];
+        var attacker = attackerConn == null ? null : _sessionManager.Players[attackerConn.ClientId];
         var damage = weapon == null ? 1000f : weapon.Damage;
 
         if (target.IsDead)
@@ -195,7 +177,7 @@ public class PlayersManager : NetworkBehaviour
         //Debug.Log($"{Players[conn.ClientId].Username} has been healed for {amount}.");
 
         // Increase the health of the target.
-        var player = Players[conn.ClientId];
+        var player = _sessionManager.Players[conn.ClientId];
         player.Health += amount;
 
         // TEMP: Debug log the target username and amount.
@@ -214,7 +196,7 @@ public class PlayersManager : NetworkBehaviour
     {
         Debug.Log($"Player {conn.ClientId} has set their username to {username}.");
 
-        Players[conn.ClientId].Username = username;
+        _sessionManager.Players[conn.ClientId].Username = username;
     }
 
     #endregion
@@ -225,7 +207,7 @@ public class PlayersManager : NetworkBehaviour
     {
         // Get a spawn point that is furthest away from each enemy player.
 
-        Transform[] playerPositions = Players.Values.Where(p => !p.IsDead).Select(p => p.Nob.transform).ToArray();
+        Transform[] playerPositions = _sessionManager.Players.Values.Where(p => !p.IsDead).Select(p => p.Nob.transform).ToArray();
 
         // Find spawn point furthest away from all players
         Transform furthestSpawnPoint = _spawnPoints[0];
