@@ -141,6 +141,9 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private PlayerManager _playerManager;
 
+    [SerializeField]
+    private GameManager _gameManager;
+
     #endregion
 
     #region Public Variables
@@ -331,6 +334,12 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
         SubscribeToTimeManager(true);
+
+        _gameManager = GameManager.Instance;
+
+        _movementDisabled = true;
+
+        _gameManager.OnGameStart.AddListener(OnGameStart);
     }
 
     public override void OnStopServer()
@@ -351,6 +360,11 @@ public class PlayerController : NetworkBehaviour
         SubscribeToTimeManager(false);
     }
 
+    private void OnGameStart()
+    {
+        _movementDisabled = false;
+    }
+
     #endregion
 
     #region Frame Updates
@@ -365,6 +379,9 @@ public class PlayerController : NetworkBehaviour
             transform.SetPositionAndRotation(_overridePosition, _overrideRotation);
             _overrideTransform = false;
         }
+
+        if (_movementDisabled)
+            return;
 
         if (_playerManager.IsDead)
         {

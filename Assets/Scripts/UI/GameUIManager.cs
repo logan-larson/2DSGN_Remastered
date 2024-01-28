@@ -6,9 +6,11 @@ using UnityEngine.InputSystem;
 
 public class GameUIManager : NetworkBehaviour
 {
-
     [SerializeField]
     private GameObject _pauseCanvas;
+
+    [SerializeField]
+    private GameObject _countdownCanvas;
 
     private InputManager _inputManager;
 
@@ -17,6 +19,7 @@ public class GameUIManager : NetworkBehaviour
     private void Awake()
     {
         _pauseCanvas.SetActive(false);
+        _countdownCanvas.SetActive(true);
 
         FirstObjectNotifier.OnFirstObjectSpawned += FirstObjectNotifier_OnFirstObjectSpawned;
     }
