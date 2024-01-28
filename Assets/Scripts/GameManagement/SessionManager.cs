@@ -17,7 +17,7 @@ public class SessionManager : MonoBehaviour
 
     public Dictionary<int, Player> Players = new Dictionary<int, Player>();
 
-    public UnityEvent OnPlayerListUpdated = new UnityEvent();
+    public UnityEvent<PlayerListUpdateBroadcast> OnPlayerListUpdate = new UnityEvent<PlayerListUpdateBroadcast>();
 
     #endregion
 
@@ -40,18 +40,25 @@ public class SessionManager : MonoBehaviour
     {
         _networkManager = InstanceFinder.NetworkManager;
 
+        // Subscribe to events
+
         _networkManager.SceneManager.OnLoadEnd += OnLoadEnd;
 
         _networkManager.ServerManager.OnRemoteConnectionState += OnRemoteConnectionState;
         _networkManager.ClientManager.OnClientConnectionState += OnClientConnectionState;
 
-        _networkManager.ServerManager.RegisterBroadcast<UsernameBroadcast>(OnUsernameBroadcast);
+        // Register broadcasts
 
+        _networkManager.ServerManager.RegisterBroadcast<UsernameBroadcast>(OnUsernameBroadcast, false);
+        _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
+        _networkManager.ServerManager.RegisterBroadcast<StartGameBroadcast>(OnStartGameBroadcast, false);
     }
 
     #endregion
 
     #region Events
+
+    #region Connection States
 
     private void OnClientConnectionState(ClientConnectionStateArgs args)
     {
@@ -63,19 +70,10 @@ public class SessionManager : MonoBehaviour
         _networkManager.ClientManager.Broadcast(usernameBroadcast);
     }
 
-    private void OnLoadEnd(SceneLoadEndEventArgs args)
-    {
-    }
-
-    private void OnUsernameBroadcast(NetworkConnection connection, UsernameBroadcast broadcast)
-    {
-        Players[connection.ClientId].Username = broadcast.Username;
-
-        OnPlayerListUpdated.Invoke();
-    }
-
     private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
+        PlayerListUpdateBroadcast playerListUpdateBroadcast = new PlayerListUpdateBroadcast();
+
         if (args.ConnectionState == RemoteConnectionState.Started)
         {
             // Create a new player.
@@ -91,6 +89,19 @@ public class SessionManager : MonoBehaviour
             // Add the player to the list.
             Players.Add(conn.ClientId, player);
 
+            playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+            {
+                IsAdd = true,
+                IsRemove = false,
+                IsUpdate = false,
+                Player = player,
+                Players = Players
+            };
+
+            _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast, false);
+
+            OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
+
             Debug.Log($"Player {conn.ClientId} has joined the game.");
         }
         else if (args.ConnectionState == RemoteConnectionState.Stopped)
@@ -98,19 +109,85 @@ public class SessionManager : MonoBehaviour
             if (Players.Count == 0) return;
 
             // Remove the player from the list.
+            var player = Players[conn.ClientId];
+
             Players.Remove(conn.ClientId);
+
+            playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+            {
+                IsAdd = false,
+                IsRemove = true,
+                IsUpdate = false,
+                Player = player,
+                Players = Players
+            };
+
+            _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+
+            OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
 
             Debug.Log($"Player {conn.ClientId} has left the game.");
         }
-
-        OnPlayerListUpdated.Invoke();
     }
+
+    #endregion
+
+    private void OnLoadEnd(SceneLoadEndEventArgs args)
+    {
+    }
+
+    #region Client Broadcast Receivers
+
+    private void OnPlayerListUpdateBroadcast(PlayerListUpdateBroadcast broadcast)
+    {
+        OnPlayerListUpdate.Invoke(broadcast);
+    }
+
+    #endregion
+
+    #region Server Broadcast Receivers
+
+    private void OnStartGameBroadcast(NetworkConnection connnection, StartGameBroadcast broadcast)
+    {
+        StartGame();
+    }
+
+    private void OnUsernameBroadcast(NetworkConnection connection, UsernameBroadcast broadcast)
+    {
+        Players[connection.ClientId].Username = broadcast.Username;
+
+        var playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+        {
+            IsAdd = false,
+            IsRemove = false,
+            IsUpdate = true,
+            Player = Players[connection.ClientId],
+            Players = Players
+        };
+
+        _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+
+        OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
+    }
+
+    #endregion
 
     #endregion
 
     #region Public Methods
 
     public void OnStart()
+    {
+        StartGameBroadcast startGameBroadcast = new StartGameBroadcast();
+
+        _networkManager.ClientManager.Broadcast(startGameBroadcast);
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    private void StartGame()
     {
         SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
         SceneUnloadData preGameLobbyScene = new SceneUnloadData("PreGameLobby");
@@ -126,3 +203,16 @@ public struct UsernameBroadcast : IBroadcast
 {
     public string Username;
 }
+
+public struct PlayerListUpdateBroadcast : IBroadcast
+{
+    public bool IsAdd;
+    public bool IsRemove;
+    public bool IsUpdate;
+
+    public Player Player;
+
+    public Dictionary<int, Player> Players;
+}
+
+public struct  StartGameBroadcast : IBroadcast { }

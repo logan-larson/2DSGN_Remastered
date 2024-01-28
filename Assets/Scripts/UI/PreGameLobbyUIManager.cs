@@ -25,17 +25,19 @@ public class PreGameLobbyUIManager : MonoBehaviour
             return;
         }
 
-        _sessionManager.OnPlayerListUpdated.AddListener(OnPlayerListUpdated);
+        _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
     }
 
-    private void OnPlayerListUpdated()
+    private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)
     {
+        // TODO: Utilize the broadcast to update the UI.
+
         for (int i = 0; i < _playerListContainer.transform.childCount; i++)
         {
             Destroy(_playerListContainer.transform.GetChild(i).gameObject);
         }
 
-        foreach (var player in _sessionManager.Players.Values)
+        foreach (var player in broadcast.Players.Values)
         {
             var playerListItem = Instantiate(_playerListItemPrefab, _playerListContainer.transform);
 
