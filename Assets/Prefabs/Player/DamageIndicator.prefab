@@ -190,6 +190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _basePitch: 0.25
   _hit: {fileID: 4568828756878849816}
+  _headshot: {fileID: 1829723101608452512}
   _death: {fileID: 1829723101608452512}
 --- !u!223 &5080214738443335856
 Canvas:

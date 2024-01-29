@@ -566,6 +566,8 @@ public class WeaponManager : NetworkBehaviour
             RaycastHit2D barrelStuff = Physics2D.Raycast(playerPosition, bulletDirections[i], weapon.MuzzleLength, LayerMask.GetMask("Obstacle"));
 
             // -- Damage the players --
+            NetworkConnection recentHit = null;
+
             foreach (RaycastHit2D hit in hits)
             {
                 if (hit.collider != null) // Maybe check if the username is the same as the shooter
@@ -574,17 +576,21 @@ public class WeaponManager : NetworkBehaviour
 
                     if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Obstacle")) break;
 
-                    var player = hit.transform.parent.parent;
+                    var isHeadshot = hit.collider.gameObject.tag == "HeadHitbox";
+
+                    var player = hit.transform.gameObject.GetComponentInParent<PlayerController>().gameObject;
 
                     //if (player.gameObject.GetInstanceID() == instanceID) continue;
 
                     var nob = player.GetComponent<NetworkObject>();
 
-                    if (nob.Owner == base.Owner) continue;
+                    if (nob.Owner == base.Owner || nob.LocalConnection == recentHit) continue;
+
+                    recentHit = nob.LocalConnection;
 
                     // -- Damage the player --
                     //PlayerManager.Instance.DamagePlayer(nob.Owner, weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
-                    PlayersManager.Instance.DamagePlayer(nob.Owner, base.Owner, weapon);
+                    PlayersManager.Instance.DamagePlayer(nob.Owner, base.Owner, weapon, isHeadshot);
                 }
             }
         }

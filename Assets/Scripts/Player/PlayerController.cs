@@ -168,6 +168,12 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private Transform _heaven;
 
+    /// <summary>
+    /// The transform of the player's weapon holder.
+    /// </summary>
+    [SerializeField]
+    private Transform _weaponHolder;
+
     #endregion
 
     #region Private Variables
@@ -435,7 +441,7 @@ public class PlayerController : NetworkBehaviour
 
             mouseWorldPosition.z = 0f;
 
-            moveData.AimDirection = (mouseWorldPosition - transform.position).normalized;
+            moveData.AimDirection = (mouseWorldPosition - _weaponHolder.position).normalized;
         }
         else if (_inputManager.InputDevice == "Gamepad")
         {
