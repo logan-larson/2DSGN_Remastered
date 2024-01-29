@@ -16,15 +16,6 @@ public class DamageIndicatorManager : MonoBehaviour
 
     private Vector3 _velocity;
 
-    [SerializeField]
-    private AudioSource _hit;
-
-    [SerializeField]
-    private AudioSource _headshot;
-
-    [SerializeField]
-    private AudioSource _death;
-
     private void Awake()
     {
         _damageValue = GetComponentInChildren<TMP_Text>();
@@ -46,22 +37,6 @@ public class DamageIndicatorManager : MonoBehaviour
     public void Initialize(int damage, float health, bool isHeadshot)
     {
         _damageValue.text = damage.ToString();
-
-        if (health <= 0f)
-        {
-            //_death.Play();
-            //return;
-            //_hit.volume = 0.75f;
-        }
-
-        //_hit.pitch = ((100f - health) / 100f) + _basePitch;
-
-        if (isHeadshot)
-        {
-            //_headshot.Play();
-        }
-
-        //_hit.Play();
     }
 
     public void SetColor(Color color)
