@@ -117,18 +117,30 @@ public class AnimationController : NetworkBehaviour
 
     private void OnTick()
     {
-        if (_playerController.MovementData.DirectionLeft != _currentFlipX)
+        if (base.IsOwner)
         {
-            _currentFlipX = _playerController.MovementData.DirectionLeft;
+            UpdateAnimation(_playerController.MovementData.Velocity, _playerController.MovementData.DirectionLeft, _playerController.MovementData.IsGrounded);
+        }
+        else
+        {
+            UpdateAnimation(_playerController.Velocity, _playerController.DirectionLeft, _playerController.IsGrounded);
+        }
+    }
+
+    private void UpdateAnimation(Vector3 velocity, bool directionLeft, bool isGrounded)
+    {
+        if (directionLeft != _currentFlipX)
+        {
+            _currentFlipX = directionLeft;
             _spriteRenderer.flipX = _currentFlipX;
         }
 
-        if (_playerController.MovementData.Velocity.magnitude > 0.1f)
+        if (velocity.magnitude > 0.1f)
         {
             switch (_currentMode)
             {
                 case Mode.Sprint:
-                    if (_playerController.MovementData.IsGrounded)
+                    if (isGrounded)
                     {
                         ChangeAnimationState(SPRINT_RUNNING);
                     }
@@ -138,7 +150,7 @@ public class AnimationController : NetworkBehaviour
                     }
                     break;
                 case Mode.Shoot:
-                    if (_playerController.MovementData.IsGrounded)
+                    if (isGrounded)
                     {
                         ChangeAnimationState(SHOOT_WALKING);
                     }
@@ -175,10 +187,10 @@ public class AnimationController : NetworkBehaviour
                 _animator.speed = 1f;
                 break;
             case SPRINT_RUNNING:
-                _animator.speed = _playerController.MovementData.Velocity.magnitude / (_playerMovementProperties.MaxSpeed * _playerMovementProperties.SprintMultiplier);
+                _animator.speed = velocity.magnitude / (_playerMovementProperties.MaxSpeed * _playerMovementProperties.SprintMultiplier);
                 break;
             case SHOOT_WALKING:
-                _animator.speed = _playerController.MovementData.Velocity.magnitude / (_playerMovementProperties.MaxSpeed * _playerMovementProperties.ShootMultiplier);
+                _animator.speed = velocity.magnitude / (_playerMovementProperties.MaxSpeed * _playerMovementProperties.ShootMultiplier);
                 break;
         }
     }

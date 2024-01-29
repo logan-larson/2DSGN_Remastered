@@ -1,6 +1,8 @@
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Prediction;
+using FishNet.Object.Synchronizing;
+using FishNet.Object.Synchronizing.Internal;
 using FishNet.Transporting;
 using System.Collections;
 using System.Collections.Generic;
@@ -149,6 +151,15 @@ public class PlayerController : NetworkBehaviour
     /// Public data about the player's movement.
     /// </summary>
     public PublicMovementData MovementData;
+
+    [SyncVar]
+    public Vector3 Velocity;
+
+    [SyncVar]
+    public bool IsGrounded;
+
+    [SyncVar]
+    public bool DirectionLeft;
 
     #endregion
 
@@ -931,15 +942,23 @@ public class PlayerController : NetworkBehaviour
         var angle = Vector3.SignedAngle(MovementData.Velocity, transform.right, transform.up);
         if (MovementData.Velocity.magnitude != 0f)
         {
-            if (angle < 5f || angle > 355f)
+            if (_isGrounded)
             {
-                MovementData.DirectionLeft = false;
-                MovementData.DirectionRight = true;
+                if (angle < 90f || angle > 270f)
+                {
+                    MovementData.DirectionLeft = false;
+                    MovementData.DirectionRight = true;
+                }
+                else
+                {
+                    MovementData.DirectionLeft = true;
+                    MovementData.DirectionRight = false;
+                }
             }
-            else if (angle > 175f && angle < 185f)
+            else
             {
-                MovementData.DirectionLeft = true;
-                MovementData.DirectionRight = false;
+                MovementData.DirectionLeft = MovementData.Velocity.x < 0f;
+                MovementData.DirectionRight = MovementData.Velocity.x > 0f;
             }
         }
 
@@ -948,6 +967,16 @@ public class PlayerController : NetworkBehaviour
             OnModeChange.Invoke(_currentMode);
             _previousMode = _currentMode;
         }
+
+        // Set for animation controller
+        // TODO: This feels hacky, but it will work for now
+        if (base.IsServer)
+        {
+            Velocity = _currentVelocity;
+            IsGrounded = _isGrounded;
+            DirectionLeft = MovementData.DirectionLeft;
+        }
+
     }
 
     #endregion

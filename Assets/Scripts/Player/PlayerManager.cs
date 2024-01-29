@@ -178,28 +178,28 @@ public class PlayerManager : NetworkBehaviour
     #region Player State Events
 
     [Server]
-    public void TakeDamage(float damage, float newHealth, bool isHeadshot = false)
+    public void TakeDamage(float damage, float newHealth, Vector3 hitPosition, bool isHeadshot = false)
     {
         // Take damage.
 
         _health = newHealth;
 
         // Spawn damage indicator.
-        var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
+        var damageIndicator = Instantiate(_damageIndicatorPrefab, hitPosition, Quaternion.identity);
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.
 
         // Play hit sound based on health remaining.
 
-        TakeDamageObserversRpc(damage, newHealth, isHeadshot);
+        TakeDamageObserversRpc(damage, newHealth, hitPosition, isHeadshot);
     }
 
     [ObserversRpc (ExcludeServer = true)]
-    private void TakeDamageObserversRpc(float damage, float newHealth, bool isHeadshot = false)
+    private void TakeDamageObserversRpc(float damage, float newHealth, Vector3 hitPostion, bool isHeadshot = false)
     {
         // Spawn damage indicator.
-        var damageIndicator = Instantiate(_damageIndicatorPrefab, transform.position, Quaternion.identity);
+        var damageIndicator = Instantiate(_damageIndicatorPrefab, hitPostion, Quaternion.identity);
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.

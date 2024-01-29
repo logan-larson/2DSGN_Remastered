@@ -590,7 +590,7 @@ public class WeaponManager : NetworkBehaviour
 
                     // -- Damage the player --
                     //PlayerManager.Instance.DamagePlayer(nob.Owner, weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
-                    PlayersManager.Instance.DamagePlayer(nob.Owner, base.Owner, weapon, isHeadshot);
+                    PlayersManager.Instance.DamagePlayer(nob.Owner, base.Owner, weapon, isHeadshot, hit.point);
                 }
             }
         }
