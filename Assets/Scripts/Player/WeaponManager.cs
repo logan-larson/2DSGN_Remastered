@@ -56,6 +56,12 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private GameObject _muzzleFlashPrefab;
 
+    [SerializeField]
+    private AudioSource _hitSound;
+
+    [SerializeField]
+    private AudioSource _headshotSound;
+
     #endregion
 
     #region Private Fields
@@ -501,6 +507,44 @@ public class WeaponManager : NetworkBehaviour
             {
                 // -- Didn't hit anything, so draw a line to the end of the range --
                 DrawShot(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, CurrentWeaponInfo, false);
+            }
+        }
+
+        // -- Get all the player hits --
+        LayerMask hitbox = LayerMask.GetMask("Hitbox", "Obstacle");
+        for (int i = 0; i < bulletDirections.Length; i++)
+        {
+            RaycastHit2D[] hits = Physics2D.RaycastAll(bulletSpawnPosition, bulletDirections[i], CurrentWeaponInfo.Range, hitbox);
+            RaycastHit2D barrelStuff = Physics2D.Raycast(transform.position, bulletDirections[i], CurrentWeaponInfo.MuzzleLength, LayerMask.GetMask("Obstacle"));
+
+            // -- Damage the players --
+            NetworkConnection recentHit = null;
+
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider != null) // Maybe check if the username is the same as the shooter
+                {
+                    if (barrelStuff.collider is not null && hit.distance > barrelStuff.distance) break;
+
+                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Obstacle")) break;
+
+                    var isHeadshot = hit.collider.gameObject.tag == "HeadHitbox";
+
+                    var player = hit.transform.gameObject.GetComponentInParent<PlayerController>().gameObject;
+
+                    var nob = player.GetComponent<NetworkObject>();
+
+                    if (nob.Owner == base.Owner || nob.LocalConnection == recentHit) continue;
+
+                    recentHit = nob.LocalConnection;
+
+                    _hitSound.Play();
+
+                    if (isHeadshot)
+                    {
+                        _headshotSound.Play();
+                    }
+                }
             }
         }
 

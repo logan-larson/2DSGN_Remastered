@@ -17,7 +17,7 @@ MonoBehaviour:
   FireSoundPath: Sounds/Weapons/Shotgun
   BulletTrailRendererPath: 
   FireRate: 2
-  Damage: 100
+  Damage: 90
   Range: 25
   IsAutomatic: 1
   BulletsPerShot: 1

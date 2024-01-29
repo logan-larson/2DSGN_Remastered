@@ -58,10 +58,10 @@ public class DamageIndicatorManager : MonoBehaviour
 
         if (isHeadshot)
         {
-            _headshot.Play();
+            //_headshot.Play();
         }
 
-        _hit.Play();
+        //_hit.Play();
     }
 
     public void SetColor(Color color)
