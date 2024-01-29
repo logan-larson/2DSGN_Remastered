@@ -16,7 +16,7 @@ public class KillfeedUIManager : NetworkBehaviour
         if (PlayersManager.Instance == null)
             return;
 
-        PlayersManager.Instance.OnPlayerKilled += OnPlayerKilled;
+        PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
     }
 
     private void OnDestroy()
@@ -24,7 +24,7 @@ public class KillfeedUIManager : NetworkBehaviour
         if (PlayersManager.Instance == null)
             return;
 
-        PlayersManager.Instance.OnPlayerKilled -= OnPlayerKilled;
+        PlayersManager.Instance.OnPlayerKilled.RemoveAllListeners();
     }
 
     private void OnPlayerKilled(Player playerKilled, Player killer, WeaponInfo weaponInfo)

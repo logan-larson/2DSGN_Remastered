@@ -163,6 +163,8 @@ public class SessionManager : MonoBehaviour
         {
             UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("PreGameLobby");
         }
+
+        GameManager.Instance.OnGameEnd.AddListener(EndGame);
     }
 
     #region Client Broadcast Receivers
@@ -226,6 +228,18 @@ public class SessionManager : MonoBehaviour
         _networkManager.SceneManager.UnloadGlobalScenes(preGameLobbyScene);
 
         SessionState = SessionState.InGame;
+    }
+
+    private void EndGame()
+    {
+          SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
+        SceneUnloadData onlineGameScene = new SceneUnloadData("OnlineGame");
+        onlineGameScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
+
+        _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
+        _networkManager.SceneManager.UnloadGlobalScenes(onlineGameScene);
+
+        SessionState = SessionState.InLobby;
     }
 
     #endregion

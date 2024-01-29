@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayersManager : NetworkBehaviour
 {
@@ -37,11 +38,11 @@ public class PlayersManager : NetworkBehaviour
 
     #region Events
 
-    public event Action<Player> OnPlayerJoined;
+    public UnityEvent<Player> OnPlayerJoined;
 
-    public event Action<Player> OnPlayerLeft;
+    public UnityEvent<Player> OnPlayerLeft;
 
-    public event Action<Player, Player, WeaponInfo> OnPlayerKilled;
+    public UnityEvent<Player, Player, WeaponInfo> OnPlayerKilled;
 
     #endregion
 

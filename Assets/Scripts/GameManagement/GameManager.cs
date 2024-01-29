@@ -1,6 +1,7 @@
 using FishNet;
 using FishNet.Managing;
 using FishNet.Object;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,9 +18,15 @@ public class GameManager : NetworkBehaviour
 {
     public UnityEvent<int> OnCountdown = new UnityEvent<int>();
     public UnityEvent OnGameStart = new UnityEvent();
+    public UnityEvent OnGameEnd = new UnityEvent();
 
     [SerializeField]
     private int _countdownDuration = 5;
+
+    [SerializeField]
+    private int _killsToWin = 5;
+
+    private int _currentKills = 0;
 
     private NetworkManager _networkManager;
 
@@ -38,6 +45,8 @@ public class GameManager : NetworkBehaviour
 
         _networkManager = InstanceFinder.NetworkManager;
         //_sessionManager = _networkManager.GetComponent<SessionManager>();
+
+        PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
 
         // For now, we'll just start the game when the server loads the scene with 10 second countdown.
         StartCoroutine(CountdownCoroutine());
@@ -67,6 +76,17 @@ public class GameManager : NetworkBehaviour
     private void OnCountdownObserversRpc(int countdown)
     {
         OnCountdown.Invoke(countdown);
+    }
+
+    private void OnPlayerKilled(Player arg0, Player arg1, WeaponInfo arg2)
+    {
+        _currentKills++;
+
+        if (_currentKills >= _killsToWin)
+        {
+            // Game over
+            OnGameEnd.Invoke();
+        }
     }
 
 }
