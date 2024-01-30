@@ -38,11 +38,7 @@ public class PlayersManager : NetworkBehaviour
 
     #region Events
 
-    public UnityEvent<Player> OnPlayerJoined;
-
-    public UnityEvent<Player> OnPlayerLeft;
-
-    public UnityEvent<Player, Player, WeaponInfo> OnPlayerKilled;
+    public event Action<Player, Player, WeaponInfo> OnPlayerKilled;
 
     #endregion
 
@@ -132,7 +128,7 @@ public class PlayersManager : NetworkBehaviour
     #region Public Methods
 
     [Server]
-    public void DamagePlayer(NetworkConnection targetConn, NetworkConnection attackerConn = null, WeaponInfo weapon = null)
+    public void DamagePlayer(NetworkConnection targetConn, NetworkConnection attackerConn = null, WeaponInfo weapon = null, bool isHeadshot = false, Vector3 hitPosition = new Vector3())
     {
         // TEMP: Debug log the attacker username and target username with the weapon name.
         //Debug.Log($"{Players[attackerConn.ClientId].Username} has damaged {Players[targetConn.ClientId].Username} with {weapon.Name}.");
@@ -141,13 +137,15 @@ public class PlayersManager : NetworkBehaviour
         var attacker = attackerConn == null ? null : _sessionManager.Players[attackerConn.ClientId];
         var damage = weapon == null ? 1000f : weapon.Damage;
 
+        damage = isHeadshot ? damage * 1.5f : damage;
+
         if (target.IsDead)
             return;
 
         // Reduce the health of the target.
         target.Health -= damage;
 
-        target.Nob.GetComponent<PlayerManager>().TakeDamage(damage, target.Health);
+        target.Nob.GetComponent<PlayerManager>().TakeDamage(damage, target.Health, isHeadshot, hitPosition);
 
         // If the target's health is less than or equal to 0, then they are dead.
         if (target.Health <= 0)

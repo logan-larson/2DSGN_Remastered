@@ -8,6 +8,8 @@ TagManager:
   - WeaponPickups
   - HealthNut
   - DeathBarrier
+  - HeadHitbox
+  - BodyHitbox
   layers:
   - Default
   - TransparentFX

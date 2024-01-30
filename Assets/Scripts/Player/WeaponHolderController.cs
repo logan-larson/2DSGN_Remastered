@@ -23,6 +23,9 @@ public class WeaponHolderController : NetworkBehaviour
     [SerializeField]
     private RectTransform _crosshair;
 
+    [SerializeField]
+    private Vector3 _originalPosition;
+
     #endregion
 
     private bool _previousFlipY = false;
@@ -130,9 +133,9 @@ public class WeaponHolderController : NetworkBehaviour
         }
 
         // Return to Original Position
-        while (Vector3.Distance(transform.localPosition, Vector3.zero) > 0.01f)
+        while (Vector3.Distance(transform.localPosition, _originalPosition) > 0.01f)
         {
-            transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, recoilRecoveryRate);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, _originalPosition, recoilRecoveryRate);
             yield return null;
         }
     }

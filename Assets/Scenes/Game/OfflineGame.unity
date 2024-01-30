@@ -301,6 +301,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1763587994}
     m_Modifications:
+    - target: {fileID: 4083524615182163704, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4083524615217670556, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
       propertyPath: m_Name
       value: Environment
@@ -347,6 +351,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4083524615217670557, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4083524615243242557, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4083524615928066862, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4083524616578717334, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
+      propertyPath: m_SortingLayerID
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4083524616839705158, guid: 0165781894b8a3f4491d11cb1c0e9029, type: 3}
