@@ -58,6 +58,7 @@ public class SessionManager : MonoBehaviour
         // Client broadcast receivers
 
         _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<SessionStateUpdateBroadcast>(OnSessionStateUpdateBroadcast);
     }
 
     #endregion
@@ -140,6 +141,7 @@ public class SessionManager : MonoBehaviour
 
     private void OnLoadEnd(SceneLoadEndEventArgs args)
     {
+        /*
         // TODO: It seems like there should be a better solution than this for unloading the pre-game lobby scene
         // when a player joins a game in progress.
 
@@ -161,10 +163,25 @@ public class SessionManager : MonoBehaviour
 
         if (preGameLobbyIndex != -1 && onlineGameIndex != -1)
         {
-            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("PreGameLobby");
+            if (SessionState == SessionState.InGame)
+            {
+                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("PreGameLobby");
+            }
+            else if (SessionState == SessionState.InLobby)
+            {
+                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("OnlineGame");
+            }
         }
+        */
 
-        GameManager.Instance.OnGameEnd.AddListener(EndGame);
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "PreGameLobby")
+        {
+            //SessionState = SessionState.InLobby;
+        }
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "OnlineGame")
+        {
+            GameManager.Instance.OnGameEnd.AddListener(EndGame);
+        }
     }
 
     #region Client Broadcast Receivers
@@ -172,6 +189,11 @@ public class SessionManager : MonoBehaviour
     private void OnPlayerListUpdateBroadcast(PlayerListUpdateBroadcast broadcast)
     {
         OnPlayerListUpdate.Invoke(broadcast);
+    }
+
+    private void OnSessionStateUpdateBroadcast(SessionStateUpdateBroadcast broadcast)
+    {
+        SessionState = broadcast.SessionState;
     }
 
     #endregion
@@ -207,10 +229,13 @@ public class SessionManager : MonoBehaviour
 
     #region Public Methods
 
+    /// <summary>
+    /// Called by the host to start the game.
+    /// </summary>
     public void OnStart()
     {
+        // Broadcast to the server to start the game.
         StartGameBroadcast startGameBroadcast = new StartGameBroadcast();
-
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
     }
 
@@ -218,28 +243,40 @@ public class SessionManager : MonoBehaviour
 
     #region Private Methods
 
+    /// <summary>
+    /// Called by the server when receiving a StartGameBroadcast.
+    /// </summary>
     private void StartGame()
     {
+        // Load the game scene.
         SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
+        onlineGameScene.ReplaceScenes = ReplaceOption.All;
+        _networkManager.SceneManager.LoadGlobalScenes(onlineGameScene);
+
+        /*
         SceneUnloadData preGameLobbyScene = new SceneUnloadData("PreGameLobby");
         preGameLobbyScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
-
-        _networkManager.SceneManager.LoadGlobalScenes(onlineGameScene);
         _networkManager.SceneManager.UnloadGlobalScenes(preGameLobbyScene);
+        */
 
         SessionState = SessionState.InGame;
+
+        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InGame });
     }
 
     private void EndGame()
     {
-          SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
-        SceneUnloadData onlineGameScene = new SceneUnloadData("OnlineGame");
-        onlineGameScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
-
+        SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
+        preGameLobbyScene.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
-        _networkManager.SceneManager.UnloadGlobalScenes(onlineGameScene);
+
+        //SceneUnloadData onlineGameScene = new SceneUnloadData("OnlineGame");
+        //onlineGameScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
+        //_networkManager.SceneManager.UnloadGlobalScenes(onlineGameScene);
 
         SessionState = SessionState.InLobby;
+
+        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobby });
     }
 
     #endregion
@@ -262,6 +299,11 @@ public struct PlayerListUpdateBroadcast : IBroadcast
 }
 
 public struct  StartGameBroadcast : IBroadcast { }
+
+public struct SessionStateUpdateBroadcast : IBroadcast
+{
+    public SessionState SessionState;
+}
 
 public enum SessionState
 {
