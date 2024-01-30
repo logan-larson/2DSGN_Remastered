@@ -11,9 +11,6 @@ public class DamageIndicatorManager : MonoBehaviour
     private float _initialXVelocityRange = 2f;
     private float _lifetime = 0.5f;
 
-    [SerializeField]
-    private float _basePitch = 0.5f;
-
     private Vector3 _velocity;
 
     private void Awake()

@@ -39,10 +39,6 @@ public class PlayersManager : NetworkBehaviour
 
     #region Events
 
-    public event Action<Player> OnPlayerJoined;
-
-    public event Action<Player> OnPlayerLeft;
-
     public event Action<Player, Player, WeaponInfo> OnPlayerKilled;
 
     #endregion
@@ -166,7 +162,7 @@ public class PlayersManager : NetworkBehaviour
         // Reduce the health of the target.
         target.Health -= damage;
 
-        target.Nob.GetComponent<PlayerManager>().TakeDamage(damage, target.Health, hitPosition, isHeadshot);
+        target.Nob.GetComponent<PlayerManager>().TakeDamage(damage, target.Health, isHeadshot, hitPosition);
 
         // If the target's health is less than or equal to 0, then they are dead.
         if (target.Health <= 0)

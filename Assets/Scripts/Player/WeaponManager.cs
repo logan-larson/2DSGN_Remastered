@@ -542,7 +542,7 @@ public class WeaponManager : NetworkBehaviour
 
                     if (isHeadshot)
                     {
-                        _headshotSound.Play();
+                        //_headshotSound.Play();
                     }
                 }
             }

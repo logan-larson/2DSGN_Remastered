@@ -57,10 +57,19 @@ public class PlayerManager : NetworkBehaviour
     private GameObject _damageIndicatorPrefab;
 
     [SerializeField]
+    private GameObject _hitParticlesPrefab;
+
+    [SerializeField]
     private GameObject _deathIndicatorPrefab;
 
     [SerializeField]
     private GameObject _audioListener;
+
+    [SerializeField]
+    private SpriteRenderer _playerSpriteRenderer;
+
+    [SerializeField]
+    private GameObject _abovePlayerUICanvas;
 
     #endregion
 
@@ -114,7 +123,8 @@ public class PlayerManager : NetworkBehaviour
         base.OnStartClient();
 
         // Set the username UI.
-        _usernameText.color = base.IsOwner ? Color.green : Color.red;
+        _usernameText.color = base.IsOwner ? new Color32(0x28, 0x2F, 0xFF, 0xFF) : new Color32(0xE2, 0x25, 0x25, 0xFF);
+        _redDamagedSprite.color = base.IsOwner ? new Color32(0x28, 0x2F, 0xFF, 0xFF) : new Color32(0xE2, 0x25, 0x25, 0xFF);
 
         _modeManager.OnModeChanged.AddListener(OnModeChanged);
 
@@ -166,11 +176,11 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnTick()
     {
-        // Red damaged sprite fill should lerp to MAX_HEALTH - _health.
-        _redDamagedSprite.fillAmount = Mathf.Lerp(_redDamagedSprite.fillAmount, (MAX_HEALTH - _health) / 100f, 0.1f);
+        // White damaged sprite fill should lerp to MAX_HEALTH - _health.
+        _redDamagedSprite.fillAmount = _health / 100f;
 
-        // White damaged sprite should be equal to MAX_HEALTH - _health.
-        _whiteDamagedSprite.fillAmount = (MAX_HEALTH - _health) / 100f;
+        // Red damaged sprite should be equal to MAX_HEALTH - _health.
+        _whiteDamagedSprite.fillAmount = Mathf.Lerp(_whiteDamagedSprite.fillAmount, _health / 100f, 0.1f);
     }
 
     #endregion
@@ -178,7 +188,7 @@ public class PlayerManager : NetworkBehaviour
     #region Player State Events
 
     [Server]
-    public void TakeDamage(float damage, float newHealth, Vector3 hitPosition, bool isHeadshot = false)
+    public void TakeDamage(float damage, float newHealth, bool isHeadshot = false, Vector3 hitPosition = new Vector3())
     {
         // Take damage.
 
@@ -189,22 +199,37 @@ public class PlayerManager : NetworkBehaviour
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.
+        Instantiate(_hitParticlesPrefab, hitPosition, Quaternion.identity);
+
+        StartCoroutine(FlashHealthCoroutine(newHealth));
 
         // Play hit sound based on health remaining.
 
-        TakeDamageObserversRpc(damage, newHealth, hitPosition, isHeadshot);
+        TakeDamageObserversRpc(damage, newHealth, isHeadshot, hitPosition);
     }
 
     [ObserversRpc (ExcludeServer = true)]
-    private void TakeDamageObserversRpc(float damage, float newHealth, Vector3 hitPostion, bool isHeadshot = false)
+    private void TakeDamageObserversRpc(float damage, float newHealth, bool isHeadshot = false, Vector3 hitPostion = new Vector3())
     {
         // Spawn damage indicator.
         var damageIndicator = Instantiate(_damageIndicatorPrefab, hitPostion, Quaternion.identity);
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.
+        Instantiate(_hitParticlesPrefab, hitPostion, Quaternion.identity);
+
+        StartCoroutine(FlashHealthCoroutine(newHealth));
 
         // Play hit sound based on health remaining.
+    }
+
+    private IEnumerator FlashHealthCoroutine(float newHealth)
+    {
+        _playerSpriteRenderer.color = new Color(1f, newHealth / 100f, newHealth / 100f);
+
+        yield return new WaitForSeconds(0.1f);
+
+        _playerSpriteRenderer.color = Color.white;
     }
 
     [Server]
@@ -269,6 +294,7 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnModeChanged(Mode mode)
     {
+        /*
         var currentRedFillAmount = _redDamagedSprite != null ? _redDamagedSprite.fillAmount : 0f;
         var currentWhiteFillAmount = _whiteDamagedSprite != null ? _whiteDamagedSprite.fillAmount : 0f;
 
@@ -291,6 +317,20 @@ public class PlayerManager : NetworkBehaviour
 
         _redDamagedSprite.fillAmount = currentRedFillAmount;
         _whiteDamagedSprite.fillAmount = currentWhiteFillAmount;
+        */
+
+        switch (mode)
+        {
+            case Mode.Sprint:
+                _abovePlayerUICanvas.transform.localPosition = new Vector3(0f, 0f, 0f);
+                break;
+            case Mode.Shoot:
+                _abovePlayerUICanvas.transform.localPosition = new Vector3(0f, 1f, 0f);
+                break;
+            case Mode.Slide:
+                _abovePlayerUICanvas.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+                break;
+        }
     }
 
     #endregion
