@@ -15,6 +15,7 @@ public class WeaponInfo : ScriptableObject
     public float FireRate;
     public float Damage;
     public float Range;
+    public float HeadshotMultiplier;
 
     public bool IsAutomatic;
 

@@ -38,7 +38,7 @@ public class PlayersManager : NetworkBehaviour
 
     #region Events
 
-    public event Action<Player, Player, WeaponInfo> OnPlayerKilled;
+    public UnityEvent<Player, Player, WeaponInfo> OnPlayerKilled;
 
     #endregion
 
@@ -137,7 +137,9 @@ public class PlayersManager : NetworkBehaviour
         var attacker = attackerConn == null ? null : _sessionManager.Players[attackerConn.ClientId];
         var damage = weapon == null ? 1000f : weapon.Damage;
 
-        damage = isHeadshot ? damage * 1.5f : damage;
+        damage = isHeadshot ? damage * weapon.HeadshotMultiplier : damage;
+
+        damage = Mathf.Floor(damage);
 
         if (target.IsDead)
             return;

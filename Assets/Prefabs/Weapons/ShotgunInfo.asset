@@ -19,6 +19,7 @@ MonoBehaviour:
   FireRate: 0.6
   Damage: 30
   Range: 8
+  HeadshotMultiplier: 1
   IsAutomatic: 1
   BulletsPerShot: 4
   SpreadAngle: 10
