@@ -2257,6 +2257,7 @@ MonoBehaviour:
   _playerController: {fileID: 6559925058770471689}
   _modeManager: {fileID: 1385860131232617773}
   _weaponManager: {fileID: 8376055070018631659}
+  _playerHealthMaterial: {fileID: 2100000, guid: 1a3751544141acf4e90dcf069d12e753, type: 2}
 --- !u!82 &-3151716298286376592
 AudioSource:
   m_ObjectHideFlags: 0

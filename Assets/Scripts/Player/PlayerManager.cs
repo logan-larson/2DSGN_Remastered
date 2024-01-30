@@ -75,6 +75,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private WeaponManager _weaponManager;
 
+    [SerializeField]
+    private Material _playerHealthMaterial;
+
     #endregion
 
     #region Private Fields
@@ -171,6 +174,8 @@ public class PlayerManager : NetworkBehaviour
 
         // White damaged sprite should be equal to MAX_HEALTH - _health.
         _whiteDamagedSprite.fillAmount = (MAX_HEALTH - _health) / 100f;
+
+        //_playerHealthMaterial.SetFloat("_FillAmount", (MAX_HEALTH / 100f));
     }
 
     #endregion
