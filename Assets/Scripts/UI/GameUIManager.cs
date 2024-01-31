@@ -20,9 +20,7 @@ public class GameUIManager : NetworkBehaviour
     {
         _pauseCanvas.SetActive(false);
 
-        // TEMP: Hide countdown canvas on start
-        //_countdownCanvas.SetActive(true);
-        _countdownCanvas.SetActive(false);
+        _countdownCanvas.SetActive(true);
 
         FirstObjectNotifier.OnFirstObjectSpawned += FirstObjectNotifier_OnFirstObjectSpawned;
     }
