@@ -176,6 +176,14 @@ public class PlayerManager : NetworkBehaviour
         SubscribeToTimeManager(false);
     }
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        //GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
+        GameManager.Instance.OnGameEnd.AddListener(OnGameEnd);
+    }
+
     #endregion
 
     #region Frame Updates
@@ -337,6 +345,22 @@ public class PlayerManager : NetworkBehaviour
                 _abovePlayerUICanvas.transform.localPosition = new Vector3(0f, -0.5f, 0f);
                 break;
         }
+    }
+
+    #endregion
+
+    #region Game State Events
+
+    private void OnGameEnd()
+    {
+        OnGameEndObserversRpc();
+    }
+
+    [ObserversRpc]
+    private void OnGameEndObserversRpc()
+    {
+        // Show the scoreboard and enable
+        GameUIManager.Instance.SetShowScoreboard(true);
     }
 
     #endregion

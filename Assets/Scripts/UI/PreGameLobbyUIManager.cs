@@ -46,4 +46,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
             playerListItemUI.SetPlayer(player);
         }
     }
+
+    public void OnStartGame()
+    {
+        _sessionManager.OnStart();
+    }
 }

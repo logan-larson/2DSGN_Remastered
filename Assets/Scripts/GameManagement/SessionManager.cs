@@ -29,6 +29,9 @@ public class SessionManager : MonoBehaviour
     [SerializeField]
     private UserInfo _userInfo;
 
+    [SerializeField]
+    private AudioListener _audioListener;
+
     #endregion
 
     #region Private Fields
@@ -183,7 +186,7 @@ public class SessionManager : MonoBehaviour
         }
         else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "OnlineGame")
         {
-            GameManager.Instance.OnGameEnd.AddListener(EndGame);
+            GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(EndGameCoroutine()));
         }
     }
 
@@ -197,6 +200,16 @@ public class SessionManager : MonoBehaviour
     private void OnSessionStateUpdateBroadcast(SessionStateUpdateBroadcast broadcast)
     {
         SessionState = broadcast.SessionState;
+
+        // Toggle the AudioListener on and off based on the session state.
+        if (SessionState == SessionState.InLobby)
+        {
+            //_audioListener.enabled = true;
+        }
+        else if (SessionState == SessionState.InGame)
+        {
+            _audioListener.enabled = false;
+        }
     }
 
     #endregion
@@ -242,6 +255,15 @@ public class SessionManager : MonoBehaviour
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
     }
 
+    public void DespawnPlayer(NetworkConnection conn)
+    {
+        // Despawn the player's nob.
+        Players[conn.ClientId].Nob.Despawn();
+
+        // Set the player's nob to null.
+        Players[conn.ClientId].Nob = null;
+    }
+
     #endregion
 
     #region Private Methods
@@ -256,32 +278,33 @@ public class SessionManager : MonoBehaviour
         onlineGameScene.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(onlineGameScene);
 
-        /*
-        SceneUnloadData preGameLobbyScene = new SceneUnloadData("PreGameLobby");
-        preGameLobbyScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
-        _networkManager.SceneManager.UnloadGlobalScenes(preGameLobbyScene);
-        */
 
         SessionState = SessionState.InGame;
 
         _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InGame });
+
+        _audioListener.enabled = false;
     }
 
     private void EndGame()
     {
         SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
         preGameLobbyScene.ReplaceScenes = ReplaceOption.All;
-        //preGameLobbyScene.PreferredActiveScene`
-        //_networkManager.SceneManager.LoadConnectionScenes(preGameLobbyScene);
         _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
 
-        //SceneUnloadData onlineGameScene = new SceneUnloadData("OnlineGame");
-        //onlineGameScene.Options.Mode = UnloadOptions.ServerUnloadMode.UnloadUnused;
-        //_networkManager.SceneManager.UnloadGlobalScenes(onlineGameScene);
 
         SessionState = SessionState.InLobby;
 
         _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobby });
+
+        //_audioListener.enabled = false;
+    }
+
+    private IEnumerator EndGameCoroutine()
+    {
+        yield return new WaitForSeconds(3);
+
+        EndGame();
     }
 
     #endregion

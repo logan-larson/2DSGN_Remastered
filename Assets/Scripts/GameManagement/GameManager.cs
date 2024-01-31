@@ -86,6 +86,11 @@ public class GameManager : NetworkBehaviour
         OnGameStart.Invoke();
 
         GameState = GameState.InGame;
+
+        // TEMP: For testing, we'll just end the game after 5 seconds.
+        yield return new WaitForSeconds(5);
+
+        OnGameEnd.Invoke();
     }
 
     [ObserversRpc]

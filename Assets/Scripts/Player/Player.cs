@@ -15,5 +15,4 @@ public class Player
     public string Username { get; set; } = "user123";
     public float Health { get; set; } = 100f;
     public bool IsDead { get; set; } = false;
-    public bool IsSpawned { get; set; } = false;
 }

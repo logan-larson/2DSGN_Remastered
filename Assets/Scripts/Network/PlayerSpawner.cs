@@ -131,7 +131,7 @@ public class PlayerSpawner : MonoBehaviour
 
     private void SpawnPlayer(NetworkConnection conn)
     {
-        if (_sessionManager.Players.TryGetValue(conn.ClientId, out Player player) && player.IsSpawned)
+        if (_sessionManager.Players.TryGetValue(conn.ClientId, out Player player) && player.Nob != null)
         {
             Debug.LogWarning($"Player {player.Username} is already spawned.");
             return;
@@ -161,7 +161,7 @@ public class PlayerSpawner : MonoBehaviour
         NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
         _networkManager.ServerManager.Spawn(nob, conn);
 
-        _sessionManager.Players[conn.ClientId].IsSpawned = true;
+        _sessionManager.Players[conn.ClientId].Nob = nob;
 
         //If there are no global scenes 
         if (_addToDefaultScene)

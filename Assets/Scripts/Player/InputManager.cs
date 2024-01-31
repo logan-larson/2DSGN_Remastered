@@ -31,6 +31,7 @@ public class InputManager : NetworkBehaviour
     private PlayerInput _playerInput;
 
     public UnityEvent TogglePause = new UnityEvent();
+    public UnityEvent ToggleScoreboard = new UnityEvent();
 
     private void Awake()
     {
@@ -104,5 +105,10 @@ public class InputManager : NetworkBehaviour
     public void OnPause(InputValue value)
     {
         TogglePause.Invoke();
+    }
+
+    public void OnScoreboard(InputValue value)
+    {
+        ToggleScoreboard.Invoke();
     }
 }
