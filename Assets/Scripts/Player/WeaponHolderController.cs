@@ -68,12 +68,21 @@ public class WeaponHolderController : NetworkBehaviour
 
     private void Start()
     {
-        _cameraController = Camera.main.GetComponent<CameraController>();
+        //_cameraController = Camera.main.GetComponent<CameraController>();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+        if (Camera.main != null)
+        {
+            _cameraController = Camera.main.GetComponent<CameraController>();
+        } else if (Camera.allCamerasCount == 1)
+        {
+            var camera = Camera.allCameras[0];
+            _cameraController = camera.GetComponent<CameraController>();
+        }
 
         SubscribeToTimeManager(true);
     }

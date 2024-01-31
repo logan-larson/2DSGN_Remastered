@@ -1,6 +1,7 @@
 using FishNet;
 using FishNet.Managing;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ public class GameManager : NetworkBehaviour
 
     #region Public Fields
 
+    [SyncVar]
     public GameState GameState;
 
     #endregion
@@ -66,6 +68,8 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
+        GameState = GameState.PreGame;
+
         int countdown = _countdownDuration;
         while (countdown > 0)
         {
@@ -80,6 +84,8 @@ public class GameManager : NetworkBehaviour
 
         // Start the game
         OnGameStart.Invoke();
+
+        GameState = GameState.InGame;
     }
 
     [ObserversRpc]
@@ -96,6 +102,8 @@ public class GameManager : NetworkBehaviour
         {
             // Game over
             OnGameEnd.Invoke();
+
+            GameState = GameState.PostGame;
         }
     }
 

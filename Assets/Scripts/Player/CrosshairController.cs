@@ -31,13 +31,27 @@ public class CrosshairController : NetworkBehaviour
     private void Start()
     {
         _crosshair = GetComponent<RectTransform>();
-
-        _cameraController = Camera.main.GetComponent<CameraController>();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+        Debug.Log("Num cameras: " + Camera.allCamerasCount);
+        if (Camera.main != null)
+        {
+            _cameraController = Camera.main.GetComponent<CameraController>();
+        }
+        else if (Camera.allCamerasCount == 1)
+        {
+            var camera = Camera.allCameras[0];
+            _cameraController = camera.GetComponent<CameraController>();
+        }
+
+        if (Camera.main != null)
+        {
+            //_cameraController = Camera.main.GetComponent<CameraController>();
+        }
 
         SubscribeToTimeManager(true);
     }
@@ -83,7 +97,7 @@ public class CrosshairController : NetworkBehaviour
 
         if (_cameraController == null || Camera.main == null)
         {
-            Debug.Log("Couldn't find camera controller or main camera");
+            Debug.Log("Couldn't find camera controller or main camera, num cameras: " + Camera.allCamerasCount);
             return;
         }
 

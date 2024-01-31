@@ -287,6 +287,7 @@ public class PlayerController : NetworkBehaviour
     /// <summary>
     /// Set to true when the player's movement should be disabled.
     /// </summary>
+    [SyncVar] [SerializeField]
     private bool _movementDisabled = false;
 
     /// <summary>
@@ -350,13 +351,13 @@ public class PlayerController : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        SubscribeToTimeManager(true);
-
-        _gameManager = GameManager.Instance;
 
         _movementDisabled = true;
 
-        _gameManager.OnGameStart.AddListener(OnGameStart);
+        GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
+        GameManager.Instance.OnGameEnd.AddListener(() => _movementDisabled = true);
+
+        SubscribeToTimeManager(true);
     }
 
     public override void OnStopServer()
@@ -375,11 +376,6 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStopClient();
         SubscribeToTimeManager(false);
-    }
-
-    private void OnGameStart()
-    {
-        _movementDisabled = false;
     }
 
     #endregion

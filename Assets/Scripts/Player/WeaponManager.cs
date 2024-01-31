@@ -128,18 +128,6 @@ public class WeaponManager : NetworkBehaviour
         }
     }
 
-    public override void OnStartNetwork()
-    {
-        base.OnStartNetwork();
-        SubscribeToTimeManager(true);
-    }
-
-    public override void OnStopNetwork()
-    {
-        base.OnStopNetwork();
-        SubscribeToTimeManager(false);
-    }
-
     #endregion
 
     #region Initialization
@@ -169,7 +157,10 @@ public class WeaponManager : NetworkBehaviour
         _playerController.OnModeChange.AddListener(OnModeChange);
 
         _instanceID = gameObject.GetInstanceID();
+
+        SubscribeToTimeManager(true);
     }
+
 
     public override void OnStopServer()
     {
@@ -177,6 +168,8 @@ public class WeaponManager : NetworkBehaviour
 
         //_playerController.OnModeChange.RemoveListener(OnModeChange);
         DropCurrentWeapon();
+
+        SubscribeToTimeManager(false);
     }
 
     // When the client starts, set the weapon pickups parent.
@@ -194,6 +187,15 @@ public class WeaponManager : NetworkBehaviour
         }
 
         _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.MovementData.Mode == Mode.Shoot);
+
+        SubscribeToTimeManager(true);
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        SubscribeToTimeManager(false);
     }
 
     #endregion
