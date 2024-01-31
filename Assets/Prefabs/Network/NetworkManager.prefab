@@ -144,7 +144,7 @@ MonoBehaviour:
   OnPlayerListUpdate:
     m_PersistentCalls:
       m_Calls: []
-  _userInfo: {fileID: 0}
+  _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
 --- !u!114 &8074955569133304615
 MonoBehaviour:
   m_ObjectHideFlags: 0

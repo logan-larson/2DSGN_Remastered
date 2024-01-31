@@ -17,6 +17,8 @@ public class WeaponHolderController : NetworkBehaviour
 
     private bool _subscribedToTimeManager = false;
 
+    private CameraController _cameraController;
+
     [SerializeField]
     private SpriteRenderer _weaponSprite;
 
@@ -64,6 +66,11 @@ public class WeaponHolderController : NetworkBehaviour
 
     #region Initialization
 
+    private void Start()
+    {
+        _cameraController = Camera.main.GetComponent<CameraController>();
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -102,6 +109,10 @@ public class WeaponHolderController : NetworkBehaviour
             _previousFlipY = flipY;
         }
 
+        if (_cameraController != null)
+        {
+            _cameraController.WeaponHolderPosition = (transform.position + transform.localPosition);
+        }
     }
 
     [ServerRpc]
@@ -119,6 +130,8 @@ public class WeaponHolderController : NetworkBehaviour
         var localShotDirection = transform.parent.InverseTransformDirection(shotDirection);
 
         Vector3 localRecoilPosition = localShotDirection * -recoil;
+
+        localRecoilPosition += _originalPosition;
 
         StartCoroutine(Recoil(localRecoilPosition, recoilRecoveryRate));
     }

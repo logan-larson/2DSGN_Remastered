@@ -25,6 +25,9 @@ public class CrosshairController : NetworkBehaviour
     [SerializeField]
     private float _sizeMultiplier = 15f;
 
+    [SerializeField]
+    private GameObject _weaponHolder;
+
     private void Start()
     {
         _crosshair = GetComponent<RectTransform>();
@@ -78,6 +81,12 @@ public class CrosshairController : NetworkBehaviour
 
         _crosshair.sizeDelta = new Vector2(size, size);
 
+        if (_cameraController == null || Camera.main == null)
+        {
+            Debug.Log("Couldn't find camera controller or main camera");
+            return;
+        }
+
         if (_inputManager.InputDevice == "Gamepad")
         {
             if (_inputManager.Aim != Vector2.zero)
@@ -88,14 +97,13 @@ public class CrosshairController : NetworkBehaviour
 
                 var aimMagnitude = Mathf.Clamp(_inputManager.Aim.magnitude * maxMagnitude, 0.25f, maxMagnitude);
 
-                _crosshair.parent.position = transform.parent.parent.position + (aimDirection * aimMagnitude);
+                // The offset is the position of the crosshair relative to the weaponholder
+                _crosshair.parent.position = _weaponHolder.transform.position + (aimDirection * aimMagnitude);
             }
         }
         else
         {
             var mousePosition = Input.mousePosition;
-
-            if (_cameraController == null || Camera.main == null) return;
 
             mousePosition.z = _cameraController.CurrentZ * -1f;
 

@@ -15,6 +15,8 @@ public class CameraController : NetworkBehaviour
 
     public Vector3 CrosshairPosition;
 
+    public Vector3 WeaponHolderPosition;
+
     #endregion
 
     #region Serialized Fields
@@ -151,11 +153,11 @@ public class CameraController : NetworkBehaviour
         // Zoom out when moving faster
         Vector3 velocity = _playerController.MovementData.Velocity;
 
-        Vector3 targetPos = _currentPlayer.position;
+        Vector3 targetPos = (_currentPlayer.position + WeaponHolderPosition) / 2f;
 
         if (_inputManager.CameraLockInput)
         {
-            targetPos = (_currentPlayer.position + CrosshairPosition) / 2f;
+            targetPos = (targetPos + CrosshairPosition) / 2f;
         }
         
         float posLerpValue = _posLerpValue;
@@ -188,7 +190,7 @@ public class CameraController : NetworkBehaviour
             lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);
         }
 
-        this.transform.SetPositionAndRotation(new Vector3(lerpedPos.x, lerpedPos.y, lerpedPos.z), lerpedRot);
+        this.transform.SetPositionAndRotation(lerpedPos, lerpedRot);
 
         CurrentZ = this.transform.position.z;
     }

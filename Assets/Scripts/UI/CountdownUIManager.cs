@@ -17,10 +17,8 @@ public class CountdownUIManager : MonoBehaviour
     {
         GameManager.Instance.OnCountdown.AddListener(OnCountdown);
 
-        _backgroundImage.gameObject.SetActive(true);
-        _countdownText.gameObject.SetActive(true);
-
-        _countdownText.text = "5";
+        _backgroundImage.gameObject.SetActive(GameManager.Instance.GameState == GameState.PreGame);
+        _countdownText.gameObject.SetActive(GameManager.Instance.GameState == GameState.PreGame);
     }
 
     private void OnCountdown(int num)

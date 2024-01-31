@@ -69,12 +69,15 @@ public class SessionManager : MonoBehaviour
 
     private void OnClientConnectionState(ClientConnectionStateArgs args)
     {
-        UsernameBroadcast usernameBroadcast = new UsernameBroadcast()
+        if (args.ConnectionState == LocalConnectionState.Started)
         {
-            Username = _userInfo.Username
-        };
+            UsernameBroadcast usernameBroadcast = new UsernameBroadcast()
+            {
+                Username = _userInfo.Username
+            };
 
-        _networkManager.ClientManager.Broadcast(usernameBroadcast);
+            _networkManager.ClientManager.Broadcast(usernameBroadcast);
+        }
     }
 
     private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
@@ -268,6 +271,8 @@ public class SessionManager : MonoBehaviour
     {
         SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
         preGameLobbyScene.ReplaceScenes = ReplaceOption.All;
+        //preGameLobbyScene.PreferredActiveScene`
+        //_networkManager.SceneManager.LoadConnectionScenes(preGameLobbyScene);
         _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
 
         //SceneUnloadData onlineGameScene = new SceneUnloadData("OnlineGame");

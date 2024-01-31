@@ -16,9 +16,19 @@ using UnityEngine.Events;
 /// </summary>
 public class GameManager : NetworkBehaviour
 {
+    #region Events 
+
     public UnityEvent<int> OnCountdown = new UnityEvent<int>();
     public UnityEvent OnGameStart = new UnityEvent();
     public UnityEvent OnGameEnd = new UnityEvent();
+
+    #endregion
+
+    #region Public Fields
+
+    public GameState GameState;
+
+    #endregion
 
     [SerializeField]
     private int _countdownDuration = 5;

@@ -2398,6 +2398,7 @@ MonoBehaviour:
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
   _playerManager: {fileID: 0}
+  _gameManager: {fileID: 0}
   Velocity: {x: 0, y: 0, z: 0}
   IsGrounded: 0
   DirectionLeft: 0
@@ -3038,6 +3039,10 @@ PrefabInstance:
       propertyPath: _inputManager
       value: 
       objectReference: {fileID: 3717805940115971261}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _weaponHolder
+      value: 
+      objectReference: {fileID: 7264720968969372115}
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _weaponManager
       value: 
