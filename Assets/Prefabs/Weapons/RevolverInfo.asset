@@ -16,9 +16,9 @@ MonoBehaviour:
   SpritePath: Sprites/Weapons/Revolver
   FireSoundPath: Sounds/Weapons/Revolver
   BulletTrailRendererPath: 
-  FireRate: 0.4
+  FireRate: 0.5
   Damage: 30
-  Range: 12
+  Range: 15
   HeadshotMultiplier: 2
   IsAutomatic: 1
   BulletsPerShot: 1
@@ -27,5 +27,5 @@ MonoBehaviour:
   BloomAngleIncreasePerShot: 0.75
   Recoil: 1
   RecoilRecoveryRate: 0.1
-  AirborneKnockback: 3
+  AirborneKnockback: 4
   MuzzleLength: 0.9

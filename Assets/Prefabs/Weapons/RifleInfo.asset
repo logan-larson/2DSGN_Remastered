@@ -17,9 +17,9 @@ MonoBehaviour:
   FireSoundPath: Sounds/Weapons/SMG
   BulletTrailRendererPath: 
   FireRate: 0.2
-  Damage: 23
+  Damage: 25
   Range: 20
-  HeadshotMultiplier: 1.75
+  HeadshotMultiplier: 1.6
   IsAutomatic: 1
   BulletsPerShot: 1
   SpreadAngle: 0

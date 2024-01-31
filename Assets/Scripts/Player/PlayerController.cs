@@ -352,10 +352,10 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
 
-        _movementDisabled = true;
+        //_movementDisabled = true;
 
-        GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
-        GameManager.Instance.OnGameEnd.AddListener(() => _movementDisabled = true);
+        //GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
+        //GameManager.Instance.OnGameEnd.AddListener(() => _movementDisabled = true);
 
         SubscribeToTimeManager(true);
     }

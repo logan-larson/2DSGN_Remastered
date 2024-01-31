@@ -1923,6 +1923,7 @@ MonoBehaviour:
   _weaponSprite: {fileID: 6571099630282843190}
   _crosshair: {fileID: 63285074913308429}
   _originalPosition: {x: 0, y: 0.5, z: 0}
+  _playerManager: {fileID: 6187821288535414075}
   _flipY: 0
 --- !u!1 &7464203539986217859
 GameObject:
@@ -2406,6 +2407,7 @@ MonoBehaviour:
   _movementProperties: {fileID: 11400000, guid: 344dda0007784ff4eab18c9031c9ed58, type: 2}
   _heaven: {fileID: 0}
   _weaponHolder: {fileID: 1374886415908552202}
+  _movementDisabled: 0
 --- !u!114 &3276682624696573865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3141,6 +3143,10 @@ PrefabInstance:
       propertyPath: _weaponHolder
       value: 
       objectReference: {fileID: 7264720968969372115}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _playerManager
+      value: 
+      objectReference: {fileID: 6187821288535414075}
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _weaponManager
       value: 

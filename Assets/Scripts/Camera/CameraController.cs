@@ -137,6 +137,8 @@ public class CameraController : NetworkBehaviour
         // Set the local script references to the set player's script references
         _playerController = _currentPlayer.GetComponent<PlayerController>();
         _inputManager = _currentPlayer.GetComponent<InputManager>();
+
+        _currentPlayer.GetComponent<PlayerManager>().SetCamera(GetComponent<Camera>());
     }
 
     public void ResetToLocal()

@@ -30,6 +30,12 @@ public class PlayerManager : NetworkBehaviour
     {
     }
 
+    #region Public
+
+    public Camera Camera { get; private set; } = null;
+
+    #endregion
+
     #region Constants
 
     const float MAX_HEALTH = 100f;
@@ -336,6 +342,14 @@ public class PlayerManager : NetworkBehaviour
     #endregion
 
     #region Camera
+
+    public void SetCamera(Camera camera)
+    {
+        if (!base.IsOwner)
+            return;
+
+        Camera = camera;
+    }
 
     [TargetRpc]
     public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)

@@ -10,6 +10,9 @@ public class CrosshairController : NetworkBehaviour
     private RectTransform _crosshair;
 
     [SerializeField]
+    private PlayerManager _playerManager;
+
+    [SerializeField]
     private WeaponManager _weaponManager;
 
     private CameraController _cameraController;
@@ -37,20 +40,26 @@ public class CrosshairController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        Debug.Log("Num cameras: " + Camera.allCamerasCount);
+        if (!base.IsOwner) return;
+
+
+        // Camera setup hullabaloo
+
         if (Camera.main != null)
         {
             _cameraController = Camera.main.GetComponent<CameraController>();
         }
-        else if (Camera.allCamerasCount == 1)
-        {
-            var camera = Camera.allCameras[0];
-            _cameraController = camera.GetComponent<CameraController>();
-        }
 
-        if (Camera.main != null)
+        if (_cameraController == null)
         {
-            //_cameraController = Camera.main.GetComponent<CameraController>();
+            if (_playerManager.Camera == null)
+            {
+                StartCoroutine(WaitForCamera());
+            }
+            else
+            {
+                _cameraController = _playerManager.Camera.GetComponent<CameraController>();
+            }
         }
 
         SubscribeToTimeManager(true);
@@ -61,6 +70,17 @@ public class CrosshairController : NetworkBehaviour
         base.OnStopClient();
 
         SubscribeToTimeManager(false);
+    }
+
+    private IEnumerator WaitForCamera()
+    {
+        if (_playerManager.Camera == null)
+        {
+            Debug.Log("Waiting for camera");
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        _cameraController = _playerManager.Camera.GetComponent<CameraController>();
     }
 
     #region Time Management
@@ -95,7 +115,7 @@ public class CrosshairController : NetworkBehaviour
 
         _crosshair.sizeDelta = new Vector2(size, size);
 
-        if (_cameraController == null || Camera.main == null)
+        if (_cameraController == null)
         {
             Debug.Log("Couldn't find camera controller or main camera, num cameras: " + Camera.allCamerasCount);
             return;
@@ -105,6 +125,7 @@ public class CrosshairController : NetworkBehaviour
         {
             if (_inputManager.Aim != Vector2.zero)
             {
+                //var aimDirection = _cameraController.transform.rotation * _inputManager.Aim.normalized;
                 var aimDirection = Camera.main.transform.rotation * _inputManager.Aim.normalized;
 
                 var maxMagnitude = _inputManager.CameraLockInput ? 10f : 5f;

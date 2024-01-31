@@ -28,6 +28,9 @@ public class WeaponHolderController : NetworkBehaviour
     [SerializeField]
     private Vector3 _originalPosition;
 
+    [SerializeField]
+    private PlayerManager _playerManager;
+
     #endregion
 
     private bool _previousFlipY = false;
@@ -66,11 +69,6 @@ public class WeaponHolderController : NetworkBehaviour
 
     #region Initialization
 
-    private void Start()
-    {
-        //_cameraController = Camera.main.GetComponent<CameraController>();
-    }
-
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -78,10 +76,18 @@ public class WeaponHolderController : NetworkBehaviour
         if (Camera.main != null)
         {
             _cameraController = Camera.main.GetComponent<CameraController>();
-        } else if (Camera.allCamerasCount == 1)
+        }
+
+        if (_cameraController == null)
         {
-            var camera = Camera.allCameras[0];
-            _cameraController = camera.GetComponent<CameraController>();
+            if (_playerManager.Camera == null)
+            {
+                StartCoroutine(WaitForCamera());
+            }
+            else
+            {
+                _cameraController = _playerManager.Camera.GetComponent<CameraController>();
+            }
         }
 
         SubscribeToTimeManager(true);
@@ -92,6 +98,17 @@ public class WeaponHolderController : NetworkBehaviour
         base.OnStopClient();
 
         SubscribeToTimeManager(false);
+    }
+
+    private IEnumerator WaitForCamera()
+    {
+        if (_playerManager.Camera == null)
+        {
+            Debug.Log("Waiting for camera");
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        _cameraController = _playerManager.Camera.GetComponent<CameraController>();
     }
 
     #endregion

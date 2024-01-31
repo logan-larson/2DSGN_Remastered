@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ServerInfo
   m_EditorClassIdentifier: 
   Address: localhost
-  Port: 7770
+  Port: 7771
