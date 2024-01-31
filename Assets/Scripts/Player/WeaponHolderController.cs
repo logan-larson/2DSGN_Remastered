@@ -111,7 +111,7 @@ public class WeaponHolderController : NetworkBehaviour
 
         if (_cameraController != null)
         {
-            _cameraController.WeaponHolderPosition = (transform.position + transform.localPosition);
+            _cameraController.WeaponHolderPosition = (transform.position + transform.parent.TransformDirection(transform.localPosition));
         }
     }
 

@@ -62,6 +62,9 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private AudioSource _headshotSound;
 
+    [SerializeField]
+    private AudioSource _shotSound;
+
     #endregion
 
     #region Private Fields
@@ -660,7 +663,15 @@ public class WeaponManager : NetworkBehaviour
         if (weaponInfo.FireSoundPath != null)
         {
             AudioClip shotSound = Resources.Load<AudioClip>(weaponInfo.FireSoundPath);
-            AudioSource.PlayClipAtPoint(shotSound, origin);
+            if (base.IsOwner)
+            {
+                _shotSound.clip = shotSound;
+                _shotSound.PlayOneShot(shotSound);
+            }
+            else
+            {
+                AudioSource.PlayClipAtPoint(shotSound, origin);
+            }
         }
 
         StartCoroutine(ShootCoroutine(origin, direction, distance, bulletTrail, hitSomething));
