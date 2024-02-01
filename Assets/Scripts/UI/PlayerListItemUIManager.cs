@@ -6,10 +6,42 @@ using UnityEngine;
 public class PlayerListItemUIManager : MonoBehaviour
 {
     [SerializeField]
+    private TMP_Text _placeText;
+
+    [SerializeField]
     private TMP_Text _usernameText;
 
-    public void SetPlayer(Player player)
+    [SerializeField]
+    private TMP_Text _killsText;
+
+    [SerializeField]
+    private TMP_Text _deathsText;
+
+    [SerializeField]
+    private TMP_Text _assistsText;
+
+    [SerializeField]
+    private TMP_Text _scoreText;
+
+
+    public void SetPlayer(Player player, int place)
     {
-        _usernameText.text = player.Username;
+        if (_placeText != null)
+            _placeText.text = place.ToString();
+
+        if (_usernameText != null)
+            _usernameText.text = player.Username;
+
+        if (_killsText != null)
+            _killsText.text = player.Kills.ToString();
+
+        if (_deathsText != null)
+            _deathsText.text = player.Deaths.ToString();
+
+        if (_assistsText != null)
+            _assistsText.text = player.Assists.ToString();
+
+        if (_scoreText != null)
+            _scoreText.text = player.Score.ToString();
     }
 }

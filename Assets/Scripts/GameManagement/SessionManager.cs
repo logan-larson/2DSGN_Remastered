@@ -22,6 +22,10 @@ public class SessionManager : MonoBehaviour
 
     public SessionState SessionState { get; private set; } = SessionState.InLobby;
 
+    public GameMode GameMode { get; private set; } = GameMode.SoloDeathmatch;
+
+    public UnityEvent<GameModeUpdateBroadcast> OnGameModeUpdate = new UnityEvent<GameModeUpdateBroadcast>();
+
     #endregion
 
     #region Serialized Fields
@@ -61,11 +65,13 @@ public class SessionManager : MonoBehaviour
 
         _networkManager.ServerManager.RegisterBroadcast<UsernameBroadcast>(OnUsernameBroadcast, false);
         _networkManager.ServerManager.RegisterBroadcast<StartGameBroadcast>(OnStartGameBroadcast, false);
+        _networkManager.ServerManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcastServer, false);
 
         // Client broadcast receivers
 
         _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<SessionStateUpdateBroadcast>(OnSessionStateUpdateBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcast);
     }
 
     #endregion
@@ -151,6 +157,8 @@ public class SessionManager : MonoBehaviour
 
     private void OnLoadEnd(SceneLoadEndEventArgs args)
     {
+        if (args.LoadedScenes.Length == 0) return;
+
         if (args.LoadedScenes[0].name == "PreGameLobby")
         {
             //SessionState = SessionState.InLobby;
@@ -171,6 +179,8 @@ public class SessionManager : MonoBehaviour
         else if (args.LoadedScenes[0].name == "OnlineGame")
         {
             GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(PostGameCoroutine()));
+
+            PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
         }
     }
 
@@ -188,6 +198,14 @@ public class SessionManager : MonoBehaviour
         OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
 
         _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+
+        // For good measure, send an update for the current game mode.
+        GameModeUpdateBroadcast gameModeUpdateBroadcast = new GameModeUpdateBroadcast()
+        {
+            GameMode = GameMode
+        };
+
+        _networkManager.ServerManager.Broadcast(gameModeUpdateBroadcast);
     }
 
     #region Client Broadcast Receivers
@@ -210,6 +228,13 @@ public class SessionManager : MonoBehaviour
         {
             _audioListener.enabled = false;
         }
+    }
+
+    private void OnGameModeUpdateBroadcast(GameModeUpdateBroadcast broadcast)
+    {
+        GameMode = broadcast.GameMode;
+
+        OnGameModeUpdate.Invoke(broadcast);
     }
 
     #endregion
@@ -239,6 +264,19 @@ public class SessionManager : MonoBehaviour
         OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
     }
 
+    // Broadcast received from host when the game mode is updated.
+    private void OnGameModeUpdateBroadcastServer(NetworkConnection conn, GameModeUpdateBroadcast broadcast)
+    {
+        // Set the game mode.
+        GameMode = broadcast.GameMode;
+
+        // Let other server components know that the game mode has been updated.
+        OnGameModeUpdate.Invoke(broadcast);
+
+        // Broadcast the game mode update to all clients.
+        _networkManager.ServerManager.Broadcast(broadcast);
+    }
+
     #endregion
 
     #endregion
@@ -253,6 +291,19 @@ public class SessionManager : MonoBehaviour
         // Broadcast to the server to start the game.
         StartGameBroadcast startGameBroadcast = new StartGameBroadcast();
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
+    }
+
+    /// <summary>
+    /// Called by the host when the gamemode is updated.
+    /// </summary>
+    public void UpdateGameMode(GameMode gameMode)
+    {
+        GameModeUpdateBroadcast gameModeUpdateBroadcast = new GameModeUpdateBroadcast()
+        {
+            GameMode = gameMode
+        };
+
+        _networkManager.ClientManager.Broadcast(gameModeUpdateBroadcast);
     }
 
     public void DespawnPlayer(NetworkConnection conn)
@@ -307,6 +358,28 @@ public class SessionManager : MonoBehaviour
         ReturnToLobby();
     }
 
+    private void OnPlayerKilled(Player target, Player attacker, WeaponInfo weaponInfo)
+    {
+        if (attacker == null) return;
+
+        // Update the target's deaths.
+        Players[target.Connection.ClientId].Deaths++;
+
+        // Update the attacker's kills.
+        Players[attacker.Connection.ClientId].Kills++;
+
+        // Broadcast a player list update to all clients.
+        PlayerListUpdateBroadcast playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+        {
+            IsAdd = false,
+            IsRemove = false,
+            IsUpdate = true,
+            Players = Players
+        };
+
+        _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+    }
+
     #endregion
 }
 
@@ -337,4 +410,17 @@ public enum SessionState
 {
     InLobby,
     InGame
+}
+
+public enum GameMode
+{
+    SoloDeathmatch, // Free for all
+    DuoDeathmatch, // 2v2v2v2
+    TrioDeathmatch, // 3v3v3
+    TripleThreat // 3v3v3 with the combined objectives of Capture the Flag and King of the Hill
+}
+
+public struct GameModeUpdateBroadcast : IBroadcast
+{
+    public GameMode GameMode;
 }

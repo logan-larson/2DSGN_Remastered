@@ -15,4 +15,13 @@ public class Player
     public string Username { get; set; } = "user123";
     public float Health { get; set; } = 100f;
     public bool IsDead { get; set; } = false;
+
+
+    // Players Manager things
+    public int Kills { get; set; } = 0;
+    public int Deaths { get; set; } = 0;
+
+    public int Assists { get; set; } = 0;
+    public int Score { get; set; } = 0;
+
 }

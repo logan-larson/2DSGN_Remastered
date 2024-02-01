@@ -37,13 +37,16 @@ public class PreGameLobbyUIManager : MonoBehaviour
             Destroy(_playerListContainer.transform.GetChild(i).gameObject);
         }
 
+        int place = 1;
         foreach (var player in broadcast.Players.Values)
         {
             var playerListItem = Instantiate(_playerListItemPrefab, _playerListContainer.transform);
 
             var playerListItemUI = playerListItem.GetComponent<PlayerListItemUIManager>();
 
-            playerListItemUI.SetPlayer(player);
+            playerListItemUI.SetPlayer(player, place);
+
+            place++;
         }
     }
 

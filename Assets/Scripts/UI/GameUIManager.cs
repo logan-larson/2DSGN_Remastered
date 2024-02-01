@@ -18,8 +18,36 @@ public class GameUIManager : NetworkBehaviour
     [SerializeField]
     private GameObject _countdownCanvas;
 
+    // Scoreboard and Score leader canvas for different game modes
+
+    // - Solo Deathmatch
     [SerializeField]
-    private GameObject _scoreboardCanvas;
+    private GameObject _soloScoreboardCanvas;
+    [SerializeField]
+    private GameObject _soloScoreLeaderCanvas;
+
+    // - Duo Deathmatch
+    [SerializeField]
+    private GameObject _duoScoreboardCanvas;
+    [SerializeField]
+    private GameObject _duoScoreLeaderCanvas;
+
+    // - Trio Deathmatch
+    [SerializeField]
+    private GameObject _trioScoreboardCanvas;
+    [SerializeField]
+    private GameObject _trioScoreLeaderCanvas;
+
+    // - Triple Threat
+    [SerializeField]
+    private GameObject _tripleThreatScoreboardCanvas;
+    [SerializeField]
+    private GameObject _tripleThreatScoreLeaderCanvas;
+
+    // Current Scoreboard and Score leader canvas
+
+    private GameObject _currentScoreboardCanvas;
+    private GameObject _currentScoreLeaderCanvas;
 
     #endregion
 
@@ -52,7 +80,7 @@ public class GameUIManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        var networkManager = GameObject.Find("NetworkManager");
+        var networkManager = InstanceFinder.NetworkManager;
 
         if (networkManager == null)
         {
@@ -61,6 +89,85 @@ public class GameUIManager : NetworkBehaviour
         }
 
         _sessionManager = networkManager.GetComponent<SessionManager>();
+
+        if (_sessionManager == null)
+        {
+            Debug.LogError("SessionManager not found.");
+            return;
+        }
+
+        switch (_sessionManager.GameMode)
+        {
+            case GameMode.SoloDeathmatch:
+                _currentScoreboardCanvas = _soloScoreboardCanvas;
+                _currentScoreLeaderCanvas = _soloScoreLeaderCanvas;
+                break;
+            case GameMode.DuoDeathmatch:
+                _currentScoreboardCanvas = _duoScoreboardCanvas;
+                _currentScoreLeaderCanvas = _duoScoreLeaderCanvas;
+                break;
+            case GameMode.TrioDeathmatch:
+                _currentScoreboardCanvas = _trioScoreboardCanvas;
+                _currentScoreLeaderCanvas = _trioScoreLeaderCanvas;
+                break;
+            case GameMode.TripleThreat:
+                _currentScoreboardCanvas = _tripleThreatScoreboardCanvas;
+                _currentScoreLeaderCanvas = _tripleThreatScoreLeaderCanvas;
+                break;
+        }
+
+        if (_currentScoreboardCanvas != null)
+            _currentScoreboardCanvas.SetActive(false);
+
+        if (_currentScoreLeaderCanvas != null)
+            _currentScoreLeaderCanvas.SetActive(true);
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        var networkManager = InstanceFinder.NetworkManager;
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetworkManager not found.");
+            return;
+        }
+
+        _sessionManager = networkManager.GetComponent<SessionManager>();
+
+        if (_sessionManager == null)
+        {
+            Debug.LogError("SessionManager not found.");
+            return;
+        }
+
+        switch (_sessionManager.GameMode)
+        {
+            case GameMode.SoloDeathmatch:
+                _currentScoreboardCanvas = _soloScoreboardCanvas;
+                _currentScoreLeaderCanvas = _soloScoreLeaderCanvas;
+                break;
+            case GameMode.DuoDeathmatch:
+                _currentScoreboardCanvas = _duoScoreboardCanvas;
+                _currentScoreLeaderCanvas = _duoScoreLeaderCanvas;
+                break;
+            case GameMode.TrioDeathmatch:
+                _currentScoreboardCanvas = _trioScoreboardCanvas;
+                _currentScoreLeaderCanvas = _trioScoreLeaderCanvas;
+                break;
+            case GameMode.TripleThreat:
+                _currentScoreboardCanvas = _tripleThreatScoreboardCanvas;
+                _currentScoreLeaderCanvas = _tripleThreatScoreLeaderCanvas;
+                break;
+        }
+
+        if (_currentScoreboardCanvas != null)
+            _currentScoreboardCanvas.SetActive(false);
+
+        if (_currentScoreLeaderCanvas != null)
+            _currentScoreLeaderCanvas.SetActive(true);
     }
 
     private void OnDestroy()
@@ -79,24 +186,25 @@ public class GameUIManager : NetworkBehaviour
 
     #endregion
 
-    private void TogglePause()
-    {
-        _pauseCanvas.SetActive(!_pauseCanvas.activeSelf);
-    }
+    #region Scoreboard Methods
 
     private void ToggleScoreboard()
     {
-        SetShowScoreboard(!_scoreboardCanvas.activeSelf);
+        SetShowScoreboard(!_currentScoreboardCanvas.activeSelf);
     }
 
     public void SetShowScoreboard(bool isShown)
     {
-        _scoreboardCanvas.SetActive(isShown);
+        _currentScoreboardCanvas.SetActive(isShown);
     }
 
+    #endregion
+
+    // DEPRECATED: The player does not have control over returning to the lobby now.
+    // The game will automatically return to the lobby after the game ends.
     public void OnReturnToLobby()
     {
-        _scoreboardCanvas.SetActive(false);
+        _currentScoreboardCanvas.SetActive(false);
 
         // Destroy the owner's player object
         NetworkConnection playerConn = _playerManager.LocalConnection;
@@ -127,6 +235,13 @@ public class GameUIManager : NetworkBehaviour
         // TargetRpc to the player to load the lobby scene??
     }
 
+    #region Pause Menu Methods
+
+    private void TogglePause()
+    {
+        _pauseCanvas.SetActive(!_pauseCanvas.activeSelf);
+    }
+
     public void OnLeaveGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
@@ -136,5 +251,7 @@ public class GameUIManager : NetworkBehaviour
     {
         _pauseCanvas.SetActive(false);
     }
+
+    #endregion
 
 }
