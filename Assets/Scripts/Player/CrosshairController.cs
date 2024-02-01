@@ -40,7 +40,11 @@ public class CrosshairController : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!base.IsOwner) return;
+        if (!base.IsOwner)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
 
 
         // Camera setup hullabaloo

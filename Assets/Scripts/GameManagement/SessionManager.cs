@@ -178,6 +178,13 @@ public class SessionManager : MonoBehaviour
         }
         else if (args.LoadedScenes[0].name == "OnlineGame")
         {
+            // Reset the kills and deaths of all players.
+            foreach (var player in Players.Values)
+            {
+                player.Kills = 0;
+                player.Deaths = 0;
+            }
+
             GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(PostGameCoroutine()));
 
             PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);

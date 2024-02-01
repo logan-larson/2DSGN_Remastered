@@ -57,9 +57,6 @@ public class PlayerManager : NetworkBehaviour
     private GameObject _jumpPredictionLine;
 
     [SerializeField]
-    private GameObject _crosshair;
-
-    [SerializeField]
     private GameObject _damageIndicatorPrefab;
 
     [SerializeField]
@@ -147,9 +144,6 @@ public class PlayerManager : NetworkBehaviour
         {
             // Disable the jump prediction line.
             _jumpPredictionLine.SetActive(false);
-            
-            // Disable the crosshair.
-            _crosshair.SetActive(false);
 
             _audioListener.SetActive(false);
         }
@@ -273,7 +267,7 @@ public class PlayerManager : NetworkBehaviour
         _playerController.OverrideTransform(heaven.position, heaven.rotation);
 
         // Set the player's camera to follow the killer.
-        if (killer != null && Camera.main.TryGetComponent(out CameraController cameraController))
+        if (killer != null && base.IsHost && Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.SetPlayer(killer.transform, false);
         }

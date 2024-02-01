@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerListContainer: {fileID: 1833889051}
-  _playerListItemPrefab: {fileID: 7539890754506815417, guid: d25762078dd41504fbf60b5740d5d0d2, type: 3}
+  _playerListItemPrefab: {fileID: 7418395983538037299, guid: 95efb63660ee8a74dbf5fc3f661732cf, type: 3}
 --- !u!1 &970356994
 GameObject:
   m_ObjectHideFlags: 0

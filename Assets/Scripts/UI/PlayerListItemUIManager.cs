@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerListItemUIManager : MonoBehaviour
 {
+    [SerializeField]
+    private Image _background;
+
     [SerializeField]
     private TMP_Text _placeText;
 
@@ -43,5 +47,10 @@ public class PlayerListItemUIManager : MonoBehaviour
 
         if (_scoreText != null)
             _scoreText.text = player.Score.ToString();
+
+        if (place % 2 == 0)
+            _background.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+        else
+            _background.color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
     }
 }

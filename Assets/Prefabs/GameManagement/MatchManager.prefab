@@ -114,5 +114,5 @@ MonoBehaviour:
       m_Calls: []
   GameState: 0
   _countdownDuration: 6
-  _killsToWin: 3
-  _gameEndOverrideTime: 4
+  _killsToWin: 5
+  _gameEndOverrideTime: -1

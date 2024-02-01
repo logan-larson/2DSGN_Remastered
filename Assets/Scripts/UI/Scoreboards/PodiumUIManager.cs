@@ -22,10 +22,27 @@ public class PodiumUIManager : MonoBehaviour
         _thirdText.text = "";
     }
 
-    public void SetPodium(string first, string second = "", string third = "")
+    public void ResetPodium()
     {
-        _firstText.text = first;
-        _secondText.text = second;
-        _thirdText.text = third;
+        _firstText.text = "";
+        _secondText.text = "";
+        _thirdText.text = "";
+    }
+
+    public void SetPlace(int place, string username)
+    {
+        switch (place)
+        {
+            case 1:
+                _firstText.text = username;
+                break;
+            case 2:
+                _secondText.text = username;
+                break;
+            case 3:
+                _thirdText.text = username;
+                break;
+        }
+
     }
 }

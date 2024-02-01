@@ -18,6 +18,24 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
 
     private SessionManager _sessionManager;
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        var networkManager = InstanceFinder.NetworkManager;
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetworkManager not found.");
+            return;
+        }
+
+        // Find the session manager and listen for player list updates
+        _sessionManager = networkManager.GetComponent<SessionManager>();
+
+        _sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerListServer);
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -36,6 +54,20 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
         _sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerList);
     }
 
+    [Server]
+    private void UpdatePlayerListServer(PlayerListUpdateBroadcast broadcast)
+    {
+        UpdatePlayerList(broadcast);
+
+        UpdatePlayerListObserversRpc(broadcast);
+    }
+
+    [ObserversRpc]
+    private void UpdatePlayerListObserversRpc(PlayerListUpdateBroadcast broadcast)
+    {
+        UpdatePlayerList(broadcast);
+    }
+
     private void UpdatePlayerList(PlayerListUpdateBroadcast broadcast)
     {
         // Clear the player list but leave the headers
@@ -50,6 +82,8 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
 
         players.Sort((x, y) => y.Kills.CompareTo(x.Kills));
 
+        _podium.ResetPodium();
+
         int place = 1;
         foreach (var player in players)
         {
@@ -59,25 +93,10 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
 
             playerUIManager.SetPlayer(player, place);
 
-            place++;
-        }
+            if (place <= 3)
+                _podium.SetPlace(place, player.Username);
 
-        // Maybe this could be cleaner, don't care rn
-        if (players.Count >= 3)
-        {
-            _podium.SetPodium(players[0].Username, players[1].Username, players[2].Username);
-        }
-        else if (players.Count == 2)
-        {
-            _podium.SetPodium(players[0].Username, players[1].Username, "");
-        }
-        else if (players.Count == 1)
-        {
-            _podium.SetPodium(players[0].Username, "", "");
-        }
-        else
-        {
-            _podium.SetPodium("", "", "");
+            place++;
         }
     }
 }
