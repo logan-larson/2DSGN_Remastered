@@ -213,7 +213,8 @@ public class PlayerManager : NetworkBehaviour
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.
-        Instantiate(_hitParticlesPrefab, hitPosition, Quaternion.identity);
+        var hitParticles = Instantiate(_hitParticlesPrefab, hitPosition, Quaternion.identity);
+        Destroy(hitParticles, 2f);
 
         StartCoroutine(FlashHealthCoroutine(newHealth));
 
@@ -230,7 +231,8 @@ public class PlayerManager : NetworkBehaviour
         damageIndicator.GetComponent<DamageIndicatorManager>().Initialize((int)damage, newHealth, isHeadshot);
 
         // Spawn hit particles.
-        Instantiate(_hitParticlesPrefab, hitPostion, Quaternion.identity);
+        var hitParticles = Instantiate(_hitParticlesPrefab, hitPostion, Quaternion.identity);
+        Destroy(hitParticles, 2f);
 
         StartCoroutine(FlashHealthCoroutine(newHealth));
 

@@ -63,7 +63,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 0
+  <PrefabId>k__BackingField: 3
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
@@ -114,4 +114,4 @@ MonoBehaviour:
       m_Calls: []
   GameState: 0
   _countdownDuration: 6
-  _killsToWin: 5
+  _killsToWin: 3

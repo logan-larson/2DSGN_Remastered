@@ -38,6 +38,9 @@ public class GameManager : NetworkBehaviour
     [SerializeField]
     private int _killsToWin = 5;
 
+    [SerializeField]
+    private int _gameEndOverrideTime = -1;
+
     private int _currentKills = 0;
 
     private NetworkManager _networkManager;
@@ -89,11 +92,14 @@ public class GameManager : NetworkBehaviour
 
 
         // TEMP: For now, we'll just end the game after 5 seconds.
-        yield return new WaitForSeconds(5);
+        if (_gameEndOverrideTime != -1)
+        {
+            yield return new WaitForSeconds(_gameEndOverrideTime);
 
-        OnGameEnd.Invoke();
+            OnGameEnd.Invoke();
 
-        GameState = GameState.PostGame;
+            GameState = GameState.PostGame;
+        }
     }
 
     [ObserversRpc]
