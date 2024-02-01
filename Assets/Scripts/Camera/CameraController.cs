@@ -57,6 +57,8 @@ public class CameraController : NetworkBehaviour
     /// </summary>
     private Transform _clientPlayer = null;
 
+    private bool _playerIsLocal = false;
+
     /// <summary>
     /// Whether or not this client is subscribed to the time manager.
     /// </summary>
@@ -89,7 +91,7 @@ public class CameraController : NetworkBehaviour
     {
         _clientPlayer = obj;
 
-        SetPlayer(_clientPlayer);
+        SetPlayer(_clientPlayer, true);
     }
 
     #endregion
@@ -130,9 +132,11 @@ public class CameraController : NetworkBehaviour
 
     #endregion
 
-    public void SetPlayer(Transform player)
+    public void SetPlayer(Transform player, bool isLocal)
     {
         _currentPlayer = player;
+
+        _playerIsLocal = isLocal;
 
         // Set the local script references to the set player's script references
         _playerController = _currentPlayer.GetComponent<PlayerController>();
@@ -143,7 +147,9 @@ public class CameraController : NetworkBehaviour
 
     public void ResetToLocal()
     {
-        SetPlayer(_clientPlayer);
+        _playerIsLocal = true;
+
+        SetPlayer(_clientPlayer, true);
     }
 
 
@@ -155,9 +161,12 @@ public class CameraController : NetworkBehaviour
         // Zoom out when moving faster
         Vector3 velocity = _playerController.MovementData.Velocity;
 
-        Vector3 targetPos = (_currentPlayer.position + WeaponHolderPosition) / 2f;
+        Vector3 targetPos = _currentPlayer.position;
+        
+        if (_playerIsLocal)
+         targetPos = (_currentPlayer.position + WeaponHolderPosition) / 2f;
 
-        if (_inputManager.CameraLockInput)
+        if (_inputManager.CameraLockInput && _playerIsLocal)
         {
             targetPos = (targetPos + CrosshairPosition) / 2f;
         }

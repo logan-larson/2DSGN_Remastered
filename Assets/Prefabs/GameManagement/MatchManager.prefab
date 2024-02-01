@@ -115,3 +115,4 @@ MonoBehaviour:
   GameState: 0
   _countdownDuration: 6
   _killsToWin: 3
+  _gameEndOverrideTime: 4

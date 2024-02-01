@@ -41,7 +41,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField]
     private int _gameEndOverrideTime = -1;
 
-    private int _currentKills = 0;
+    //private int _currentKills = 0;
 
     private NetworkManager _networkManager;
 
@@ -127,10 +127,8 @@ public class GameManager : NetworkBehaviour
 
     private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)
     {
-        for (int i = 0; i < broadcast.Players.Count; i++)
+        foreach (var player in broadcast.Players.Values)
         {
-            var player = broadcast.Players[i];
-
             if (player.Kills >= _killsToWin)
             {
                 // Game over

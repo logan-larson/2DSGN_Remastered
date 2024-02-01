@@ -275,10 +275,10 @@ public class PlayerManager : NetworkBehaviour
         // Set the player's camera to follow the killer.
         if (killer != null && Camera.main.TryGetComponent(out CameraController cameraController))
         {
-            cameraController.SetPlayer(killer.transform);
+            cameraController.SetPlayer(killer.transform, false);
         }
 
-        SetPlayerToFollowTargetRpc(targetConn, killer);
+        SetPlayerToFollowTargetRpc(targetConn, killer, false);
 
         OnDeathObserversRpc(deathIndicatorPosition);
     }
@@ -298,14 +298,14 @@ public class PlayerManager : NetworkBehaviour
 
         IsDead = false;
 
+        _health = MAX_HEALTH;
+
         if (Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.ResetToLocal();
         }
 
-        _health = MAX_HEALTH;
-
-        SetPlayerToFollowTargetRpc(player.Connection, player.Nob);
+        SetPlayerToFollowTargetRpc(player.Connection, player.Nob, true);
     }
 
     private void OnModeChanged(Mode mode)
@@ -378,11 +378,11 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [TargetRpc]
-    public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target)
+    public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target, bool isLocal)
     {
         if (target != null && Camera.main.TryGetComponent(out CameraController cameraController))
         {
-            cameraController.SetPlayer(target.transform);
+            cameraController.SetPlayer(target.transform, isLocal);
         }
     }
 
