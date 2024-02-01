@@ -83,9 +83,6 @@ public class WeaponManager : NetworkBehaviour
 
     private float _bloomTimer = 0.0f;
 
-    [SyncVar]
-    private int _instanceID = -1;
-
     #endregion
 
     #region Script References
@@ -155,8 +152,6 @@ public class WeaponManager : NetworkBehaviour
         _weaponHolder.GetChild(0).gameObject.SetActive(_playerController.MovementData.Mode == Mode.Shoot);
 
         _playerController.OnModeChange.AddListener(OnModeChange);
-
-        _instanceID = gameObject.GetInstanceID();
 
         SubscribeToTimeManager(true);
     }
@@ -556,7 +551,7 @@ public class WeaponManager : NetworkBehaviour
         PreciseTick pt = base.TimeManager.GetPreciseTick(base.TimeManager.LastPacketTick);
 
         // -- Shoot on server -- 
-        FireServer(pt, CurrentWeaponInfo, transform.position, bulletSpawnPosition, bulletDirections, _instanceID);
+        FireServer(pt, CurrentWeaponInfo, transform.position, bulletSpawnPosition, bulletDirections, base.LocalConnection);
 
         // -- Increase bloom --
         AddBloom();
@@ -566,7 +561,7 @@ public class WeaponManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void FireServer(PreciseTick pt, WeaponInfo weapon, Vector3 playerPosition, Vector3 bulletSpawnPosition, Vector3[] bulletDirections, int instanceID)
+    public void FireServer(PreciseTick pt, WeaponInfo weapon, Vector3 playerPosition, Vector3 bulletSpawnPosition, Vector3[] bulletDirections, NetworkConnection shooterConn)
     {
         if (weapon == null) return;
 
@@ -615,7 +610,7 @@ public class WeaponManager : NetworkBehaviour
             RaycastHit2D barrelStuff = Physics2D.Raycast(playerPosition, bulletDirections[i], weapon.MuzzleLength, LayerMask.GetMask("Obstacle"));
 
             // -- Damage the players --
-            NetworkConnection recentHit = null;
+            int recentHitID = -1;
 
             foreach (RaycastHit2D hit in hits)
             {
@@ -629,13 +624,11 @@ public class WeaponManager : NetworkBehaviour
 
                     var player = hit.transform.gameObject.GetComponentInParent<PlayerController>().gameObject;
 
-                    //if (player.gameObject.GetInstanceID() == instanceID) continue;
-
                     var nob = player.GetComponent<NetworkObject>();
 
-                    if (nob.Owner == base.Owner || nob.LocalConnection == recentHit) continue;
+                    if (nob.Owner == base.Owner || nob.Owner.ClientId == recentHitID) continue;
 
-                    recentHit = nob.LocalConnection;
+                    recentHitID = nob.Owner.ClientId;
 
                     // -- Damage the player --
                     //PlayerManager.Instance.DamagePlayer(nob.Owner, weapon.Damage, gameObject.GetInstanceID(), weapon.Name, nob.LocalConnection);
