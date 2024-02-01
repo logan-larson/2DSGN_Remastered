@@ -62,6 +62,22 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
             place++;
         }
 
-
+        // Maybe this could be cleaner, don't care rn
+        if (players.Count >= 3)
+        {
+            _podium.SetPodium(players[0].Username, players[1].Username, players[2].Username);
+        }
+        else if (players.Count == 2)
+        {
+            _podium.SetPodium(players[0].Username, players[1].Username, "");
+        }
+        else if (players.Count == 1)
+        {
+            _podium.SetPodium(players[0].Username, "", "");
+        }
+        else
+        {
+            _podium.SetPodium("", "", "");
+        }
     }
 }

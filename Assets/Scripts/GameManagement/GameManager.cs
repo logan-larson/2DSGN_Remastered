@@ -45,7 +45,7 @@ public class GameManager : NetworkBehaviour
 
     private NetworkManager _networkManager;
 
-    //private SessionManager _sessionManager;
+    private SessionManager _sessionManager;
 
     public static GameManager Instance;
 
@@ -59,7 +59,9 @@ public class GameManager : NetworkBehaviour
         base.OnStartServer();
 
         _networkManager = InstanceFinder.NetworkManager;
-        //_sessionManager = _networkManager.GetComponent<SessionManager>();
+        _sessionManager = _networkManager.GetComponent<SessionManager>();
+
+        _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
 
         PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
 
@@ -110,6 +112,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnPlayerKilled(Player arg0, Player arg1, WeaponInfo arg2)
     {
+        /*
         _currentKills++;
 
         if (_currentKills >= _killsToWin)
@@ -119,6 +122,22 @@ public class GameManager : NetworkBehaviour
 
             GameState = GameState.PostGame;
         }
+        */
     }
 
+    private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)
+    {
+        for (int i = 0; i < broadcast.Players.Count; i++)
+        {
+            var player = broadcast.Players[i];
+
+            if (player.Kills >= _killsToWin)
+            {
+                // Game over
+                OnGameEnd.Invoke();
+
+                GameState = GameState.PostGame;
+            }
+        }
+    }
 }
