@@ -32,6 +32,9 @@ public class SessionManager : MonoBehaviour
     [SerializeField]
     private AudioListener _audioListener;
 
+    [SerializeField]
+    private int _postGameWaitTime = 5;
+
     #endregion
 
     #region Private Fields
@@ -49,6 +52,7 @@ public class SessionManager : MonoBehaviour
         // Subscribe to events
 
         _networkManager.SceneManager.OnLoadEnd += OnLoadEnd;
+        _networkManager.SceneManager.OnClientPresenceChangeEnd += OnClientPresenceChangeEnd;
 
         _networkManager.ServerManager.OnRemoteConnectionState += OnRemoteConnectionState;
         _networkManager.ClientManager.OnClientConnectionState += OnClientConnectionState;
@@ -147,47 +151,43 @@ public class SessionManager : MonoBehaviour
 
     private void OnLoadEnd(SceneLoadEndEventArgs args)
     {
-        /*
-        // TODO: It seems like there should be a better solution than this for unloading the pre-game lobby scene
-        // when a player joins a game in progress.
-
-        //Scene[] scenes = UnityEngine.SceneManagement.SceneManager.GetAllScenes();
-        var preGameLobbyIndex = -1;
-        var onlineGameIndex = -1;
-
-        for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
-        {
-            if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name == "PreGameLobby")
-            {
-                preGameLobbyIndex = i;
-            }
-            else if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name == "OnlineGame")
-            {
-                onlineGameIndex = i;
-            }
-        }
-
-        if (preGameLobbyIndex != -1 && onlineGameIndex != -1)
-        {
-            if (SessionState == SessionState.InGame)
-            {
-                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("PreGameLobby");
-            }
-            else if (SessionState == SessionState.InLobby)
-            {
-                UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("OnlineGame");
-            }
-        }
-        */
-
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "PreGameLobby")
+        if (args.LoadedScenes[0].name == "PreGameLobby")
         {
             //SessionState = SessionState.InLobby;
+
+            // Update the player list.
+            /*
+            PlayerListUpdateBroadcast playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+            {
+                IsAdd = false,
+                IsRemove = false,
+                IsUpdate = true,
+                Players = Players
+            };
+
+            _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+            */
         }
-        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "OnlineGame")
+        else if (args.LoadedScenes[0].name == "OnlineGame")
         {
-            GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(EndGameCoroutine()));
+            GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(PostGameCoroutine()));
         }
+    }
+
+    private void OnClientPresenceChangeEnd(ClientPresenceChangeEventArgs args)
+    {
+        // Update the player list.
+        PlayerListUpdateBroadcast playerListUpdateBroadcast = new PlayerListUpdateBroadcast()
+        {
+            IsAdd = false,
+            IsRemove = false,
+            IsUpdate = true,
+            Players = Players
+        };
+
+        OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
+
+        _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
     }
 
     #region Client Broadcast Receivers
@@ -286,7 +286,7 @@ public class SessionManager : MonoBehaviour
         _audioListener.enabled = false;
     }
 
-    private void EndGame()
+    private void ReturnToLobby()
     {
         SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
         preGameLobbyScene.ReplaceScenes = ReplaceOption.All;
@@ -300,11 +300,11 @@ public class SessionManager : MonoBehaviour
         //_audioListener.enabled = false;
     }
 
-    private IEnumerator EndGameCoroutine()
+    private IEnumerator PostGameCoroutine()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(_postGameWaitTime);
 
-        EndGame();
+        ReturnToLobby();
     }
 
     #endregion

@@ -112,5 +112,6 @@ MonoBehaviour:
   OnGameEnd:
     m_PersistentCalls:
       m_Calls: []
-  _countdownDuration: 5
-  _killsToWin: 2
+  GameState: 0
+  _countdownDuration: 6
+  _killsToWin: 5
