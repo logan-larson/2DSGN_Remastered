@@ -294,7 +294,7 @@ public class PlayerManager : NetworkBehaviour
 
         _health = MAX_HEALTH;
 
-        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        if (base.IsHost && Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.ResetToLocal();
         }
