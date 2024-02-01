@@ -58,15 +58,15 @@ public class GameManager : NetworkBehaviour
     {
         base.OnStartServer();
 
+        // For now, we'll just start the game when the server loads the scene with 10 second countdown.
+        StartCoroutine(CountdownCoroutine());
+
         _networkManager = InstanceFinder.NetworkManager;
         _sessionManager = _networkManager.GetComponent<SessionManager>();
 
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
 
         PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
-
-        // For now, we'll just start the game when the server loads the scene with 10 second countdown.
-        StartCoroutine(CountdownCoroutine());
 
         // Later, we'll want to wait for all the players in the pre game lobby before starting.
     }
@@ -129,7 +129,7 @@ public class GameManager : NetworkBehaviour
     {
         foreach (var player in broadcast.Players.Values)
         {
-            if (player.Kills >= _killsToWin)
+            if (player.Kills >= _killsToWin && GameState == GameState.InGame)
             {
                 // Game over
                 OnGameEnd.Invoke();
