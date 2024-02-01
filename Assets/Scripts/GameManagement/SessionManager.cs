@@ -344,8 +344,18 @@ public class SessionManager : MonoBehaviour
         _audioListener.enabled = false;
     }
 
+    /// <summary>
+    /// Called by the server after post game routine is complete.
+    /// </summary>
     private void ReturnToLobby()
     {
+        // For each player, despawn their nob.
+        foreach (var player in Players.Values)
+        {
+            player.Nob.Despawn();
+            player.Nob = null;
+        }
+
         SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
         preGameLobbyScene.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
@@ -385,6 +395,8 @@ public class SessionManager : MonoBehaviour
         };
 
         _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
+
+        OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
     }
 
     #endregion
