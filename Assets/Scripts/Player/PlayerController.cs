@@ -4,6 +4,7 @@ using FishNet.Object.Prediction;
 using FishNet.Object.Synchronizing;
 using FishNet.Object.Synchronizing.Internal;
 using FishNet.Transporting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -377,6 +378,17 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartClient();
         SubscribeToTimeManager(true);
+
+        if (base.IsOwner)
+        {
+            _inputManager.TogglePause.AddListener((bool isPaused) => SetCursorEnabled(isPaused));
+            _inputManager.ToggleScoreboard.AddListener((bool isShown) => SetCursorEnabled(isShown));
+        }
+    }
+
+    private void SetCursorEnabled(bool isEnabled)
+    {
+        Cursor.visible = isEnabled;
     }
 
     public override void OnStopClient()

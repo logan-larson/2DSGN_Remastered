@@ -1923,7 +1923,7 @@ MonoBehaviour:
   _weaponSprite: {fileID: 6571099630282843190}
   _crosshair: {fileID: 63285074913308429}
   _originalPosition: {x: 0, y: 0.5, z: 0}
-  _playerManager: {fileID: 6187821288535414075}
+  _playerManager: {fileID: 0}
   _flipY: 0
 --- !u!1 &7464203539986217859
 GameObject:
@@ -2203,10 +2203,10 @@ GameObject:
   - component: {fileID: 6559925058770471689}
   - component: {fileID: 3276682624696573865}
   - component: {fileID: 8376055070018631659}
-  - component: {fileID: 6187821288535414075}
   - component: {fileID: -3151716298286376592}
   - component: {fileID: -7861618833502650203}
   - component: {fileID: 6843065295274194501}
+  - component: {fileID: 7373235295653534899}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2258,7 +2258,7 @@ MonoBehaviour:
   - {fileID: 6559925058770471689}
   - {fileID: 3276682624696573865}
   - {fileID: 8376055070018631659}
-  - {fileID: 6187821288535414075}
+  - {fileID: 7373235295653534899}
   - {fileID: 1541329403088711447}
   - {fileID: 2074076706242421501}
   - {fileID: 8927696244155630835}
@@ -2458,39 +2458,6 @@ MonoBehaviour:
   _playerController: {fileID: 6559925058770471689}
   _weaponHolderController: {fileID: 8102376201190440948}
   _playerManager: {fileID: 0}
---- !u!114 &6187821288535414075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8224984725197528771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9312e57491c20f43bbb9323b61de04d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 5
-  _addedNetworkObject: {fileID: 7614852995303497732}
-  _networkObjectCache: {fileID: 7614852995303497732}
-  _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
-  _username: 
-  IsDead: 0
-  _health: 100
-  _redDamagedSprite: {fileID: 8906561054560122590}
-  _whiteDamagedSprite: {fileID: 1890953716486911386}
-  _usernameText: {fileID: 1571920059544832893}
-  _jumpPredictionLine: {fileID: 8639079816381434075}
-  _damageIndicatorPrefab: {fileID: 5569836438895531722, guid: 5712ae94916c7cd4c9811bb1c2070fb8, type: 3}
-  _hitParticlesPrefab: {fileID: 4839056782413129775, guid: bc1f75f200212c6498ca492e3bf18819, type: 3}
-  _deathIndicatorPrefab: {fileID: 3914275941705013947, guid: 54360931213f54b47ab766e0a8077f42, type: 3}
-  _audioListener: {fileID: 3666992726851049938}
-  _playerSpriteRenderer: {fileID: 2364269242530524157}
-  _abovePlayerUICanvas: {fileID: 1220559215219882511}
-  _playerController: {fileID: 6559925058770471689}
-  _modeManager: {fileID: 1385860131232617773}
-  _weaponManager: {fileID: 8376055070018631659}
-  _inputManager: {fileID: 3717805940115971261}
 --- !u!82 &-3151716298286376592
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2779,6 +2746,39 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7373235295653534899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8224984725197528771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9312e57491c20f43bbb9323b61de04d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 7614852995303497732}
+  _networkObjectCache: {fileID: 7614852995303497732}
+  _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
+  _username: 
+  IsDead: 0
+  _health: 100
+  _redDamagedSprite: {fileID: 8906561054560122590}
+  _whiteDamagedSprite: {fileID: 1890953716486911386}
+  _usernameText: {fileID: 1571920059544832893}
+  _jumpPredictionLine: {fileID: 8639079816381434075}
+  _damageIndicatorPrefab: {fileID: 5569836438895531722, guid: 5712ae94916c7cd4c9811bb1c2070fb8, type: 3}
+  _hitParticlesPrefab: {fileID: 4839056782413129775, guid: bc1f75f200212c6498ca492e3bf18819, type: 3}
+  _deathIndicatorPrefab: {fileID: 3914275941705013947, guid: 54360931213f54b47ab766e0a8077f42, type: 3}
+  _audioListener: {fileID: 3666992726851049938}
+  _playerSpriteRenderer: {fileID: 2364269242530524157}
+  _abovePlayerUICanvas: {fileID: 1220559215219882511}
+  _playerController: {fileID: 6559925058770471689}
+  _modeManager: {fileID: 1385860131232617773}
+  _weaponManager: {fileID: 8376055070018631659}
+  _inputManager: {fileID: 3717805940115971261}
 --- !u!1 &8289577944091477313
 GameObject:
   m_ObjectHideFlags: 0
@@ -3148,7 +3148,7 @@ PrefabInstance:
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _playerManager
       value: 
-      objectReference: {fileID: 6187821288535414075}
+      objectReference: {fileID: 0}
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _weaponManager
       value: 

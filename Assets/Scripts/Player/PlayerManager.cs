@@ -141,11 +141,6 @@ public class PlayerManager : NetworkBehaviour
 
         if (base.IsOwner)
         {
-            // Enable the cursor on pause and scoreboard.
-            _inputManager.TogglePause.AddListener(OnPause);
-            _inputManager.ToggleScoreboard.AddListener(OnScoreboard);
-            
-
             // Set the health UI.
             InitializeServerRpc(base.LocalConnection, _userInfo.Username);
         }
@@ -387,22 +382,6 @@ public class PlayerManager : NetworkBehaviour
         if (base.IsOwner)
         {
             SetCursorEnabled(true);
-        }
-    }
-
-    private void OnPause(bool isPaused)
-    {
-        if (base.IsOwner)
-        {
-            SetCursorEnabled(isPaused);
-        }
-    }
-
-    private void OnScoreboard(bool isShown)
-    {
-        if (base.IsOwner)
-        {
-            SetCursorEnabled(isShown);
         }
     }
 
