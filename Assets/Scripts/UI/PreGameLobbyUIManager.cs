@@ -1,7 +1,10 @@
 using FishNet;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PreGameLobbyUIManager : MonoBehaviour
 {
@@ -12,6 +15,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _playerListItemPrefab;
+
+    [SerializeField]
+    private TMP_Dropdown _mapDropdown;
 
     private void Start()
     {
@@ -26,6 +32,13 @@ public class PreGameLobbyUIManager : MonoBehaviour
         }
 
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
+
+        _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
+    }
+
+    private void OnMapDropdownValueChanged(int index)
+    {
+        _sessionManager.OnMapChange(index);
     }
 
     private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)

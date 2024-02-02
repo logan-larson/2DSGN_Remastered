@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 770353692667717894}
   m_Layer: 0
   m_Name: Pickups
-  m_TagString: Untagged
+  m_TagString: WeaponPickups
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -78,6 +78,7 @@ MonoBehaviour:
   - {fileID: 5813714944498885850}
   - {fileID: 5813714946220496169}
   - {fileID: 5813714946335084998}
+  - {fileID: 7886824716638906364}
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
@@ -91,7 +92,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 8235334828050845797
+  <AssetPathHash>k__BackingField: 16478997014540293205
 --- !u!1001 &410529275766354283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -648,6 +649,14 @@ PrefabInstance:
       propertyPath: <IsNested>k__BackingField
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1677154622665538802, guid: f8d70035338733040a46c84b658e43a1, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1677154622665538802, guid: f8d70035338733040a46c84b658e43a1, type: 3}
+      propertyPath: <ParentNetworkObject>k__BackingField
+      value: 
+      objectReference: {fileID: 770353692667717894}
     - target: {fileID: 7728413602355034829, guid: f8d70035338733040a46c84b658e43a1, type: 3}
       propertyPath: HealthNutSprite
       value: 
@@ -712,3 +721,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9132779481292761573, guid: f8d70035338733040a46c84b658e43a1, type: 3}
   m_PrefabInstance: {fileID: 8806176048030571278}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7886824716638906364 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1677154622665538802, guid: f8d70035338733040a46c84b658e43a1, type: 3}
+  m_PrefabInstance: {fileID: 8806176048030571278}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

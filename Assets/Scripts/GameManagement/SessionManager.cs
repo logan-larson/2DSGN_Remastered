@@ -4,6 +4,7 @@ using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Managing.Scened;
 using FishNet.Transporting;
+using HathoraCloud.Models.Operations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +26,10 @@ public class SessionManager : MonoBehaviour
     public GameMode GameMode { get; private set; } = GameMode.SoloDeathmatch;
 
     public UnityEvent<GameModeUpdateBroadcast> OnGameModeUpdate = new UnityEvent<GameModeUpdateBroadcast>();
+
+    public List<GameObject> MapPrefabs = new List<GameObject>();
+
+    public int SelectedMapIndex = 0;
 
     #endregion
 
@@ -299,6 +304,11 @@ public class SessionManager : MonoBehaviour
         StartGameBroadcast startGameBroadcast = new StartGameBroadcast();
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
     }
+
+    public void OnMapChange(int index)
+    {
+        SelectedMapIndex = index;
+    } 
 
     /// <summary>
     /// Called by the host when the gamemode is updated.

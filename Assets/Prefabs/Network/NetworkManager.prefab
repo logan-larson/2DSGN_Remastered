@@ -151,6 +151,8 @@ MonoBehaviour:
   OnGameModeUpdate:
     m_PersistentCalls:
       m_Calls: []
+  MapPrefabs:
+  - {fileID: 5063949607307197275, guid: 0f5f8f394171af0449d51bde5200f7a4, type: 3}
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
   _audioListener: {fileID: 4162585637748075726}
   _postGameWaitTime: 5

@@ -172,7 +172,7 @@ public class WeaponManager : NetworkBehaviour
     {
         base.OnStartClient();
 
-        var map = GameObject.Find("Map");
+        var map = GameObject.FindWithTag("Map");
 
         _pickupsParent = map.transform.GetChild(1).gameObject;
 

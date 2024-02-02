@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5232804222510909945}
   - component: {fileID: 7266054430107025921}
   - component: {fileID: 3159047174390764698}
+  - component: {fileID: 1234214565159709641}
   m_Layer: 0
   m_Name: MatchManager
   m_TagString: Untagged
@@ -116,3 +117,15 @@ MonoBehaviour:
   _countdownDuration: 6
   _killsToWin: 5
   _gameEndOverrideTime: -1
+--- !u!114 &1234214565159709641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5232804222510909950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 199c8862989615f43a2d0bc30d7f5381, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

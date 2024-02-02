@@ -10,6 +10,7 @@ TagManager:
   - DeathBarrier
   - HeadHitbox
   - BodyHitbox
+  - Map
   layers:
   - Default
   - TransparentFX
