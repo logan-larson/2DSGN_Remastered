@@ -30,8 +30,11 @@ public class InputManager : NetworkBehaviour
 
     private PlayerInput _playerInput;
 
-    public UnityEvent TogglePause = new UnityEvent();
-    public UnityEvent ToggleScoreboard = new UnityEvent();
+    private bool _isPaused = false;
+    public UnityEvent<bool> TogglePause = new UnityEvent<bool>();
+
+    private bool _isScoreboardOpen = false;
+    public UnityEvent<bool> ToggleScoreboard = new UnityEvent<bool>();
 
     private void Awake()
     {
@@ -102,13 +105,21 @@ public class InputManager : NetworkBehaviour
         InputDevice = inputDevice;
     }
 
+    public void SetPause(bool isPaused)
+    {
+        _isPaused = isPaused;
+        TogglePause.Invoke(_isPaused);
+    }
+
     public void OnPause(InputValue value)
     {
-        TogglePause.Invoke();
+        _isPaused = !_isPaused;
+        TogglePause.Invoke(_isPaused);
     }
 
     public void OnScoreboard(InputValue value)
     {
-        ToggleScoreboard.Invoke();
+        _isScoreboardOpen = !_isScoreboardOpen;
+        ToggleScoreboard.Invoke(_isScoreboardOpen);
     }
 }

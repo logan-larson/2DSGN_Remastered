@@ -180,18 +180,13 @@ public class GameUIManager : NetworkBehaviour
         _inputManager = obj.GetComponent<InputManager>();
         _playerManager = obj.GetComponent<PlayerManager>();
 
-        _inputManager.TogglePause.AddListener(TogglePause);
-        _inputManager.ToggleScoreboard.AddListener(ToggleScoreboard);
+        _inputManager.TogglePause.AddListener(SetShowPause);
+        _inputManager.ToggleScoreboard.AddListener(SetShowScoreboard);
     }
 
     #endregion
 
     #region Scoreboard Methods
-
-    private void ToggleScoreboard()
-    {
-        SetShowScoreboard(!_currentScoreboardCanvas.activeSelf);
-    }
 
     public void SetShowScoreboard(bool isShown)
     {
@@ -237,9 +232,9 @@ public class GameUIManager : NetworkBehaviour
 
     #region Pause Menu Methods
 
-    private void TogglePause()
+    private void SetShowPause(bool isShown)
     {
-        _pauseCanvas.SetActive(!_pauseCanvas.activeSelf);
+        _pauseCanvas.SetActive(isShown);
     }
 
     public void OnLeaveGame()
@@ -249,6 +244,7 @@ public class GameUIManager : NetworkBehaviour
 
     public void OnResumeGame()
     {
+        _inputManager.SetPause(false);
         _pauseCanvas.SetActive(false);
     }
 

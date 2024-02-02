@@ -1,6 +1,7 @@
 using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -87,6 +88,9 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private WeaponManager _weaponManager;
 
+    [SerializeField]
+    private InputManager _inputManager;
+
     #endregion
 
     #region Private Fields
@@ -137,6 +141,11 @@ public class PlayerManager : NetworkBehaviour
 
         if (base.IsOwner)
         {
+            // Enable the cursor on pause and scoreboard.
+            _inputManager.TogglePause.AddListener(OnPause);
+            _inputManager.ToggleScoreboard.AddListener(OnScoreboard);
+            
+
             // Set the health UI.
             InitializeServerRpc(base.LocalConnection, _userInfo.Username);
         }
@@ -347,6 +356,23 @@ public class PlayerManager : NetworkBehaviour
 
     #region Game State Events
 
+    private void OnGameStart()
+    {
+        OnGameStartObserversRpc();
+    }
+
+    [ObserversRpc]
+    private void OnGameStartObserversRpc()
+    {
+        // Hide the scoreboard and disable
+        GameUIManager.Instance.SetShowScoreboard(false);
+
+        if (base.IsOwner)
+        {
+            SetCursorEnabled(false);
+        }
+    }
+
     private void OnGameEnd()
     {
         OnGameEndObserversRpc();
@@ -357,6 +383,36 @@ public class PlayerManager : NetworkBehaviour
     {
         // Show the scoreboard and enable
         GameUIManager.Instance.SetShowScoreboard(true);
+
+        if (base.IsOwner)
+        {
+            SetCursorEnabled(true);
+        }
+    }
+
+    private void OnPause(bool isPaused)
+    {
+        if (base.IsOwner)
+        {
+            SetCursorEnabled(isPaused);
+        }
+    }
+
+    private void OnScoreboard(bool isShown)
+    {
+        if (base.IsOwner)
+        {
+            SetCursorEnabled(isShown);
+        }
+    }
+
+    #endregion
+
+    #region Cursor
+
+    private void SetCursorEnabled(bool isEnabled)
+    {
+        Cursor.visible = isEnabled;
     }
 
     #endregion

@@ -100,10 +100,12 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1058332941952659524}
   _networkObjectCache: {fileID: 1058332941952659524}
   _crosshair: {fileID: 1058332941952659527}
+  _playerManager: {fileID: 0}
   _weaponManager: {fileID: 0}
   _inputManager: {fileID: 0}
   _minSize: 5
   _sizeMultiplier: 15
+  _weaponHolder: {fileID: 0}
 --- !u!1 &1058332942860035988
 GameObject:
   m_ObjectHideFlags: 0
