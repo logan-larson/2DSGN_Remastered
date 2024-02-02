@@ -142,7 +142,11 @@ public class WeaponManager : NetworkBehaviour
 
         SetCurrentWeapon(_defaultWeaponInfo);
 
-        _pickupsParent = GameObject.Find("WeaponPickups");
+        var map = GameObject.FindWithTag("Map");
+
+        //_pickupsParent = map.GetComponentInChildren<WeaponPickupsInitializer>().gameObject;
+
+        _pickupsParent = map.transform.GetChild(1).gameObject;
 
         if (_pickupsParent == null)
         {
@@ -173,6 +177,8 @@ public class WeaponManager : NetworkBehaviour
         base.OnStartClient();
 
         var map = GameObject.FindWithTag("Map");
+
+        //_pickupsParent = map.GetComponentInChildren<WeaponPickupsInitializer>().gameObject;
 
         _pickupsParent = map.transform.GetChild(1).gameObject;
 

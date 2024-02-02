@@ -153,6 +153,9 @@ MonoBehaviour:
       m_Calls: []
   MapPrefabs:
   - {fileID: 5063949607307197275, guid: 0f5f8f394171af0449d51bde5200f7a4, type: 3}
+  - {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+  - {fileID: 8642975376856295050, guid: 7503cdd63f5d827438f0e8eaf61398da, type: 3}
+  SelectedMapIndex: 0
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
   _audioListener: {fileID: 4162585637748075726}
   _postGameWaitTime: 5

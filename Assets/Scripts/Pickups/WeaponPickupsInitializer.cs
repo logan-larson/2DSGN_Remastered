@@ -1,11 +1,10 @@
-using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponPickupsInitializer : NetworkBehaviour
+public class WeaponPickupsInitializer : MonoBehaviour
 {
-    public override void OnStartServer()
+    private void Start()
     {
         foreach (Transform pickup in transform)
         {
