@@ -23,7 +23,7 @@ public class WeaponManager : NetworkBehaviour
         // TODO: Initialize other things like the weapon sprite, etc.
         if (!asServer && newValue != null)
         {
-            _weaponHolder.GetComponentInChildren<SpriteRenderer>(true).sprite = Resources.Load<Sprite>(newValue.SpritePath);
+            _weaponHolder.GetComponentInChildren<SpriteRenderer>(true).sprite = Resources.Load<Sprite>(newValue.SpriteWithHandsPath);
         }
     }
 

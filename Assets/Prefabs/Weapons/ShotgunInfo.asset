@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Shotgun
   SpritePath: Sprites/Weapons/Shotgun
+  SpriteWithHandsPath: Sprites/Weapons/ShotgunWithHands
   FireSoundPath: Sounds/Weapons/Sniper
   BulletTrailRendererPath: 
   FireRate: 0.6

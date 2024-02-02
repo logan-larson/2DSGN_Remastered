@@ -9,6 +9,7 @@ public class WeaponInfo : ScriptableObject
 
     //public Sprite Sprite;
     public string SpritePath;
+    public string SpriteWithHandsPath;
     public string FireSoundPath;
     public string BulletTrailRendererPath;
 
