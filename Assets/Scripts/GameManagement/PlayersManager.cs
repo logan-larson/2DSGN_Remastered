@@ -34,6 +34,9 @@ public class PlayersManager : NetworkBehaviour
     [SerializeField]
     private UserInfo _userInfo;
 
+    [SerializeField]
+    private MapInitializer _mapInitializer;
+
     #endregion
 
     #region Events
@@ -95,7 +98,14 @@ public class PlayersManager : NetworkBehaviour
         // Subscribe to the remote connection state disconnects.
         ServerManager.OnRemoteConnectionState += ServerManager_OnRemoteConnectionState;
 
-        GameObject spawnPoints = GameObject.Find("SpawnPoints");
+        _mapInitializer.OnMapSpawned.AddListener(OnMapSpawned);
+    }
+
+    private void OnMapSpawned()
+    {
+        var map = GameObject.FindWithTag("Map");
+
+        Transform spawnPoints = map.transform.GetChild(2);
 
         if (spawnPoints == null)
         {
@@ -103,12 +113,18 @@ public class PlayersManager : NetworkBehaviour
             return;
         }
 
-        foreach (Transform child in spawnPoints.transform)
+        foreach (Transform child in spawnPoints)
         {
             _spawnPoints.Add(child);
         }
 
         _heaven = GameObject.Find("Heaven").transform;
+
+        if (_heaven == null)
+        {
+            Debug.LogError("Heaven not found.");
+            return;
+        }
     }
 
     private void PlayerSpawner_OnSpawned(NetworkObject nob)

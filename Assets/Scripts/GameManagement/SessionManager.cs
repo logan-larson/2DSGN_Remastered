@@ -27,6 +27,8 @@ public class SessionManager : MonoBehaviour
 
     public UnityEvent<GameModeUpdateBroadcast> OnGameModeUpdate = new UnityEvent<GameModeUpdateBroadcast>();
 
+    public UnityEvent<MapChangeBroadcast> OnMapChange = new UnityEvent<MapChangeBroadcast>();
+
     public List<GameObject> MapPrefabs = new List<GameObject>();
 
     public int SelectedMapIndex = 0;
@@ -71,12 +73,14 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.RegisterBroadcast<UsernameBroadcast>(OnUsernameBroadcast, false);
         _networkManager.ServerManager.RegisterBroadcast<StartGameBroadcast>(OnStartGameBroadcast, false);
         _networkManager.ServerManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcastServer, false);
+        _networkManager.ServerManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcastServer, false);
 
         // Client broadcast receivers
 
         _networkManager.ClientManager.RegisterBroadcast<PlayerListUpdateBroadcast>(OnPlayerListUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<SessionStateUpdateBroadcast>(OnSessionStateUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcast);
     }
 
     #endregion
@@ -249,6 +253,13 @@ public class SessionManager : MonoBehaviour
         OnGameModeUpdate.Invoke(broadcast);
     }
 
+    private void OnMapChangeBroadcast(MapChangeBroadcast broadcast)
+    {
+        SelectedMapIndex = broadcast.SelectedMapIndex;
+
+        OnMapChange.Invoke(broadcast);
+    }
+
     #endregion
 
     #region Server Broadcast Receivers
@@ -289,6 +300,13 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.Broadcast(broadcast);
     }
 
+    private void OnMapChangeBroadcastServer(NetworkConnection conn, MapChangeBroadcast broadcast)
+    {
+        SelectedMapIndex = broadcast.SelectedMapIndex;
+
+        _networkManager.ServerManager.Broadcast(broadcast);
+    }
+
     #endregion
 
     #endregion
@@ -305,8 +323,16 @@ public class SessionManager : MonoBehaviour
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
     }
 
-    public void OnMapChange(int index)
+    public void ChangeMap(int index)
     {
+        // Broadcast to the server to change the map.
+        MapChangeBroadcast mapChangeBroadcast = new MapChangeBroadcast()
+        {
+            SelectedMapIndex = index
+        };
+
+        _networkManager.ClientManager.Broadcast(mapChangeBroadcast);
+
         SelectedMapIndex = index;
     } 
 
@@ -433,6 +459,11 @@ public struct  StartGameBroadcast : IBroadcast { }
 public struct SessionStateUpdateBroadcast : IBroadcast
 {
     public SessionState SessionState;
+}
+
+public struct MapChangeBroadcast : IBroadcast
+{
+    public int SelectedMapIndex;
 }
 
 public enum SessionState

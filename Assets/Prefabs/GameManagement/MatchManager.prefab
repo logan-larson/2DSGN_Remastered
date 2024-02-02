@@ -53,6 +53,7 @@ MonoBehaviour:
   _networkBehaviours:
   - {fileID: 7266054430107025921}
   - {fileID: 3159047174390764698}
+  - {fileID: 1234214565159709641}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -86,6 +87,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 5232804222510909945}
   _spawnPoints: []
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
+  _mapInitializer: {fileID: 1234214565159709641}
   OnPlayerKilled:
     m_PersistentCalls:
       m_Calls: []
@@ -129,3 +131,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 199c8862989615f43a2d0bc30d7f5381, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 5232804222510909945}
+  _networkObjectCache: {fileID: 5232804222510909945}
+  OnMapSpawned:
+    m_PersistentCalls:
+      m_Calls: []

@@ -32,13 +32,20 @@ public class PreGameLobbyUIManager : MonoBehaviour
         }
 
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
+        _sessionManager.OnMapChange.AddListener(OnMapChange);
 
         _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
+
     }
 
     private void OnMapDropdownValueChanged(int index)
     {
-        _sessionManager.OnMapChange(index);
+        _sessionManager.ChangeMap(index);
+    }
+
+    private void OnMapChange(MapChangeBroadcast broadcast)
+    {
+        _mapDropdown.value = broadcast.SelectedMapIndex;
     }
 
     private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)
