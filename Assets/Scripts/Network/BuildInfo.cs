@@ -6,4 +6,6 @@ using UnityEngine;
 public class BuildInfo : ScriptableObject
 {
     public bool IsServer;
+
+    public bool IsProduction;
 }

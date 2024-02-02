@@ -130,6 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buildInfo: {fileID: 11400000, guid: 112176f20fe600b4f9dd340b4df611f5, type: 2}
   _networkManager: {fileID: 6030808624407447608}
+  _networkManagerUI: {fileID: 579283459155506203}
   _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
   _tugboat: {fileID: 3818472558376582985}
 --- !u!114 &3583834901183877028
@@ -147,8 +148,12 @@ MonoBehaviour:
   OnPlayerListUpdate:
     m_PersistentCalls:
       m_Calls: []
+  OnGameModeUpdate:
+    m_PersistentCalls:
+      m_Calls: []
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
   _audioListener: {fileID: 4162585637748075726}
+  _postGameWaitTime: 5
 --- !u!114 &8074955569133304615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,5 +326,10 @@ PrefabInstance:
 --- !u!224 &579283459155506182 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4393252310969058990, guid: 0570b6f7f713dc44a90463654bbcd8d0, type: 3}
+  m_PrefabInstance: {fileID: 3818472560023089832}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &579283459155506203 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4393252310969058995, guid: 0570b6f7f713dc44a90463654bbcd8d0, type: 3}
   m_PrefabInstance: {fileID: 3818472560023089832}
   m_PrefabAsset: {fileID: 0}

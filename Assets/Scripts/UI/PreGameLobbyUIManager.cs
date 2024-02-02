@@ -54,4 +54,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
     {
         _sessionManager.OnStart();
     }
+
+    public void OnLeaveLobby()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
 }

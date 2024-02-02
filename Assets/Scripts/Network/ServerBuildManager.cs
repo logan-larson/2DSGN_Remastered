@@ -13,6 +13,9 @@ public class ServerBuildManager : MonoBehaviour
     private NetworkManager _networkManager;
 
     [SerializeField]
+    private GameObject _networkManagerUI;
+
+    [SerializeField]
     private ServerInfo _serverInfo;
 
     [SerializeField]
@@ -23,11 +26,17 @@ public class ServerBuildManager : MonoBehaviour
         if (_buildInfo.IsServer)
         {
             _networkManager.ServerManager.StartConnection();
+            _networkManagerUI.SetActive(false);
 
             // Query the lobby ID for the initial player list.
         }
         else
         {
+            if (_buildInfo.IsProduction)
+            {
+                _networkManagerUI.SetActive(false);
+            }
+
             // Set the connection info
             _tugboat.SetPort(_serverInfo.Port);
             _tugboat.SetClientAddress(_serverInfo.Address);
