@@ -19,6 +19,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
     [SerializeField]
     private TMP_Dropdown _mapDropdown;
 
+    [SerializeField]
+    private TMP_InputField _killLimitInputField;
+
     private void Start()
     {
         var networkManager = InstanceFinder.NetworkManager;
@@ -33,9 +36,10 @@ public class PreGameLobbyUIManager : MonoBehaviour
 
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
         _sessionManager.OnMapChange.AddListener(OnMapChange);
+        _sessionManager.OnKillLimitChange.AddListener(OnKillLimitChange);
 
         _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
-
+        _killLimitInputField.onEndEdit.AddListener(OnKillLimitInputFieldEndEdit);
     }
 
     private void OnMapDropdownValueChanged(int index)
@@ -46,6 +50,19 @@ public class PreGameLobbyUIManager : MonoBehaviour
     private void OnMapChange(MapChangeBroadcast broadcast)
     {
         _mapDropdown.value = broadcast.SelectedMapIndex;
+    }
+
+    private void OnKillLimitInputFieldEndEdit(string value)
+    {
+        if (int.TryParse(value, out int killLimit))
+        {
+            _sessionManager.ChangeKillLimit(killLimit);
+        }
+    }
+
+    private void OnKillLimitChange(KillLimitBroadcast broadcast)
+    {
+        _killLimitInputField.text = broadcast.KillLimit.ToString();
     }
 
     private void OnPlayerListUpdate(PlayerListUpdateBroadcast broadcast)

@@ -29,9 +29,13 @@ public class SessionManager : MonoBehaviour
 
     public UnityEvent<MapChangeBroadcast> OnMapChange = new UnityEvent<MapChangeBroadcast>();
 
+    public UnityEvent<KillLimitBroadcast> OnKillLimitChange = new UnityEvent<KillLimitBroadcast>();
+
     public List<GameObject> MapPrefabs = new List<GameObject>();
 
     public int SelectedMapIndex = 0;
+
+    public int KillLimit = 20;
 
     #endregion
 
@@ -74,6 +78,7 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.RegisterBroadcast<StartGameBroadcast>(OnStartGameBroadcast, false);
         _networkManager.ServerManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcastServer, false);
         _networkManager.ServerManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcastServer, false);
+        _networkManager.ServerManager.RegisterBroadcast<KillLimitBroadcast>(OnKillLimitBroadcastServer, false);
 
         // Client broadcast receivers
 
@@ -81,6 +86,7 @@ public class SessionManager : MonoBehaviour
         _networkManager.ClientManager.RegisterBroadcast<SessionStateUpdateBroadcast>(OnSessionStateUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<KillLimitBroadcast>(OnKillLimitBroadcast);
     }
 
     #endregion
@@ -260,6 +266,13 @@ public class SessionManager : MonoBehaviour
         OnMapChange.Invoke(broadcast);
     }
 
+    private void OnKillLimitBroadcast(KillLimitBroadcast broadcast)
+    {
+        KillLimit = broadcast.KillLimit;
+
+        OnKillLimitChange.Invoke(broadcast);
+    }
+
     #endregion
 
     #region Server Broadcast Receivers
@@ -307,6 +320,13 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.Broadcast(broadcast);
     }
 
+    private void OnKillLimitBroadcastServer(NetworkConnection connection, KillLimitBroadcast broadcast)
+    {
+        KillLimit = broadcast.KillLimit;
+
+        _networkManager.ServerManager.Broadcast(broadcast);
+    }
+
     #endregion
 
     #endregion
@@ -335,6 +355,19 @@ public class SessionManager : MonoBehaviour
 
         SelectedMapIndex = index;
     } 
+
+    public void ChangeKillLimit(int killLimit)
+    {
+        KillLimit = killLimit;
+
+        // Broadcast to the server to change the kill limit.
+        KillLimitBroadcast killLimitBroadcast = new KillLimitBroadcast()
+        {
+            KillLimit = killLimit
+        };
+
+        _networkManager.ClientManager.Broadcast(killLimitBroadcast);
+    }
 
     /// <summary>
     /// Called by the host when the gamemode is updated.
@@ -464,6 +497,11 @@ public struct SessionStateUpdateBroadcast : IBroadcast
 public struct MapChangeBroadcast : IBroadcast
 {
     public int SelectedMapIndex;
+}
+
+public struct KillLimitBroadcast : IBroadcast
+{
+    public int KillLimit;
 }
 
 public enum SessionState

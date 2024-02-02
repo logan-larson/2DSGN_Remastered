@@ -66,6 +66,8 @@ public class GameManager : NetworkBehaviour
 
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
 
+        _killsToWin = _sessionManager.KillLimit;
+
         PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
 
         // Later, we'll want to wait for all the players in the pre game lobby before starting.
