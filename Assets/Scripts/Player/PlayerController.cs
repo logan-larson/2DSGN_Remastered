@@ -381,8 +381,8 @@ public class PlayerController : NetworkBehaviour
 
         if (base.IsOwner)
         {
-            _inputManager.TogglePause.AddListener((bool isPaused) => SetCursorEnabled(isPaused));
-            _inputManager.ToggleScoreboard.AddListener((bool isShown) => SetCursorEnabled(isShown));
+            _inputManager.TogglePause.AddListener(OnTogglePause);
+            _inputManager.ToggleScoreboard.AddListener(OnToggleScoreboard);
         }
     }
 
@@ -396,6 +396,17 @@ public class PlayerController : NetworkBehaviour
         base.OnStopClient();
         SubscribeToTimeManager(false);
     }
+
+    private void OnTogglePause(bool isPaused)
+    {
+        SetCursorEnabled(isPaused);
+    }
+
+    private void OnToggleScoreboard(bool isShown)
+    {
+        SetCursorEnabled(isShown);
+    }
+
 
     #endregion
 

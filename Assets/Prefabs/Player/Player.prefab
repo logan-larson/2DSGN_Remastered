@@ -1923,7 +1923,7 @@ MonoBehaviour:
   _weaponSprite: {fileID: 6571099630282843190}
   _crosshair: {fileID: 63285074913308429}
   _originalPosition: {x: 0, y: 0.5, z: 0}
-  _playerManager: {fileID: 0}
+  _playerManager: {fileID: 7373235295653534899}
   _flipY: 0
 --- !u!1 &7464203539986217859
 GameObject:
@@ -2402,7 +2402,7 @@ MonoBehaviour:
       m_Calls: []
   _inputManager: {fileID: 3717805940115971261}
   _weaponManager: {fileID: 8376055070018631659}
-  _playerManager: {fileID: 0}
+  _playerManager: {fileID: 7373235295653534899}
   _gameManager: {fileID: 0}
   Velocity: {x: 0, y: 0, z: 0}
   IsGrounded: 0
@@ -2457,7 +2457,7 @@ MonoBehaviour:
   _inputManager: {fileID: 3717805940115971261}
   _playerController: {fileID: 6559925058770471689}
   _weaponHolderController: {fileID: 8102376201190440948}
-  _playerManager: {fileID: 0}
+  _playerManager: {fileID: 7373235295653534899}
 --- !u!82 &-3151716298286376592
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3148,7 +3148,7 @@ PrefabInstance:
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _playerManager
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 7373235295653534899}
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _weaponManager
       value: 
