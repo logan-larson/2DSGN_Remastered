@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9efc09e56702bb4a92f12720a029a05, type: 3}
   m_Name: BuildInfo
   m_EditorClassIdentifier: 
-  IsServer: 0
-  IsProduction: 0
+  IsServer: 1
+  IsProduction: 1

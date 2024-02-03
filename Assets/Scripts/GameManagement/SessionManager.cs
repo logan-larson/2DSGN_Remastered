@@ -144,7 +144,10 @@ public class SessionManager : MonoBehaviour
         }
         else if (args.ConnectionState == RemoteConnectionState.Stopped)
         {
-            if (Players.Count == 0) return;
+            if (Players.Count == 0)
+            {
+                return;
+            }
 
             // Remove the player from the list.
             var player = Players[conn.ClientId];
@@ -165,6 +168,11 @@ public class SessionManager : MonoBehaviour
             OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
 
             Debug.Log($"Player {conn.ClientId} has left the game.");
+
+            if (Players.Count == 0 && SessionState == SessionState.InGame)
+            {
+                ReturnToLobby();
+            }
         }
     }
 
