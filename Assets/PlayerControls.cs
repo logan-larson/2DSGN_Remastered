@@ -295,6 +295,17 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""dc75213e-219a-4db5-8c8a-d185c72db666"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""72ac5c46-91da-4c45-893c-859f54ac9d2b"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
