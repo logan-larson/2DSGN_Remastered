@@ -14,10 +14,11 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private UserInfo _userInfo;
 
+    [SyncVar]
+    public bool IsDead = false;
+
     [SyncVar (OnChange = nameof(OnUsernameChanged))]
     private string _username;
-
-    public bool IsDead = false;
 
     private void OnUsernameChanged(string oldValue, string newValue, bool asServer)
     {
@@ -178,8 +179,7 @@ public class PlayerManager : NetworkBehaviour
     {
         base.OnStartServer();
 
-        //GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
-        GameManager.Instance.OnGameEnd.AddListener(OnGameEnd);
+        GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
     }
 
     #endregion
@@ -271,6 +271,7 @@ public class PlayerManager : NetworkBehaviour
         _playerController.OverrideTransform(heaven.position, heaven.rotation);
 
         // Set the player's camera to follow the killer.
+        // Only do it on the server, if the player is host.
         if (killer != null && base.IsHost && Camera.main.TryGetComponent(out CameraController cameraController))
         {
             cameraController.SetPlayer(killer.transform, false);
@@ -284,6 +285,11 @@ public class PlayerManager : NetworkBehaviour
     [ObserversRpc (ExcludeServer = true)]
     private void OnDeathObserversRpc(Vector3 deathIndicatorPosition)
     {
+        if (base.IsOwner)
+        {
+            //// Hide the player's sprite, 
+        }
+
         Instantiate(_deathIndicatorPrefab, deathIndicatorPosition, Quaternion.identity);
     }
 
@@ -308,31 +314,6 @@ public class PlayerManager : NetworkBehaviour
 
     private void OnModeChanged(Mode mode)
     {
-        /*
-        var currentRedFillAmount = _redDamagedSprite != null ? _redDamagedSprite.fillAmount : 0f;
-        var currentWhiteFillAmount = _whiteDamagedSprite != null ? _whiteDamagedSprite.fillAmount : 0f;
-
-        switch (mode)
-        {
-            case Mode.Sprint:
-                _redDamagedSprite = _modeManager.RedSprintDamage;
-                _whiteDamagedSprite = _modeManager.WhiteSprintDamage;
-                break;
-            case Mode.Shoot:
-                _redDamagedSprite = _modeManager.RedShootDamage;
-                _whiteDamagedSprite = _modeManager.WhiteShootDamage;
-                break;
-            case Mode.Slide:
-                _redDamagedSprite = _modeManager.RedSlideDamage;
-                _whiteDamagedSprite = _modeManager.WhiteSlideDamage;
-                break;
-
-        }
-
-        _redDamagedSprite.fillAmount = currentRedFillAmount;
-        _whiteDamagedSprite.fillAmount = currentWhiteFillAmount;
-        */
-
         switch (mode)
         {
             case Mode.Sprint:
@@ -350,6 +331,20 @@ public class PlayerManager : NetworkBehaviour
     #endregion
 
     #region Game State Events
+
+    private void OnGameStateChange(GameState gameState)
+    {
+        switch (gameState)
+        {
+            case GameState.PreGame:
+            case GameState.InGame:
+                OnGameStart();
+                break;
+            case GameState.PostGame:
+                OnGameEnd();
+                break;
+        }
+    }
 
     private void OnGameStart()
     {
@@ -409,9 +404,16 @@ public class PlayerManager : NetworkBehaviour
     [TargetRpc]
     public void SetPlayerToFollowTargetRpc(NetworkConnection conn, NetworkObject target, bool isLocal)
     {
-        if (target != null && Camera.main.TryGetComponent(out CameraController cameraController))
+        if (Camera.main.TryGetComponent(out CameraController cameraController))
         {
-            cameraController.SetPlayer(target.transform, isLocal);
+            if (target == null)
+            {
+                cameraController.SetNoFollow();
+            }
+            else
+            {
+                cameraController.SetPlayer(target.transform, isLocal);
+            }
         }
     }
 

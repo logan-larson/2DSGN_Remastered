@@ -286,10 +286,10 @@ public class PlayerController : NetworkBehaviour
     private bool _recalculateLandingCoroutineIsRunning;
 
     /// <summary>
-    /// Set to true when the player's movement should be disabled.
+    /// Set to true when the player's movement should be enabled.
     /// </summary>
     [SyncVar] [SerializeField]
-    private bool _movementDisabled = false;
+    private bool _controllerEnabled = true;
 
     /// <summary>
     /// Direction the player is aiming in the previous tick.
@@ -353,17 +353,9 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
 
-        if (GameManager.Instance.GameState == GameState.InGame)
-        {
-            _movementDisabled = false;
-        }
-        else
-        {
-            _movementDisabled = true;
-        }
+        _controllerEnabled = GameManager.Instance.GameState == GameState.InGame;
 
-        GameManager.Instance.OnGameStart.AddListener(() => _movementDisabled = false);
-        GameManager.Instance.OnGameEnd.AddListener(() => _movementDisabled = true);
+        GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
 
         SubscribeToTimeManager(true);
     }
@@ -379,10 +371,25 @@ public class PlayerController : NetworkBehaviour
         base.OnStartClient();
         SubscribeToTimeManager(true);
 
+        SetCursorEnabled(GameManager.Instance.GameState != GameState.InGame);
+
         if (base.IsOwner)
         {
             _inputManager.TogglePause.AddListener(OnTogglePause);
             _inputManager.ToggleScoreboard.AddListener(OnToggleScoreboard);
+        }
+    }
+
+    private void OnGameStateChange(GameState gameState)
+    {
+        switch (gameState)
+        {
+            case GameState.InGame:
+                _controllerEnabled = true;
+                break;
+            default:
+                _controllerEnabled = false;
+                break;
         }
     }
 
@@ -423,7 +430,7 @@ public class PlayerController : NetworkBehaviour
             _overrideTransform = false;
         }
 
-        if (_movementDisabled)
+        if (!_controllerEnabled)
             return;
 
         if (_playerManager.IsDead)
@@ -526,14 +533,6 @@ public class PlayerController : NetworkBehaviour
     [Replicate]
     private void Move(MoveData moveData, bool asServer, Channel channel = Channel.Unreliable, bool replaying = false)
     {
-        if (_movementDisabled)
-        {
-            _currentVelocity = Vector3.zero;
-            _predictedNormal = Vector3.zero;
-            _predictedPosition = transform.position;
-            return;
-        }
-
         UpdateRaycastOrigins();
 
         UpdateGrounded();

@@ -208,9 +208,17 @@ public class SessionManager : MonoBehaviour
                 player.Deaths = 0;
             }
 
-            GameManager.Instance.OnGameEnd.AddListener(() => StartCoroutine(PostGameCoroutine()));
+            GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
 
             PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
+        }
+    }
+
+    private void OnGameStateChange(GameState gameState)
+    {
+        if (gameState == GameState.PostGame)
+        {
+            StartCoroutine(PostGameCoroutine());
         }
     }
 

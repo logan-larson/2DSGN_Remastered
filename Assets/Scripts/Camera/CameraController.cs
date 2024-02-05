@@ -145,6 +145,11 @@ public class CameraController : NetworkBehaviour
         _currentPlayer.GetComponent<PlayerManager>().SetCamera(GetComponent<Camera>());
     }
 
+    public void SetNoFollow()
+    {
+        _currentPlayer = null;
+    }
+
     public void ResetToLocal()
     {
         _playerIsLocal = true;

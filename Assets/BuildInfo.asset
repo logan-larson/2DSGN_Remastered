@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: BuildInfo
   m_EditorClassIdentifier: 
   IsServer: 0
-  IsProduction: 1
+  IsProduction: 0

@@ -20,17 +20,24 @@ public class GameManager : NetworkBehaviour
     #region Events 
 
     public UnityEvent<int> OnCountdown = new UnityEvent<int>();
-    public UnityEvent OnGameStart = new UnityEvent();
-    public UnityEvent OnGameEnd = new UnityEvent();
+
+    public UnityEvent<GameState> OnGameStateChange = new UnityEvent<GameState>();
 
     #endregion
 
     #region Public Fields
 
-    [SyncVar]
+    [SyncVar (OnChange = nameof(OnGameStateChanged))]
     public GameState GameState;
 
+    private void OnGameStateChanged(GameState oldState, GameState newState, bool asServer)
+    {
+        OnGameStateChange.Invoke(newState);
+    }
+
     #endregion
+
+    #region Private Fields
 
     [SerializeField]
     private int _countdownDuration = 5;
@@ -47,7 +54,13 @@ public class GameManager : NetworkBehaviour
 
     private SessionManager _sessionManager;
 
+    #endregion
+
+    #region Static Fields
+
     public static GameManager Instance;
+
+    #endregion
 
     private void Awake()
     {
@@ -89,18 +102,12 @@ public class GameManager : NetworkBehaviour
         OnCountdownObserversRpc(countdown);
         OnCountdown.Invoke(0);
 
-        // Start the game
-        OnGameStart.Invoke();
-
         GameState = GameState.InGame;
-
 
         // TEMP: For now, we'll just end the game after 5 seconds.
         if (_gameEndOverrideTime != -1)
         {
             yield return new WaitForSeconds(_gameEndOverrideTime);
-
-            OnGameEnd.Invoke();
 
             GameState = GameState.PostGame;
         }
@@ -134,8 +141,6 @@ public class GameManager : NetworkBehaviour
             if (player.Kills >= _killsToWin && GameState == GameState.InGame)
             {
                 // Game over
-                OnGameEnd.Invoke();
-
                 GameState = GameState.PostGame;
             }
         }
