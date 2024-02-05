@@ -72,6 +72,9 @@ public class CameraController : NetworkBehaviour
     [SerializeField]
     private InputManager _inputManager;
 
+    [SerializeField]
+    private PlayerManager _playerManager;
+
     #endregion
 
     #region Initialization
@@ -141,8 +144,8 @@ public class CameraController : NetworkBehaviour
         // Set the local script references to the set player's script references
         _playerController = _currentPlayer.GetComponent<PlayerController>();
         _inputManager = _currentPlayer.GetComponent<InputManager>();
-
-        _currentPlayer.GetComponent<PlayerManager>().SetCamera(GetComponent<Camera>());
+        _playerManager = _currentPlayer.GetComponent<PlayerManager>();
+        _playerManager.SetCamera(GetComponent<Camera>());
     }
 
     public void SetNoFollow()
@@ -161,6 +164,13 @@ public class CameraController : NetworkBehaviour
     void OnTick()
     {
         if (_currentPlayer == null) return;
+
+        // If the current player is dead, don't follow them
+        if (_playerManager.Status == PlayerStatus.Dead)
+        {
+            SetNoFollow();
+            return;
+        }
 
         // Calculate the camera z position based on the player's velocity
         // Zoom out when moving faster

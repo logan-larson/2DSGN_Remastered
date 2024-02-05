@@ -14,8 +14,20 @@ public class PlayerManager : NetworkBehaviour
     [SerializeField]
     private UserInfo _userInfo;
 
-    [SyncVar]
-    public bool IsDead = false;
+    [SyncVar (OnChange = nameof(OnPlayerStatusChanged))]
+    public PlayerStatus Status = PlayerStatus.Alive;
+
+    private void OnPlayerStatusChanged(PlayerStatus oldStatus, PlayerStatus newStatus, bool asServer)
+    {
+        if (newStatus == PlayerStatus.Dead)
+        {
+            // Disable the player's visual elements.
+        }
+        else if (newStatus == PlayerStatus.Alive)
+        {
+            // Enable the player's visual elements.
+        }
+    }
 
     [SyncVar (OnChange = nameof(OnUsernameChanged))]
     private string _username;
@@ -138,6 +150,9 @@ public class PlayerManager : NetworkBehaviour
 
         OnModeChanged(_modeManager.CurrentMode);
 
+        // Enable the player's visual elements.
+        OnPlayerStatusChanged(PlayerStatus.Alive, PlayerStatus.Alive, true);
+
         SubscribeToTimeManager(true);
 
         if (base.IsOwner)
@@ -164,6 +179,9 @@ public class PlayerManager : NetworkBehaviour
         OnModeChanged(_modeManager.CurrentMode);
 
         OnHealthChanged(_health, _health, true);
+
+        // Enable the player's visual elements.
+        OnPlayerStatusChanged(PlayerStatus.Alive, PlayerStatus.Alive, true);
 
         PlayersManager.Instance.SetUsername(conn, username);
     }
@@ -258,7 +276,7 @@ public class PlayerManager : NetworkBehaviour
     [Server]
     public void OnDeath(Transform heaven, NetworkConnection targetConn, NetworkObject killer)
     {
-        IsDead = true;
+        Status = PlayerStatus.Dead;
 
         // Spawn death indicator prefab.
         var deathIndicatorPosition = transform.position;
@@ -287,7 +305,8 @@ public class PlayerManager : NetworkBehaviour
     {
         if (base.IsOwner)
         {
-            //// Hide the player's sprite, 
+            //// Hide the player's sprite, jump prediction line, username and health UI.
+            
         }
 
         Instantiate(_deathIndicatorPrefab, deathIndicatorPosition, Quaternion.identity);
@@ -300,7 +319,7 @@ public class PlayerManager : NetworkBehaviour
 
         _playerController.OverrideTransform(spawnPoint.position, spawnPoint.rotation);
 
-        IsDead = false;
+        Status = PlayerStatus.Alive;
 
         _health = MAX_HEALTH;
 

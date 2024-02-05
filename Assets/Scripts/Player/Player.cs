@@ -25,3 +25,11 @@ public class Player
     public int Score { get; set; } = 0;
 
 }
+
+public enum PlayerStatus
+{
+    Alive,
+    Dead,
+    Disabled,
+    Spectating
+}

@@ -433,7 +433,7 @@ public class PlayerController : NetworkBehaviour
         if (!_controllerEnabled)
             return;
 
-        if (_playerManager.IsDead)
+        if (_playerManager.Status == PlayerStatus.Dead)
         {
             // Set mode to sprint if dead.
             _currentMode = Mode.Sprint;

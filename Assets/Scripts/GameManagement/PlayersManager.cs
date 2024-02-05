@@ -174,15 +174,12 @@ public class PlayersManager : NetworkBehaviour
 
             // Initiate the respawn.
 
-            // Get a spawn point that is furhest away from each enemy player.
-            Transform spawnPoint = GetSpawnPoint();
-
             // Send the player to heaven.
             target.Nob.GetComponent<PlayerManager>().OnDeath(_heaven, target.Connection, attacker != null ? attacker.Nob : null);
 
 
             // Start the respawn coroutine.
-            StartCoroutine(RespawnPlayer(target, spawnPoint));
+            StartCoroutine(RespawnPlayer(target));
         }
 
     }
@@ -252,10 +249,13 @@ public class PlayersManager : NetworkBehaviour
         return furthestSpawnPoint;
     }
 
-    private IEnumerator RespawnPlayer(Player player, Transform spawnPoint)
+    private IEnumerator RespawnPlayer(Player player)
     {
         // Wait for 3 seconds.
         yield return new WaitForSeconds(3f);
+
+        // Get a spawn point that is furhest away from each enemy player.
+        Transform spawnPoint = GetSpawnPoint();
 
         // Reset the player's health.
         player.Health = 100;
