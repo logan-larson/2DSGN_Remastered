@@ -8,4 +8,6 @@ public class BuildInfo : ScriptableObject
     public bool IsServer;
 
     public bool IsProduction;
+
+    public bool IsFreeplay;
 }

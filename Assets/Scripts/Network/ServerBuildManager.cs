@@ -1,5 +1,7 @@
 using FishNet.Managing;
+using FishNet.Transporting.Multipass;
 using FishNet.Transporting.Tugboat;
+using FishNet.Transporting.Yak;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +25,8 @@ public class ServerBuildManager : MonoBehaviour
 
     private void Awake()
     {
+        Multipass multipass = _networkManager.TransportManager.GetTransport<Multipass>();
+        
         if (_buildInfo.IsServer)
         {
             _networkManager.ServerManager.StartConnection();
@@ -30,8 +34,19 @@ public class ServerBuildManager : MonoBehaviour
 
             // Query the lobby ID for the initial player list.
         }
+        else if (_buildInfo.IsFreeplay)
+        {
+            multipass.SetClientTransport<Yak>();
+
+            _networkManagerUI.SetActive(false);
+
+            _networkManager.ServerManager.StartConnection();
+            _networkManager.ClientManager.StartConnection();
+        }
         else
         {
+            multipass.SetClientTransport<Tugboat>();
+
             if (_buildInfo.IsProduction)
             {
                 _networkManagerUI.SetActive(false);
