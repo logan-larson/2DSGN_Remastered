@@ -22,10 +22,16 @@ public class PlayerManager : NetworkBehaviour
         if (newStatus == PlayerStatus.Dead)
         {
             // Disable the player's visual elements.
+            _abovePlayerUICanvas.SetActive(false);
+            _playerSpriteRenderer.enabled = false;
+            _jumpPredictionLine.SetActive(false);
         }
         else if (newStatus == PlayerStatus.Alive)
         {
             // Enable the player's visual elements.
+            _abovePlayerUICanvas.SetActive(true);
+            _playerSpriteRenderer.enabled = true;
+            _jumpPredictionLine.SetActive(true);
         }
     }
 
