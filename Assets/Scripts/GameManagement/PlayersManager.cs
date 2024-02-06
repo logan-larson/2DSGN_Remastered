@@ -157,7 +157,8 @@ public class PlayersManager : NetworkBehaviour
 
         damage = Mathf.Floor(damage);
 
-        if (target.IsDead)
+        //if (target.IsDead)
+        if (target.Status == PlayerStatus.Dead)
             return;
 
         // Reduce the health of the target.
@@ -168,7 +169,7 @@ public class PlayersManager : NetworkBehaviour
         // If the target's health is less than or equal to 0, then they are dead.
         if (target.Health <= 0)
         {
-            target.IsDead = true;
+            target.Status = PlayerStatus.Dead;
 
             OnPlayerKilled?.Invoke(target, attacker, weapon);
 
@@ -219,9 +220,13 @@ public class PlayersManager : NetworkBehaviour
 
     private Transform GetSpawnPoint()
     {
-        // Get a spawn point that is furthest away from each enemy player.
+        // -- Get a spawn point that is furthest away from each enemy player --
 
-        Transform[] playerPositions = _sessionManager.Players.Values.Where(p => !p.IsDead).Select(p => p.Nob.transform).ToArray();
+        // Add the alive player positions to the list of player positions.
+        List<Transform> playerPositions = _sessionManager.Players.Values.Where(p => p.Status == PlayerStatus.Alive).Select(p => p.Nob.transform).ToList();
+
+        // Add the respawning player positions to the list of player positions.
+        playerPositions.AddRange(_sessionManager.Players.Values.Where(p => p.Status == PlayerStatus.Respawning).Select(p => p.RespawnPoint));
 
         // Find spawn point furthest away from all players
         Transform furthestSpawnPoint = _spawnPoints[0];
@@ -251,20 +256,30 @@ public class PlayersManager : NetworkBehaviour
 
     private IEnumerator RespawnPlayer(Player player)
     {
-        // Wait for 3 seconds.
-        yield return new WaitForSeconds(3f);
+        // Wait for 2 seconds.
+        yield return new WaitForSeconds(2.5f);
 
-        // Get a spawn point that is furhest away from each enemy player.
-        Transform spawnPoint = GetSpawnPoint();
+        // Get a spawn point that is furhest away from each enemy player that is alive or currently respawning.
+        player.RespawnPoint = GetSpawnPoint();
+        
+        // Set the player's status to respawning.
+        player.Status = PlayerStatus.Respawning;
+
+        player.Nob.GetComponent<PlayerManager>().OnSetRespawnPoint(player.Connection, player.RespawnPoint);
+
+        // Wait for 1 second.
+        yield return new WaitForSeconds(0.5f);
 
         // Reset the player's health.
         player.Health = 100;
 
         // Reset the player's death state.
-        player.IsDead = false;
+        player.Status = PlayerStatus.Alive;
 
         // Respawn the player.
-        player.Nob.GetComponent<PlayerManager>().OnRespawn(spawnPoint, player);
+        player.Nob.GetComponent<PlayerManager>().OnRespawn(player.RespawnPoint, player);
+
+        player.RespawnPoint = null;
     }
 
     #endregion

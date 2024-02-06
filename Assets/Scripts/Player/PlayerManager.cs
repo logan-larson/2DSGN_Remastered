@@ -313,6 +313,14 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [Server]
+    public void OnSetRespawnPoint(NetworkConnection target, Transform respawnPoint)
+    {
+        Status = PlayerStatus.Respawning;
+
+        SetPointToFollowTargetRpc(target, respawnPoint.position, respawnPoint.rotation);
+    }
+
+    [Server]
     public void OnRespawn(Transform spawnPoint, Player player)
     {
         _weaponManager.EquipDefaultWeapon();
@@ -433,6 +441,15 @@ public class PlayerManager : NetworkBehaviour
             {
                 cameraController.SetPlayer(target.transform, isLocal);
             }
+        }
+    }
+
+    [TargetRpc]
+    public void SetPointToFollowTargetRpc(NetworkConnection conn, Vector3 position, Quaternion rotation)
+    {
+        if (Camera.main.TryGetComponent(out CameraController cameraController))
+        {
+            cameraController.SetPoint(position, rotation);
         }
     }
 

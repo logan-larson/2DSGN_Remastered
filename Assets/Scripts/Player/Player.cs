@@ -14,8 +14,11 @@ public class Player
     public NetworkConnection Connection { get; set; }
     public string Username { get; set; } = "user123";
     public float Health { get; set; } = 100f;
+
+    public PlayerStatus Status { get; set; } = PlayerStatus.Alive;
     public bool IsDead { get; set; } = false;
 
+    public Transform RespawnPoint { get; set; } = null;
 
     // Players Manager things
     public int Kills { get; set; } = 0;
@@ -30,6 +33,7 @@ public enum PlayerStatus
 {
     Alive,
     Dead,
+    Respawning,
     Disabled,
     Spectating
 }

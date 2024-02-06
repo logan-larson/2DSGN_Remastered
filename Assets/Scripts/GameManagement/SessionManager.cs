@@ -121,7 +121,8 @@ public class SessionManager : MonoBehaviour
                 Nob = null,
                 Username = "Request Username",
                 Health = 100,
-                IsDead = false
+                IsDead = false,
+                Status = PlayerStatus.Alive,
             };
 
             // Add the player to the list.

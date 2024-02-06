@@ -50,7 +50,7 @@ public class CameraController : NetworkBehaviour
     /// <summary>
     /// The current player being followed by the camera.
     /// </summary>
-    private Transform _currentPlayer = null;
+    private Transform _currentPlayer = null; // TODO: rename to _currentTargetTransform
 
     /// <summary>
     /// The player associated with this client.
@@ -58,6 +58,11 @@ public class CameraController : NetworkBehaviour
     private Transform _clientPlayer = null;
 
     private bool _playerIsLocal = false;
+
+    private bool _isFollowingPlayer = false;
+
+    private Vector3? _currentTargetPosition = null;
+    private Quaternion? _currentTargetRotation = null;
 
     /// <summary>
     /// Whether or not this client is subscribed to the time manager.
@@ -135,8 +140,23 @@ public class CameraController : NetworkBehaviour
 
     #endregion
 
+    /// <summary>
+    /// Sets the player to follow.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="isLocal"></param>
     public void SetPlayer(Transform player, bool isLocal)
     {
+        // If we currently aren't following the local player, don't set the player to follow to
+        // be another player that isn't the local player
+        if (!_playerIsLocal && !isLocal)
+        {
+            SetNoFollow();
+            return;
+        }
+
+        _isFollowingPlayer = true;
+
         _currentPlayer = player;
 
         _playerIsLocal = isLocal;
@@ -146,11 +166,22 @@ public class CameraController : NetworkBehaviour
         _inputManager = _currentPlayer.GetComponent<InputManager>();
         _playerManager = _currentPlayer.GetComponent<PlayerManager>();
         _playerManager.SetCamera(GetComponent<Camera>());
+
+        _currentTargetPosition = null;
+        _currentTargetRotation = null;
+    }
+
+    public void SetPoint(Vector3 position, Quaternion rotation)
+    {
+        _isFollowingPlayer = true;
+
+        _currentTargetPosition = position;
+        _currentTargetRotation = rotation;
     }
 
     public void SetNoFollow()
     {
-        _currentPlayer = null;
+        _isFollowingPlayer = false;
     }
 
     public void ResetToLocal()
@@ -163,7 +194,7 @@ public class CameraController : NetworkBehaviour
 
     void OnTick()
     {
-        if (_currentPlayer == null) return;
+        if (_currentPlayer == null || !_isFollowingPlayer) return;
 
         // If the current player is dead, don't follow them
         if (_playerManager.Status == PlayerStatus.Dead)
@@ -177,9 +208,12 @@ public class CameraController : NetworkBehaviour
         Vector3 velocity = _playerController.MovementData.Velocity;
 
         Vector3 targetPos = _currentPlayer.position;
+
+        if (_currentTargetPosition != null)
+            targetPos = _currentTargetPosition.Value;
         
         if (_playerIsLocal)
-         targetPos = (_currentPlayer.position + WeaponHolderPosition) / 2f;
+            targetPos = (_currentPlayer.position + WeaponHolderPosition) / 2f;
 
         if (_inputManager.CameraLockInput && _playerIsLocal)
         {
@@ -199,7 +233,7 @@ public class CameraController : NetworkBehaviour
         var rotLerpValue = _playerController.MovementData.IsGrounded ? _groundedRotLerpValue : _airborneRotLerpValue;
 
         // Check if the player is holding the camera rotation lock button
-        Quaternion lerpedRot = this.transform.rotation;
+        Quaternion lerpedRot = _currentTargetRotation != null ? _currentTargetRotation.Value : this.transform.rotation;
         if (!_inputManager.CameraLockInput)
         {
             var movementRot = Quaternion.identity;
@@ -213,7 +247,7 @@ public class CameraController : NetworkBehaviour
                 movementRot = Quaternion.Euler(0, 0, -movementRotationFactor * _playerController.MovementData.Velocity.magnitude);
             }
 
-            lerpedRot = Quaternion.Lerp(this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);
+            lerpedRot = Quaternion.Lerp(_currentTargetRotation != null ? _currentTargetRotation.Value : this.transform.rotation, _currentPlayer.rotation * movementRot, rotLerpValue);
         }
 
         this.transform.SetPositionAndRotation(lerpedPos, lerpedRot);
