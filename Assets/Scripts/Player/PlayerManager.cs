@@ -31,7 +31,9 @@ public class PlayerManager : NetworkBehaviour
             // Enable the player's visual elements.
             _abovePlayerUICanvas.SetActive(true);
             _playerSpriteRenderer.enabled = true;
-            _jumpPredictionLine.SetActive(true);
+
+            if (base.IsOwner)
+                _jumpPredictionLine.SetActive(true);
         }
     }
 

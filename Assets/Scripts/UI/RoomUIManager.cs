@@ -6,6 +6,8 @@ using Hathora.Core.Scripts.Runtime.Server;
 using TMPro;
 using System.Collections;
 using System.Threading.Tasks;
+using System.Text;
+using UnityEngine.Networking;
 
 public class RoomUIManager : MonoBehaviour
 {
@@ -56,8 +58,13 @@ public class RoomUIManager : MonoBehaviour
         _usernameText.text = _userInfo.Username;
     }
 
-    public async void OnHost()
+    public void OnHost()
     {
+        // Request a room from my Go server
+        StartCoroutine(CreateRoomCoroutine("{\"name\":\"Test Room\", \"hostUsername\":\"\"}", "Chicago"));
+
+
+        /*
         // Create the room
         CreateRoomRequest request = new CreateRoomRequest()
         {
@@ -80,6 +87,39 @@ public class RoomUIManager : MonoBehaviour
             // Start polling for the room to be ready
             StartCoroutine(PollConnectionInfoCoroutine(res.ConnectionInfoV2.RoomId));
         }
+        */
+    }
+
+    private IEnumerator CreateRoomCoroutine(string roomConfig, string region)
+    {
+        var requestBody = new
+        {
+            roomConfig,
+            region,
+        };
+
+        string jsonBody = JsonUtility.ToJson(requestBody);
+        byte[] jsonBodyBytes = Encoding.UTF8.GetBytes(jsonBody);
+
+        using (UnityWebRequest www = new UnityWebRequest("http://localhost:8080/lobbies", "POST"))
+        {
+            www.uploadHandler = new UploadHandlerRaw(jsonBodyBytes);
+            www.downloadHandler = new DownloadHandlerBuffer();
+            www.SetRequestHeader("Content-Type", "application/json");
+
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                Debug.Log("Room created");
+            }
+        }
+
     }
 
     private IEnumerator PollConnectionInfoCoroutine(string roomId)
@@ -153,6 +193,7 @@ public class RoomUIManager : MonoBehaviour
         // Join the room
         _serverInfo.Address = _serverAddressInput.text;
         _serverInfo.Port = ushort.Parse(_serverPortInput.text);
+
 
         // TEMP: Switching to test
         UnityEngine.SceneManagement.SceneManager.LoadScene("PreGameLobby");
