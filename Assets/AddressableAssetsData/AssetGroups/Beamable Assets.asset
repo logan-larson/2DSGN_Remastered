@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Beamable Assets
+  m_EditorClassIdentifier: 
+  m_GroupName: Beamable Assets
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 6711040726afa2748bfc33e3374a01ac
+  m_SerializeEntries:
+  - m_GUID: f819a6beb22c04c8d9f8222f930252b5
+    m_Address: Assets/Beamable/DefaultAssets/currency/icon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: fa878dd7df28a7440ae08d5860fe6425, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 6c2a63f74d683f549859e8801c0fb2a1, type: 2}
+    - {fileID: 11400000, guid: 8e22e5c71ce4e754e918b7de331db5a3, type: 2}

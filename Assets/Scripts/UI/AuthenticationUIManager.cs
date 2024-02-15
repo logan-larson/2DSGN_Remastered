@@ -1,3 +1,5 @@
+using Beamable;
+using Beamable.Player;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,11 +15,34 @@ public class AuthenticationUIManager : MonoBehaviour
     private TMP_Text _usernameError;
 
     [SerializeField]
+    private TMP_Text _loginStatus;
+
+    [SerializeField]
     private UserInfo _userInfo;
 
-    private void Start()
+    private BeamContext _beamContext;
+
+    private PlayerAccount _playerAccount;
+
+    private async void Start()
     {
         _usernameError.gameObject.SetActive(false);
+
+        _beamContext = BeamContext.Default;
+
+        _loginStatus.text = "Connecting to authentication service...";
+        await _beamContext.OnReady;
+
+        _loginStatus.text = "Fetching user details...";
+        await _beamContext.Accounts.OnReady;
+
+        _loginStatus.text = "User details fetched!";
+
+        _playerAccount = _beamContext.Accounts.Current;
+
+        _username.text = _playerAccount.Alias;
+
+        Debug.Log($"User Id: {_beamContext.PlayerId}");
     }
 
     public void Continue()
@@ -30,9 +55,27 @@ public class AuthenticationUIManager : MonoBehaviour
 
         _usernameError.gameObject.SetActive(false);
 
-        _userInfo.Username = _username.text;
+        if (_playerAccount.Alias != _username.text)
+        {
+            _loginStatus.text = "Updating user details...";
 
-        // Load the main menu scene
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            var accountPromise = _beamContext.Accounts.Current.SetAlias(_username.text);
+
+            accountPromise.Then((account) =>
+            {
+                _loginStatus.text = "User details updated!";
+                _userInfo.Username = _username.text;
+
+                // Load the main menu scene
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            });
+        }
+        else
+        {
+            _userInfo.Username = _username.text;
+
+            // Load the main menu scene
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+        }
     }
 }

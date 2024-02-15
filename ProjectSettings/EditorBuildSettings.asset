@@ -23,4 +23,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game/OfflineGame.unity
     guid: bb1db77b3dee5c844a12ffb5c1042f0a
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: e877b4c97fc5c704f82d776632688752, type: 2}

@@ -1,0 +1,8 @@
+{
+    "cid": "1715976867330048",
+    "alias": "caffeinated-studios",
+    "pid": "DE_1715976867330051",
+    "platform": "",
+    "socket": "",
+    "containerPrefix": ""
+}
