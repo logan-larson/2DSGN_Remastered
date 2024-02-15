@@ -1,3 +1,5 @@
+using Beamable;
+using Beamable.Experimental.Api.Lobbies;
 using FishNet;
 using FishNet.Broadcast;
 using FishNet.Connection;
@@ -37,6 +39,10 @@ public class SessionManager : MonoBehaviour
 
     public int KillLimit = 20;
 
+    public Lobby Lobby { get; private set; }
+
+    public UnityEvent<Lobby> OnLobbyUpdate = new UnityEvent<Lobby>();
+
     #endregion
 
     #region Serialized Fields
@@ -55,6 +61,8 @@ public class SessionManager : MonoBehaviour
     #region Private Fields
 
     private NetworkManager _networkManager;
+
+    private BeamContext _beamContext;
 
     #endregion
 
@@ -105,8 +113,25 @@ public class SessionManager : MonoBehaviour
             };
 
             _networkManager.ClientManager.Broadcast(usernameBroadcast);
+
+            SetupBeamable();
+        }
+        else if (args.ConnectionState == LocalConnectionState.Stopped)
+        {
+            _beamContext.Lobby.Leave();
         }
     }
+
+    private async void SetupBeamable()
+    {
+        _beamContext = BeamContext.Default;
+        await _beamContext.OnReady;
+        //_beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
+
+        Lobby = _beamContext.Lobby.Value;
+        OnLobbyUpdate.Invoke(Lobby);
+    }
+
 
     private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {

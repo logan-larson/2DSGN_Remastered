@@ -1,3 +1,4 @@
+using Beamable.Experimental.Api.Lobbies;
 using FishNet;
 using System;
 using System.Collections;
@@ -22,6 +23,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
     [SerializeField]
     private TMP_InputField _killLimitInputField;
 
+    [SerializeField]
+    private TMP_Text _lobbyCodeText;
+
     private void Start()
     {
         var networkManager = InstanceFinder.NetworkManager;
@@ -37,6 +41,7 @@ public class PreGameLobbyUIManager : MonoBehaviour
         _sessionManager.OnPlayerListUpdate.AddListener(OnPlayerListUpdate);
         _sessionManager.OnMapChange.AddListener(OnMapChange);
         _sessionManager.OnKillLimitChange.AddListener(OnKillLimitChange);
+        _sessionManager.OnLobbyUpdate.AddListener(OnLobbyUpdate);
 
         _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
         _killLimitInputField.onEndEdit.AddListener(OnKillLimitInputFieldEndEdit);
@@ -87,6 +92,17 @@ public class PreGameLobbyUIManager : MonoBehaviour
         }
     }
 
+    private void OnLobbyUpdate(Lobby lobby)
+    {
+        var details = ParseDescription(lobby.description);
+
+        _mapDropdown.value = _mapDropdown.options.FindIndex(option => option.text == details.Map);
+
+        // TODO: Set the other details provided by the lobby.
+
+        _lobbyCodeText.text = lobby.passcode;
+    }
+
     public void OnStartGame()
     {
         _sessionManager.OnStart();
@@ -95,5 +111,21 @@ public class PreGameLobbyUIManager : MonoBehaviour
     public void OnLeaveLobby()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+
+    private LobbyListItemDetails ParseDescription(string description)
+    {
+        // The description is a semicolon delimited list of strings
+        // server_address:port;map;gamemode;gamestate;player_count;max_players
+        var details = new LobbyListItemDetails();
+
+        var parts = description.Split(';');
+
+        details.Map = parts[1];
+        details.Gamemode = parts[2];
+        details.Gamestate = parts[3];
+        details.PlayerCount = parts[4];
+
+        return details;
     }
 }

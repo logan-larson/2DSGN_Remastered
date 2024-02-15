@@ -30,6 +30,9 @@ public class MainMenuUIManager : MonoBehaviour
     public TMP_Text UsernameText;
 
     [SerializeField]
+    private TMP_InputField _lobbyPasscodeInputField;
+
+    [SerializeField]
     private TMP_Text _serverStatusText;
 
     [SerializeField]
@@ -116,6 +119,13 @@ public class MainMenuUIManager : MonoBehaviour
 
     }
 
+    public void OnJoinLobbyByPasscode()
+    {
+        var passcode = _lobbyPasscodeInputField.text;
+
+        JoinLobbyAsync("", passcode);
+    }
+
     private void OnLobbyDataUpdated(Beamable.Experimental.Api.Lobbies.Lobby lobby)
     {
         if (lobby == null) return;
@@ -167,8 +177,14 @@ public class MainMenuUIManager : MonoBehaviour
     {
         CreateAndJoinLobbyAsync();
     }
+
+    public class CreateLobbyDetails
+    {
+        public string LobbyId;
+        public string LobbyPasscode;
+    }
     
-    public async Promise<string> CreateLobbyAsync(CreateLobbyRecord lobbyRecord)
+    public async Promise<CreateLobbyDetails> CreateLobbyAsync(CreateLobbyRecord lobbyRecord)
     {
         // TEMP: Create the Hathora room
         CreateRoomRequest request = new CreateRoomRequest()
@@ -235,7 +251,8 @@ public class MainMenuUIManager : MonoBehaviour
             return null;
         }
 
-        var description = roomRes.ConnectionInfoV2.ExposedPort.Host + ":" + roomRes.ConnectionInfoV2.ExposedPort.Port;
+        // TODO: Don't hardcode this
+        var description = $"{roomRes.ConnectionInfoV2.ExposedPort.Host}:{roomRes.ConnectionInfoV2.ExposedPort.Port};BigMap;{lobbyRecord.Gamemode};In Lobby;0";
         
 
         // TEMP: Get the Hathora room connection details
@@ -246,15 +263,21 @@ public class MainMenuUIManager : MonoBehaviour
             description, lobbyRecord.PlayerTags, lobbyRecord.MaxPlayers, lobbyRecord.PasscodeLength);
 
         // Get the lobby ID and call the create lobby microservice
-        string lobbyId = _beamContext.Lobby.Id;
+        //string lobbyId = _beamContext.Lobby.Id;
 
         // Call the lobby microservice to create the Hathora room and store the lobby details
         //var lobbyDetails = await _lobbyDetailsClient.CreateLobby(lobbyId, lobbyRecord.Restriction == LobbyRestriction.Open, lobbyRecord.Name, lobbyRecord.Gamemode);
 
-        return lobbyId;
+        var createLobbyDetails = new CreateLobbyDetails()
+        {
+            LobbyId = _beamContext.Lobby.Id,
+            LobbyPasscode = _beamContext.Lobby.Passcode
+        };
+
+        return createLobbyDetails; 
     }
 
-    public async void JoinLobbyAsync(string lobbyId)
+    public async void JoinLobbyAsync(string lobbyId, string passcode = null)
     {
         // Get the connection details for the Hathora room based on the Beamable lobby ID
 
@@ -262,12 +285,24 @@ public class MainMenuUIManager : MonoBehaviour
 
 
         // TEMP: Get the connection details for the Hathora room from the lobby description
-        var lqr = await _beamContext.Lobby.FindLobbies();
+        //var lqr = await _beamContext.Lobby.FindLobbies();
 
         // Join the lobby in Beamable
         // TODO: Move this to the PreGameLobby scene
-        await _beamContext.Lobby.Join(lobbyId);
+        if (passcode == null)
+        {
+            await _beamContext.Lobby.Join(lobbyId);
+        }
+        else
+        {
+            await _beamContext.Lobby.JoinByPasscode(passcode.ToUpper());
+        }
 
+
+        var connectionDetails = _beamContext.Lobby.Description.Split(';')[0].Split(":");
+        JoinLobby(connectionDetails[0], connectionDetails[1]);
+
+        /*
         lqr.results.ForEach(lobby =>
         {
             if (lobby.lobbyId == lobbyId)
@@ -276,6 +311,7 @@ public class MainMenuUIManager : MonoBehaviour
                 JoinLobby(connectionDetails[0], connectionDetails[1]);
             }
         });
+        */
     }
     
     public record CreateLobbyRecord
@@ -318,12 +354,21 @@ public class MainMenuUIManager : MonoBehaviour
         };
 
         // Create the lobby and get its ID
-        var lobbyId = await CreateLobbyAsync(lobbyRecord);
+        await CreateLobbyAsync(lobbyRecord);
 
         _serverStatusText.text = "Joining lobby...";
 
-        // Join the lobby by its ID
-        JoinLobbyAsync(lobbyId);
+        JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
+        /*
+        if (lobbyRecord.Restriction == LobbyRestriction.Open)
+        {
+            // Join the lobby by its ID and passcode
+        }
+        else
+        {
+            JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
+        }
+        */
 
         // This is now getting handled by the LobbyDetails microservice
         // Create the room

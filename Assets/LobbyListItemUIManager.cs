@@ -14,16 +14,16 @@ public class LobbyListItemUIManager : MonoBehaviour
     private TMP_Text _nameText;
 
     [SerializeField]
+    private TMP_Text _mapText;
+
+    [SerializeField]
     private TMP_Text _gamemodeText;
 
     [SerializeField]
-    private TMP_Text _playerCountText;
-
-    [SerializeField]
-    private TMP_Text _maxPlayerCountText;
-
-    [SerializeField]
     private TMP_Text _gamestateText;
+
+    [SerializeField]
+    private TMP_Text _playerCountText;
 
     [SerializeField]
     private Button _joinButton;
@@ -52,9 +52,49 @@ public class LobbyListItemUIManager : MonoBehaviour
         if (_nameText != null)
             _nameText.text = lobby.name;
 
+        var details = ParseDescription(lobby.description);
+
+        if (_mapText != null)
+            _mapText.text = details.Map;
+
+        if (_gamemodeText != null)
+            _gamemodeText.text = details.Gamemode;
+
+        if (_gamestateText != null)
+            _gamestateText.text = details.Gamestate;
+
+        if (_playerCountText != null)
+            _playerCountText.text = $"{details.PlayerCount}/{details.MaxPlayers}";
+
         if (place % 2 == 0)
             _background.color = new Color(0.1f, 0.1f, 0.1f, 0.5f);
         else
             _background.color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
     }
+
+    private LobbyListItemDetails ParseDescription(string description)
+    {
+        // The description is a semicolon delimited list of strings
+        // server_address:port;map;gamemode;gamestate;player_count;max_players
+        var details = new LobbyListItemDetails();
+
+        var parts = description.Split(';');
+
+        details.Map = parts[1];
+        details.Gamemode = parts[2];
+        details.Gamestate = parts[3];
+        details.PlayerCount = parts[4];
+        //details.MaxPlayers = parts[5];
+
+        return details;
+    }
+}
+
+public class LobbyListItemDetails
+{
+    public string Map;
+    public string Gamemode; 
+    public string Gamestate;
+    public string PlayerCount;
+    public string MaxPlayers;
 }
