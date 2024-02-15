@@ -3,7 +3,6 @@ using Beamable;
 using Beamable.Common;
 using Beamable.Common.Content;
 using Beamable.Experimental.Api.Lobbies;
-using Beamable.Server.Clients;
 using Hathora.Core.Scripts.Runtime.Server;
 using HathoraCloud;
 using HathoraCloud.Models.Operations;
@@ -31,6 +30,9 @@ public class MainMenuUIManager : MonoBehaviour
 
     [SerializeField]
     private TMP_InputField _lobbyPasscodeInputField;
+
+    [SerializeField]
+    private TMP_Text _debugText;
 
     [SerializeField]
     private TMP_Text _serverStatusText;
@@ -66,8 +68,6 @@ public class MainMenuUIManager : MonoBehaviour
     private HathoraCloudSDK _hathora;
 
     private BeamContext _beamContext;
-
-    private LobbyDetailsClient _lobbyDetailsClient;
 
     public string PlayerId { get; private set; }
 
@@ -106,6 +106,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     public async void OnRefreshLobbyList()
     {
+        _debugText.text = "Refreshing lobby list...";
+
         Lobbies.Clear();
 
         var lobbiesQueryResponse = await _beamContext.Lobby.FindLobbies();
@@ -117,6 +119,7 @@ public class MainMenuUIManager : MonoBehaviour
 
         OnLobbyListUpdated.Invoke(Lobbies);
 
+        _debugText.text = "Lobby list refreshed.";
     }
 
     public void OnJoinLobbyByPasscode()
@@ -130,6 +133,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (lobby == null) return;
 
+        Debug.Log("Lobby data updated: " + lobby.name);
         // Otherwise set the server info to the lobby's server info
     }
 
@@ -336,6 +340,7 @@ public class MainMenuUIManager : MonoBehaviour
             return;
         }
         
+        _debugText.text = "Creating and joining lobby: " + _lobbyName.text;
         Debug.Log("Creating and joining lobby: " + _lobbyName.text);
 
         SimGameType simGameType = await _simGameTypeRef.Resolve();
@@ -356,9 +361,12 @@ public class MainMenuUIManager : MonoBehaviour
         // Create the lobby and get its ID
         await CreateLobbyAsync(lobbyRecord);
 
+        _debugText.text = "Lobby created, joining lobby...";
         _serverStatusText.text = "Joining lobby...";
 
         JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
+
+        _debugText.text = "Lobby joined";
         /*
         if (lobbyRecord.Restriction == LobbyRestriction.Open)
         {
