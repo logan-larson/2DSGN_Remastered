@@ -81,34 +81,77 @@ public class MainMenuUIManager : MonoBehaviour
 
         UsernameText.text = "Welcome back, " + _userInfo.Username;
 
-        _hathora = new HathoraCloudSDK(
-            security: new HathoraCloud.Models.Shared.Security()
-            {
-                HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
-            },
-            appId: _serverConfig.HathoraCoreOpts.AppId
-        );
+        SetupHathora();
 
         SetupBeamable();
     }
 
+    private void SetupHathora()
+    {
+        _debugText.text = "Setting up Hathora...";
+
+        // TEMP: Hardcoded dev token and app id
+        var devToken = "xLSJxvOK2VCYUxaVGmV9zc_VO3KHQQOGCRZlDHOEzXXNJ";
+        var appId = "app-b330c055-60e2-4bdf-9427-9c9e900eb48f";
+
+        _hathora = new HathoraCloudSDK(
+            security: new HathoraCloud.Models.Shared.Security()
+            {
+                //HathoraDevToken = _serverConfig.HathoraCoreOpts.DevAuthOpts.HathoraDevToken,
+                HathoraDevToken = devToken,
+            },
+            //appId: _serverConfig.HathoraCoreOpts.AppId
+            appId: appId
+        );
+
+        _debugText.text = "Hathora setup complete.";
+    }
+
     private async void SetupBeamable()
     {
+        _debugText.text = "Setting up Beamable...";
+
         _beamContext = BeamContext.Default;
         await _beamContext.OnReady;
         _beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
 
-        OnRefreshLobbyList();
-
         //_lobbyDetailsClient = _beamContext.Microservices().LobbyDetails();
         PlayerId = _beamContext.PlayerId.ToString();
+
+        _debugText.text = "Beamable setup complete.";
+
+        OnRefreshLobbyList();
     }
 
     public async void OnRefreshLobbyList()
     {
         _debugText.text = "Refreshing lobby list...";
 
-        Lobbies.Clear();
+        //Lobbies.Clear();
+
+        Lobbies = (await _beamContext.Lobby.FindLobbies()).results;
+
+        OnLobbyListUpdated.Invoke(Lobbies);
+
+        _debugText.text = "Lobby list refreshed.";
+
+        /*
+        var lobbiesQueryPromise = _beamContext.Lobby.FindLobbies();
+
+        lobbiesQueryPromise.Then((lobbiesQueryResponse) =>
+        {
+            foreach (var lobby in lobbiesQueryResponse.results)
+            {
+                Lobbies.Add(lobby);
+            }
+
+            OnLobbyListUpdated.Invoke(Lobbies);
+
+            _debugText.text = "Lobby list refreshed.";
+        }).Error((error) =>
+        {
+            _debugText.text = "Error refreshing lobby list: " + error.Message;
+        });
 
         var lobbiesQueryResponse = await _beamContext.Lobby.FindLobbies();
 
@@ -120,6 +163,7 @@ public class MainMenuUIManager : MonoBehaviour
         OnLobbyListUpdated.Invoke(Lobbies);
 
         _debugText.text = "Lobby list refreshed.";
+        */
     }
 
     public void OnJoinLobbyByPasscode()
@@ -187,7 +231,7 @@ public class MainMenuUIManager : MonoBehaviour
         public string LobbyId;
         public string LobbyPasscode;
     }
-    
+
     public async Promise<CreateLobbyDetails> CreateLobbyAsync(CreateLobbyRecord lobbyRecord)
     {
         // TEMP: Create the Hathora room
@@ -257,7 +301,7 @@ public class MainMenuUIManager : MonoBehaviour
 
         // TODO: Don't hardcode this
         var description = $"{roomRes.ConnectionInfoV2.ExposedPort.Host}:{roomRes.ConnectionInfoV2.ExposedPort.Port};BigMap;{lobbyRecord.Gamemode};In Lobby;0";
-        
+
 
         // TEMP: Get the Hathora room connection details
         _serverStatusText.text = "Room is active, creating Beamable lobby...";
@@ -278,7 +322,7 @@ public class MainMenuUIManager : MonoBehaviour
             LobbyPasscode = _beamContext.Lobby.Passcode
         };
 
-        return createLobbyDetails; 
+        return createLobbyDetails;
     }
 
     public async void JoinLobbyAsync(string lobbyId, string passcode = null)
@@ -317,7 +361,7 @@ public class MainMenuUIManager : MonoBehaviour
         });
         */
     }
-    
+
     public record CreateLobbyRecord
     {
         public string Name { get; set; }
@@ -339,7 +383,7 @@ public class MainMenuUIManager : MonoBehaviour
             Debug.LogError("Lobby name is required");
             return;
         }
-        
+
         _debugText.text = "Creating and joining lobby: " + _lobbyName.text;
         Debug.Log("Creating and joining lobby: " + _lobbyName.text);
 
