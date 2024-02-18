@@ -637,10 +637,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _background: {fileID: 4328469008758895828}
   _nameText: {fileID: 4328469008635570799}
-  _mapText: {fileID: 0}
+  _mapText: {fileID: 1629341338902180512}
   _gamemodeText: {fileID: 0}
-  _gamestateText: {fileID: 0}
-  _playerCountText: {fileID: 0}
+  _gamestateText: {fileID: 1049977016221953673}
+  _playerCountText: {fileID: 2638723654133117938}
   _joinButton: {fileID: 4328469008857589072}
   _mainMenuUIManager: {fileID: 0}
 --- !u!1 &4328469008857589102

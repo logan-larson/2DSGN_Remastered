@@ -571,6 +571,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 363674799}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: _simGameTypeRef.Id
+      value: game_types.FFA
+      objectReference: {fileID: 0}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.size
       value: 3
       objectReference: {fileID: 0}

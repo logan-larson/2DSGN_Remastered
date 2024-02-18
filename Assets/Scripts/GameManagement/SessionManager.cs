@@ -1,4 +1,5 @@
 using Beamable;
+using Beamable.Common.Content;
 using Beamable.Experimental.Api.Lobbies;
 using FishNet;
 using FishNet.Broadcast;
@@ -51,10 +52,16 @@ public class SessionManager : MonoBehaviour
     private UserInfo _userInfo;
 
     [SerializeField]
+    private ServerInfo _serverInfo;
+
+    [SerializeField]
     private AudioListener _audioListener;
 
     [SerializeField]
     private int _postGameWaitTime = 5;
+
+    [SerializeField]
+    private SimGameTypeRef _simGameTypeRef;
 
     #endregion
 
@@ -129,7 +136,10 @@ public class SessionManager : MonoBehaviour
         //_beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
 
         Lobby = _beamContext.Lobby.Value;
+
         OnLobbyUpdate.Invoke(Lobby);
+
+        UpdateLobbyDetails();
     }
 
 
@@ -166,6 +176,7 @@ public class SessionManager : MonoBehaviour
 
             OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
 
+            UpdateLobbyDetails();
             Debug.Log($"Player {conn.ClientId} has joined the game.");
         }
         else if (args.ConnectionState == RemoteConnectionState.Stopped)
@@ -194,6 +205,8 @@ public class SessionManager : MonoBehaviour
             OnPlayerListUpdate.Invoke(playerListUpdateBroadcast);
 
             Debug.Log($"Player {conn.ClientId} has left the game.");
+
+            UpdateLobbyDetails();
 
             if (Players.Count == 0 && SessionState == SessionState.InGame)
             {
@@ -453,6 +466,19 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InGame });
 
         _audioListener.enabled = false;
+
+        UpdateLobbyDetails();
+    }
+
+    private async void UpdateLobbyDetails()
+    {
+        var sessionState = SessionState == SessionState.InLobby ? "In Lobby" : "In Game";
+
+        var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  MapPrefabs[SelectedMapIndex].name + ";FFA;" + sessionState;
+
+        SimGameType simGameType = await _simGameTypeRef.Resolve();
+
+        await _beamContext.Lobby.Update(Lobby.lobbyId, Lobby.Restriction, Lobby.host, Lobby.name, description, simGameType.Id, 8);
     }
 
     /// <summary>
@@ -476,7 +502,7 @@ public class SessionManager : MonoBehaviour
 
         _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobby });
 
-        //_audioListener.enabled = false;
+        UpdateLobbyDetails();
     }
 
     private IEnumerator PostGameCoroutine()

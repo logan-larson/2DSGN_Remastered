@@ -124,7 +124,7 @@ public class PreGameLobbyUIManager : MonoBehaviour
         details.Map = parts[1];
         details.Gamemode = parts[2];
         details.Gamestate = parts[3];
-        details.PlayerCount = parts[4];
+        //details.PlayerCount = parts[4];
 
         return details;
     }

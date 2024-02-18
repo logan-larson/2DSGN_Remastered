@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 404f8a85a397642f5b56ce1f2d8cebea, type: 3}
-  m_Name: default2
+  m_Name: Casual
   m_EditorClassIdentifier: 
   _tags:
   - base
@@ -18,8 +18,18 @@ MonoBehaviour:
   legacyTeams: []
   teams:
     listData:
-    - name: TeamName
-      maxPlayers: 10
+    - name: TeamBlue
+      maxPlayers: 3
+      minPlayers:
+        HasValue: 0
+        Value: 0
+    - name: TeamRed
+      maxPlayers: 3
+      minPlayers:
+        HasValue: 0
+        Value: 0
+    - name: TeamOrange
+      maxPlayers: 3
       minPlayers:
         HasValue: 0
         Value: 0
@@ -34,5 +44,8 @@ MonoBehaviour:
   matchingIntervalSecs:
     HasValue: 0
     Value: 0
+  federatedGameServerNamespace:
+    HasValue: 0
+    Value: 
   leaderboardUpdates: []
   rewards: []

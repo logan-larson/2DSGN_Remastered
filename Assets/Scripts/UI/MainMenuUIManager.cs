@@ -18,13 +18,15 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuUIManager : MonoBehaviour
 {
+    #region Public Events
+
     public UnityEvent<List<Beamable.Experimental.Api.Lobbies.Lobby>> OnLobbyListUpdated = new UnityEvent<List<Beamable.Experimental.Api.Lobbies.Lobby>>();
+
+    #endregion
 
     public List<Beamable.Experimental.Api.Lobbies.Lobby> Lobbies = new List<Beamable.Experimental.Api.Lobbies.Lobby>();
 
-    public GameObject BaseMenu;
-    public GameObject HostMenu;
-    public GameObject JoinMenu;
+    #region Object References
 
     public TMP_Text UsernameText;
 
@@ -32,10 +34,11 @@ public class MainMenuUIManager : MonoBehaviour
     private TMP_InputField _lobbyPasscodeInputField;
 
     [SerializeField]
-    private TMP_Text _debugText;
-
-    [SerializeField]
     private TMP_Text _serverStatusText;
+
+    #endregion
+
+    #region Scriptable Object References
 
     [SerializeField]
     private BuildInfo _buildInfo;
@@ -48,6 +51,11 @@ public class MainMenuUIManager : MonoBehaviour
 
     [SerializeField]
     private SimGameTypeRef _simGameTypeRef;
+
+    [SerializeField]
+    private HathoraServerConfig _serverConfig;
+
+    #endregion
 
     #region Lobby Parameters
 
@@ -62,21 +70,18 @@ public class MainMenuUIManager : MonoBehaviour
 
     #endregion
 
-    [SerializeField]
-    private HathoraServerConfig _serverConfig;
+    #region Private
 
     private HathoraCloudSDK _hathora;
 
     private BeamContext _beamContext;
 
-    public string PlayerId { get; private set; }
+    #endregion
+
+    #region Initialization
 
     private void Start()
     {
-        BaseMenu.SetActive(true);
-        HostMenu.SetActive(true);
-        JoinMenu.SetActive(true);
-
         _buildInfo.IsFreeplay = false;
 
         UsernameText.text = "Welcome back, " + _userInfo.Username;
@@ -88,8 +93,6 @@ public class MainMenuUIManager : MonoBehaviour
 
     private void SetupHathora()
     {
-        _debugText.text = "Setting up Hathora...";
-
         // TEMP: Hardcoded dev token and app id
         var devToken = "xLSJxvOK2VCYUxaVGmV9zc_VO3KHQQOGCRZlDHOEzXXNJ";
         var appId = "app-b330c055-60e2-4bdf-9427-9c9e900eb48f";
@@ -103,67 +106,38 @@ public class MainMenuUIManager : MonoBehaviour
             //appId: _serverConfig.HathoraCoreOpts.AppId
             appId: appId
         );
-
-        _debugText.text = "Hathora setup complete.";
     }
 
     private async void SetupBeamable()
     {
-        _debugText.text = "Setting up Beamable...";
-
         _beamContext = BeamContext.Default;
         await _beamContext.OnReady;
         _beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
 
-        //_lobbyDetailsClient = _beamContext.Microservices().LobbyDetails();
-        PlayerId = _beamContext.PlayerId.ToString();
-
-        _debugText.text = "Beamable setup complete.";
-
         OnRefreshLobbyList();
     }
 
+    #endregion
+
+    #region Private Events
+
+    private void OnLobbyDataUpdated(Beamable.Experimental.Api.Lobbies.Lobby lobby)
+    {
+        if (lobby == null) return;
+
+        Debug.Log($"Lobby updated: {lobby.name}, Description: {lobby.description}, Players: {lobby.players.Count}/{lobby.maxPlayers}");
+        // Otherwise set the server info to the lobby's server info
+    }
+
+    #endregion
+
+    #region Public Events
+
     public async void OnRefreshLobbyList()
     {
-        _debugText.text = "Refreshing lobby list...";
-
-        //Lobbies.Clear();
-
         Lobbies = (await _beamContext.Lobby.FindLobbies()).results;
 
         OnLobbyListUpdated.Invoke(Lobbies);
-
-        _debugText.text = "Lobby list refreshed.";
-
-        /*
-        var lobbiesQueryPromise = _beamContext.Lobby.FindLobbies();
-
-        lobbiesQueryPromise.Then((lobbiesQueryResponse) =>
-        {
-            foreach (var lobby in lobbiesQueryResponse.results)
-            {
-                Lobbies.Add(lobby);
-            }
-
-            OnLobbyListUpdated.Invoke(Lobbies);
-
-            _debugText.text = "Lobby list refreshed.";
-        }).Error((error) =>
-        {
-            _debugText.text = "Error refreshing lobby list: " + error.Message;
-        });
-
-        var lobbiesQueryResponse = await _beamContext.Lobby.FindLobbies();
-
-        foreach (var lobby in lobbiesQueryResponse.results)
-        {
-            Lobbies.Add(lobby);
-        }
-
-        OnLobbyListUpdated.Invoke(Lobbies);
-
-        _debugText.text = "Lobby list refreshed.";
-        */
     }
 
     public void OnJoinLobbyByPasscode()
@@ -173,38 +147,37 @@ public class MainMenuUIManager : MonoBehaviour
         JoinLobbyAsync("", passcode);
     }
 
-    private void OnLobbyDataUpdated(Beamable.Experimental.Api.Lobbies.Lobby lobby)
+    public async void OnCreateAndJoinLobby()
     {
-        if (lobby == null) return;
+        // Check that the host's input is valid
+        if (string.IsNullOrEmpty(_lobbyName.text))
+        {
+            // TODO: Show an error message
+            Debug.LogError("Lobby name is required");
+            return;
+        }
 
-        Debug.Log("Lobby data updated: " + lobby.name);
-        // Otherwise set the server info to the lobby's server info
-    }
+        SimGameType simGameType = await _simGameTypeRef.Resolve();
 
-    public void OpenHostMenu()
-    {
-        HostMenu.SetActive(true);
-    }
+        // Set the rooms config based on the host's input
+        CreateLobbyRecord lobbyRecord = new CreateLobbyRecord
+        {
+            Name = _lobbyName.text,
+            Restriction = _publicPrivateDropdown.options[_publicPrivateDropdown.value].text == "Public" ? LobbyRestriction.Open : LobbyRestriction.Closed,
+            GameTypeId = simGameType.Id,
+            Description = "Test Lobby",
+            PlayerTags = new List<Tag>(),
+            MaxPlayers = 8,
+            PasscodeLength = 6,
+            Gamemode = _gamemodeDropdown.options[_gamemodeDropdown.value].text,
+        };
 
-    public void CloseHostMenu()
-    {
-        HostMenu.SetActive(false);
-    }
+        // Create the lobby and get its ID
+        await CreateLobbyAsync(lobbyRecord);
 
-    public void OpenJoinMenu()
-    {
-        JoinMenu.SetActive(true);
-    }
+        _serverStatusText.text = "Joining lobby...";
 
-    public void CloseJoinMenu()
-    {
-        JoinMenu.SetActive(false);
-    }
-
-    public void OpenLobbyShell()
-    {
-        // Load the lobby scene
-        SceneManager.LoadScene("LobbyShell");
+        JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
     }
 
     public void OpenFreeplayGame()
@@ -221,16 +194,7 @@ public class MainMenuUIManager : MonoBehaviour
         UnityEngine.Application.Quit();
     }
 
-    public void OnCreateAndJoinLobby()
-    {
-        CreateAndJoinLobbyAsync();
-    }
-
-    public class CreateLobbyDetails
-    {
-        public string LobbyId;
-        public string LobbyPasscode;
-    }
+    #endregion
 
     public async Promise<CreateLobbyDetails> CreateLobbyAsync(CreateLobbyRecord lobbyRecord)
     {
@@ -310,11 +274,6 @@ public class MainMenuUIManager : MonoBehaviour
         await _beamContext.Lobby.Create(lobbyRecord.Name, lobbyRecord.Restriction, lobbyRecord.GameTypeId,
             description, lobbyRecord.PlayerTags, lobbyRecord.MaxPlayers, lobbyRecord.PasscodeLength);
 
-        // Get the lobby ID and call the create lobby microservice
-        //string lobbyId = _beamContext.Lobby.Id;
-
-        // Call the lobby microservice to create the Hathora room and store the lobby details
-        //var lobbyDetails = await _lobbyDetailsClient.CreateLobby(lobbyId, lobbyRecord.Restriction == LobbyRestriction.Open, lobbyRecord.Name, lobbyRecord.Gamemode);
 
         var createLobbyDetails = new CreateLobbyDetails()
         {
@@ -327,16 +286,7 @@ public class MainMenuUIManager : MonoBehaviour
 
     public async void JoinLobbyAsync(string lobbyId, string passcode = null)
     {
-        // Get the connection details for the Hathora room based on the Beamable lobby ID
-
-        // Call the lobby microservice to get the room details
-
-
-        // TEMP: Get the connection details for the Hathora room from the lobby description
-        //var lqr = await _beamContext.Lobby.FindLobbies();
-
         // Join the lobby in Beamable
-        // TODO: Move this to the PreGameLobby scene
         if (passcode == null)
         {
             await _beamContext.Lobby.Join(lobbyId);
@@ -349,17 +299,29 @@ public class MainMenuUIManager : MonoBehaviour
 
         var connectionDetails = _beamContext.Lobby.Description.Split(';')[0].Split(":");
         JoinLobby(connectionDetails[0], connectionDetails[1]);
+    }
 
-        /*
-        lqr.results.ForEach(lobby =>
+    private void JoinLobby(string serverAddress, string serverPort)
+    {
+
+        if (ushort.TryParse(serverPort, out ushort port) == false)
         {
-            if (lobby.lobbyId == lobbyId)
-            {
-                var connectionDetails = lobby.description.Split(':');
-                JoinLobby(connectionDetails[0], connectionDetails[1]);
-            }
-        });
-        */
+            return;
+        }
+
+        // Join the room
+        _serverInfo.Address = serverAddress;
+        _serverInfo.Port = ushort.Parse(serverPort);
+
+        SceneManager.LoadScene("PreGameLobby");
+    }
+
+    #region Classes and Records
+
+    public class CreateLobbyDetails
+    {
+        public string LobbyId;
+        public string LobbyPasscode;
     }
 
     public record CreateLobbyRecord
@@ -374,161 +336,6 @@ public class MainMenuUIManager : MonoBehaviour
         public string Gamemode { get; set; }
     };
 
-    public async void CreateAndJoinLobbyAsync()
-    {
-        // Check that the host's input is valid
-        if (string.IsNullOrEmpty(_lobbyName.text))
-        {
-            // TODO: Show an error message
-            Debug.LogError("Lobby name is required");
-            return;
-        }
+    #endregion
 
-        _debugText.text = "Creating and joining lobby: " + _lobbyName.text;
-        Debug.Log("Creating and joining lobby: " + _lobbyName.text);
-
-        SimGameType simGameType = await _simGameTypeRef.Resolve();
-
-        // Set the rooms config based on the host's input
-        CreateLobbyRecord lobbyRecord = new CreateLobbyRecord
-        {
-            Name = _lobbyName.text,
-            Restriction = _publicPrivateDropdown.options[_publicPrivateDropdown.value].text == "Public" ? LobbyRestriction.Open : LobbyRestriction.Closed,
-            GameTypeId = simGameType.Id,
-            Description = "Test Lobby",
-            PlayerTags = new List<Tag>(),
-            MaxPlayers = 9,
-            PasscodeLength = 6,
-            Gamemode = _gamemodeDropdown.options[_gamemodeDropdown.value].text,
-        };
-
-        // Create the lobby and get its ID
-        await CreateLobbyAsync(lobbyRecord);
-
-        _debugText.text = "Lobby created, joining lobby...";
-        _serverStatusText.text = "Joining lobby...";
-
-        JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
-
-        _debugText.text = "Lobby joined";
-        /*
-        if (lobbyRecord.Restriction == LobbyRestriction.Open)
-        {
-            // Join the lobby by its ID and passcode
-        }
-        else
-        {
-            JoinLobbyAsync(_beamContext.Lobby.Id, _beamContext.Lobby.Passcode);
-        }
-        */
-
-        // This is now getting handled by the LobbyDetails microservice
-        // Create the room
-        /*
-        CreateRoomRequest request = new CreateRoomRequest()
-        {
-            AppId = _serverConfig.HathoraCoreOpts.AppId,
-            CreateRoomParams = new CreateRoomParams()
-            {
-                Region = Region.Chicago,
-                RoomConfig = "{\"name\":\"Test Room\"}",
-            },
-        };
-
-        _serverStatusText.text = "Creating room...";
-
-        CreateRoomResponse res = await _hathora.RoomV2.CreateRoomAsync(request);
-
-        if (res.ConnectionInfoV2.Status == ConnectionInfoV2Status.Starting)
-        {
-            _serverStatusText.text = "Room is starting...";
-
-            // Start polling for the room to be ready
-            StartCoroutine(PollConnectionInfoCoroutine(res.ConnectionInfoV2.RoomId));
-        }
-        */
-    }
-
-    private IEnumerator PollConnectionInfoCoroutine(string roomId)
-    {
-        uint maxPolls = 10;
-        uint polls = 0;
-        while (true)
-        {
-            Task<bool> isConnectionActiveTask = IsConnectionActive(roomId);
-
-            yield return new WaitUntil(() => isConnectionActiveTask.IsCompleted);
-
-            if (isConnectionActiveTask.Result)
-            {
-                break;
-            }
-
-            if (polls >= maxPolls)
-            {
-                _serverStatusText.text = "Room failed to start";
-                Debug.LogError($"Room '{roomId}' failed to start");
-                break;
-            }
-
-            polls++;
-            yield return new WaitForSeconds(1);
-        }
-    }
-
-    private async Task<bool> IsConnectionActive(string roomId)
-    {
-        // Poll for the room to be ready
-        GetConnectionInfoResponse roomRes = await _hathora.RoomV2.GetConnectionInfoAsync(new GetConnectionInfoRequest()
-        {
-            AppId = _serverConfig.HathoraCoreOpts.AppId,
-            RoomId = roomId,
-        });
-
-        if (roomRes.ConnectionInfoV2.Status == ConnectionInfoV2Status.Active)
-        {
-            // Update UI
-            _serverStatusText.text = "Room is ready";
-            var address = roomRes.ConnectionInfoV2.ExposedPort.Host;
-            var port = roomRes.ConnectionInfoV2.ExposedPort.Port.ToString();
-
-            JoinLobby(address, port);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private void JoinLobby(string serverAddress, string serverPort)
-    {
-        //_joinInputErrorText.gameObject.SetActive(false);
-
-        /*
-        if (string.IsNullOrEmpty(_serverAddressInput.text) || string.IsNullOrEmpty(_serverPortInput.text))
-        {
-            Debug.LogError("Server address or port is empty");
-            _joinInputErrorText.gameObject.SetActive(true);
-            return;
-        }
-        */
-
-        if (ushort.TryParse(serverPort, out ushort port) == false)
-        {
-            //Debug.LogError("Server port is not a number");
-            //_joinInputErrorText.gameObject.SetActive(true);
-            return;
-        }
-
-        // Join the room
-        _serverInfo.Address = serverAddress;
-        _serverInfo.Port = ushort.Parse(serverPort);
-
-
-        // TEMP: Switching to test
-        SceneManager.LoadScene("PreGameLobby");
-        //UnityEngine.SceneManagement.SceneManager.LoadScene("OnlineGame");
-    }
 }

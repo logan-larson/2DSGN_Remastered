@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 404f8a85a397642f5b56ce1f2d8cebea, type: 3}
-  m_Name: New_SimGameType
+  m_Name: FFA
   m_EditorClassIdentifier: 
   _tags:
   - base
@@ -18,8 +18,8 @@ MonoBehaviour:
   legacyTeams: []
   teams:
     listData:
-    - name: Team1
-      maxPlayers: 3
+    - name: TeamDefault
+      maxPlayers: 8
       minPlayers:
         HasValue: 0
         Value: 0

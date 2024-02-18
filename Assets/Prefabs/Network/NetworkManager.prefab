@@ -130,9 +130,15 @@ MonoBehaviour:
   - {fileID: 8642975376856295050, guid: 7503cdd63f5d827438f0e8eaf61398da, type: 3}
   SelectedMapIndex: 0
   KillLimit: 20
+  OnLobbyUpdate:
+    m_PersistentCalls:
+      m_Calls: []
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
+  _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
   _audioListener: {fileID: 4162585637748075726}
   _postGameWaitTime: 10
+  _simGameTypeRef:
+    Id: game_types.default1
 --- !u!114 &8074955569133304615
 MonoBehaviour:
   m_ObjectHideFlags: 0
