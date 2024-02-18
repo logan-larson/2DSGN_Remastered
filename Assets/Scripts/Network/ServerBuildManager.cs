@@ -34,7 +34,7 @@ public class ServerBuildManager : MonoBehaviour
 
             // Query the lobby ID for the initial player list.
         }
-        else if (_buildInfo.IsFreeplay)
+        else if (_serverInfo.IsFreeplay)
         {
             multipass.SetClientTransport<Yak>();
 

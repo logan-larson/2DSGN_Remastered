@@ -7,4 +7,6 @@ public class ServerInfo : ScriptableObject
 {
     public string Address;
     public ushort Port;
+
+    public bool IsFreeplay;
 }

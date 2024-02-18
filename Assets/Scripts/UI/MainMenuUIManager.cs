@@ -183,7 +183,9 @@ public class MainMenuUIManager : MonoBehaviour
     public void OpenFreeplayGame()
     {
         // Set the server info to localhost and port 7770
-        _buildInfo.IsFreeplay = true;
+        _serverInfo.IsFreeplay = true;
+        _serverInfo.Address = "localhost";
+        _serverInfo.Port = 7770;
 
         // Load the freeplay scene
         SceneManager.LoadScene("PreGameLobby");
