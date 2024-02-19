@@ -48,8 +48,43 @@ public class PlayerManager : NetworkBehaviour
     [SyncVar (OnChange = nameof(OnHealthChanged))]
     private float _health = 100f;
 
+    [SerializeField]
+    private Transform _healthbarTransform;
+
+    private Coroutine _popCoroutine;
+
     private void OnHealthChanged(float oldValue, float newValue, bool asServer)
     {
+        if (_popCoroutine != null)
+        {
+            StopCoroutine(_popCoroutine);
+        }
+
+        _popCoroutine = StartCoroutine(PopHealthbar());
+    }
+
+    private IEnumerator PopHealthbar()
+    {
+        // Scale up
+        float timeToPop = 0.1f; // Duration of the pop up
+        float maxScaleMultiplier = 1.2f; // How much larger the pop should be
+        Vector3 originalScale = new Vector3(1f, 1f, 1f);
+
+        for (float t = 0; t < 1; t += Time.deltaTime / timeToPop)
+        {
+            _healthbarTransform.localScale = Vector3.Lerp(originalScale, originalScale * maxScaleMultiplier, t);
+            yield return null;
+        }
+
+        // Scale down
+        for (float t = 0; t < 1; t += Time.deltaTime / timeToPop)
+        {
+            _healthbarTransform.localScale = Vector3.Lerp(originalScale * maxScaleMultiplier, originalScale, t);
+            yield return null;
+        }
+
+        // Ensure it's set back to the original scale in case of any discrepancies
+        _healthbarTransform.localScale = originalScale;
     }
 
     #region Public

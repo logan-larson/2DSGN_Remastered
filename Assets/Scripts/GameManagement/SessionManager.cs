@@ -472,6 +472,8 @@ public class SessionManager : MonoBehaviour
 
     private async void UpdateLobbyDetails()
     {
+        if (Lobby == null) return;
+
         var sessionState = SessionState == SessionState.InLobby ? "In Lobby" : "In Game";
 
         var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  MapPrefabs[SelectedMapIndex].name + ";FFA;" + sessionState;

@@ -138,7 +138,7 @@ MonoBehaviour:
   _audioListener: {fileID: 4162585637748075726}
   _postGameWaitTime: 10
   _simGameTypeRef:
-    Id: game_types.default1
+    Id: game_types.FFA
 --- !u!114 &8074955569133304615
 MonoBehaviour:
   m_ObjectHideFlags: 0
