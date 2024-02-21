@@ -49,6 +49,9 @@ public class PlayerManager : NetworkBehaviour
     private float _health = 100f;
 
     [SerializeField]
+    private Image _damageHUDImage;
+
+    [SerializeField]
     private Transform _healthbarTransform;
 
     private Coroutine _popCoroutine;
@@ -209,6 +212,8 @@ public class PlayerManager : NetworkBehaviour
             _jumpPredictionLine.SetActive(false);
 
             _audioListener.SetActive(false);
+
+            _damageHUDImage.enabled = false;
         }
     }
 
@@ -254,6 +259,19 @@ public class PlayerManager : NetworkBehaviour
 
         // Red damaged sprite should be equal to MAX_HEALTH - _health.
         _whiteDamagedSprite.fillAmount = Mathf.Lerp(_whiteDamagedSprite.fillAmount, _health / 100f, 0.1f);
+
+        if (base.IsOwner)
+        {
+            if (Status == PlayerStatus.Alive)
+            {
+                // Update the player's health UI.
+                _damageHUDImage.color = new Color(1f, 1f, 1f, 1f - (_health / 100f));
+            }
+            else if (Status == PlayerStatus.Dead)
+            {
+                _damageHUDImage.color = new Color(1f, 1f, 1f, 0f);
+            }
+        }
     }
 
     #endregion
@@ -261,7 +279,7 @@ public class PlayerManager : NetworkBehaviour
     #region Player State Events
 
     [Server]
-    public void TakeDamage(float damage, float newHealth, bool isHeadshot = false, Vector3 hitPosition = new Vector3())
+    public void TakeDamage(float damage, float newHealth, bool isHeadshot, Vector3 hitPosition)
     {
         // Take damage.
 
@@ -283,7 +301,7 @@ public class PlayerManager : NetworkBehaviour
     }
 
     [ObserversRpc (ExcludeServer = true)]
-    private void TakeDamageObserversRpc(float damage, float newHealth, bool isHeadshot = false, Vector3 hitPostion = new Vector3())
+    private void TakeDamageObserversRpc(float damage, float newHealth, bool isHeadshot, Vector3 hitPostion)
     {
         // Spawn damage indicator.
         var damageIndicator = Instantiate(_damageIndicatorPrefab, hitPostion, Quaternion.identity);
@@ -294,8 +312,6 @@ public class PlayerManager : NetworkBehaviour
         Destroy(hitParticles, 2f);
 
         StartCoroutine(FlashHealthCoroutine(newHealth));
-
-        // Play hit sound based on health remaining.
     }
 
     private IEnumerator FlashHealthCoroutine(float newHealth)

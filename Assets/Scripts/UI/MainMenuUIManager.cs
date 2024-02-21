@@ -142,6 +142,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     public void OnJoinLobbyByPasscode()
     {
+        _serverInfo.IsFreeplay = false;
+
         var passcode = _lobbyPasscodeInputField.text;
 
         JoinLobbyAsync("", passcode);
@@ -149,6 +151,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     public async void OnCreateAndJoinLobby()
     {
+        _serverInfo.IsFreeplay = false;
+
         // Check that the host's input is valid
         if (string.IsNullOrEmpty(_lobbyName.text))
         {

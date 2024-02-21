@@ -25,6 +25,8 @@ public class ServerBuildManager : MonoBehaviour
 
     private void Awake()
     {
+        if (_networkManager == null || _networkManager.TransportManager == null) return;
+
         Multipass multipass = _networkManager.TransportManager.GetTransport<Multipass>();
         
         if (_buildInfo.IsServer)
