@@ -769,6 +769,7 @@ MonoBehaviour:
   _playerListItemPrefab: {fileID: 7418395983538037299, guid: 95efb63660ee8a74dbf5fc3f661732cf, type: 3}
   _mapDropdown: {fileID: 1510990027}
   _killLimitInputField: {fileID: 340295612}
+  _startGameButton: {fileID: 1750482812}
   _lobbyCodeText: {fileID: 805853423}
 --- !u!1 &563686133
 GameObject:

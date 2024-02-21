@@ -24,6 +24,9 @@ public class PreGameLobbyUIManager : MonoBehaviour
     private TMP_InputField _killLimitInputField;
 
     [SerializeField]
+    private GameObject _startGameButton;
+
+    [SerializeField]
     private TMP_Text _lobbyCodeText;
 
     private void Start()
@@ -42,6 +45,7 @@ public class PreGameLobbyUIManager : MonoBehaviour
         _sessionManager.OnMapChange.AddListener(OnMapChange);
         _sessionManager.OnKillLimitChange.AddListener(OnKillLimitChange);
         _sessionManager.OnLobbyUpdate.AddListener(OnLobbyUpdate);
+        _sessionManager.OnHostChange.AddListener(OnHostChange);
 
         _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
         _killLimitInputField.onEndEdit.AddListener(OnKillLimitInputFieldEndEdit);
@@ -101,6 +105,15 @@ public class PreGameLobbyUIManager : MonoBehaviour
         // TODO: Set the other details provided by the lobby.
 
         _lobbyCodeText.text = lobby.passcode;
+    }
+
+    private void OnHostChange(bool isHost)
+    {
+        Debug.Log("isHost: " + isHost);
+
+        _mapDropdown.gameObject.SetActive(isHost);
+        _killLimitInputField.gameObject.SetActive(isHost);
+        _startGameButton.SetActive(isHost);
     }
 
     public void OnStartGame()

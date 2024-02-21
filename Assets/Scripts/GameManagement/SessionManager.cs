@@ -44,6 +44,8 @@ public class SessionManager : MonoBehaviour
 
     public UnityEvent<Lobby> OnLobbyUpdate = new UnityEvent<Lobby>();
 
+    public UnityEvent<bool> OnHostChange = new UnityEvent<bool>();
+
     #endregion
 
     #region Serialized Fields
@@ -133,15 +135,40 @@ public class SessionManager : MonoBehaviour
     {
         _beamContext = BeamContext.Default;
         await _beamContext.OnReady;
-        //_beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
+        _beamContext.Lobby.OnDataUpdated += OnLobbyDataUpdated;
+        _beamContext.Lobby.OnUpdated += Lobby_OnUpdated;
 
         Lobby = _beamContext.Lobby.Value;
 
         OnLobbyUpdate.Invoke(Lobby);
 
+        Lobby_OnUpdated();
+
         UpdateLobbyDetails();
     }
 
+    private void Lobby_OnUpdated()
+    {
+        Debug.Log($"Host: {_beamContext.Lobby.Host}, playerId: {_beamContext.PlayerId}");
+
+        OnHostChange.Invoke(_beamContext.PlayerId.ToString() == _beamContext.Lobby.Host);
+
+    }
+
+    private void OnLobbyDataUpdated(Lobby lobby)
+    {
+        Debug.Log($"Host: {lobby.host}, playerId: {_beamContext.PlayerId}");
+
+        OnHostChange.Invoke(_beamContext.PlayerId.ToString() == lobby.host);
+
+        /*
+        Lobby = lobby;
+
+        OnLobbyUpdate.Invoke(Lobby);
+
+        UpdateLobbyDetails();
+        */
+    }
 
     private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
@@ -472,7 +499,8 @@ public class SessionManager : MonoBehaviour
 
     private async void UpdateLobbyDetails()
     {
-        if (Lobby == null) return;
+        // If the player isn't in a lobby or isn't the host, return.
+        if (_beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
 
         var sessionState = SessionState == SessionState.InLobby ? "In Lobby" : "In Game";
 

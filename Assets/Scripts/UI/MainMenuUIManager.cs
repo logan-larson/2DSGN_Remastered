@@ -137,6 +137,16 @@ public class MainMenuUIManager : MonoBehaviour
     {
         Lobbies = (await _beamContext.Lobby.FindLobbies()).results;
 
+        foreach (var lobby in Lobbies)
+        {
+            Debug.Log("name: " + lobby.name);
+            if (lobby.data == null) continue;
+            foreach (var data in lobby.data)
+            {
+                Debug.Log($"key: {data.Key}; value: {data.Value}");
+            }
+        }
+
         OnLobbyListUpdated.Invoke(Lobbies);
     }
 
@@ -204,6 +214,9 @@ public class MainMenuUIManager : MonoBehaviour
 
     public async Promise<CreateLobbyDetails> CreateLobbyAsync(CreateLobbyRecord lobbyRecord)
     {
+
+        // --- HATHORA ---
+
         // TEMP: Create the Hathora room
         CreateRoomRequest request = new CreateRoomRequest()
         {
@@ -269,9 +282,10 @@ public class MainMenuUIManager : MonoBehaviour
             return null;
         }
 
+        // --- BEAMABLE ---
+
         // TODO: Don't hardcode this
         var description = $"{roomRes.ConnectionInfoV2.ExposedPort.Host}:{roomRes.ConnectionInfoV2.ExposedPort.Port};BigMap;{lobbyRecord.Gamemode};In Lobby;0";
-
 
         // TEMP: Get the Hathora room connection details
         _serverStatusText.text = "Room is active, creating Beamable lobby...";
@@ -280,6 +294,12 @@ public class MainMenuUIManager : MonoBehaviour
         await _beamContext.Lobby.Create(lobbyRecord.Name, lobbyRecord.Restriction, lobbyRecord.GameTypeId,
             description, lobbyRecord.PlayerTags, lobbyRecord.MaxPlayers, lobbyRecord.PasscodeLength);
 
+        _beamContext.Lobby.Value.data = new Dictionary<string, string>
+        {
+            { "gamemode", lobbyRecord.Gamemode },
+            { "map", "BigMap" },
+            { "status", "In Lobby" },
+        };
 
         var createLobbyDetails = new CreateLobbyDetails()
         {
@@ -301,7 +321,6 @@ public class MainMenuUIManager : MonoBehaviour
         {
             await _beamContext.Lobby.JoinByPasscode(passcode.ToUpper());
         }
-
 
         var connectionDetails = _beamContext.Lobby.Description.Split(';')[0].Split(":");
         JoinLobby(connectionDetails[0], connectionDetails[1]);
