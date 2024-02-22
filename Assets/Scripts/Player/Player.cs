@@ -27,6 +27,8 @@ public class Player
     public int Assists { get; set; } = 0;
     public int Score { get; set; } = 0;
 
+    public int OptionVoteIndex { get; set; } = -1;
+
 }
 
 public enum PlayerStatus

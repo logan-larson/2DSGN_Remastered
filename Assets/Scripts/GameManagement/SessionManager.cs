@@ -24,15 +24,21 @@ public class SessionManager : MonoBehaviour
 
     public UnityEvent<PlayerListUpdateBroadcast> OnPlayerListUpdate = new UnityEvent<PlayerListUpdateBroadcast>();
 
-    public SessionState SessionState { get; private set; } = SessionState.InLobby;
+    public SessionState SessionState { get; private set; } = SessionState.InLobbyWaitingForVote;
 
     public GameMode GameMode { get; private set; } = GameMode.SoloDeathmatch;
+
+    public UnityEvent<SessionState> OnSessionStateUpdate = new UnityEvent<SessionState>();
 
     public UnityEvent<GameModeUpdateBroadcast> OnGameModeUpdate = new UnityEvent<GameModeUpdateBroadcast>();
 
     public UnityEvent<MapChangeBroadcast> OnMapChange = new UnityEvent<MapChangeBroadcast>();
 
     public UnityEvent<KillLimitBroadcast> OnKillLimitChange = new UnityEvent<KillLimitBroadcast>();
+
+    public UnityEvent<List<int>> OnOptionVoteChange = new UnityEvent<List<int>>();
+
+    public UnityEvent<int> OnOptionSelected = new UnityEvent<int>();
 
     public List<GameObject> MapPrefabs = new List<GameObject>();
 
@@ -60,6 +66,13 @@ public class SessionManager : MonoBehaviour
     private AudioListener _audioListener;
 
     [SerializeField]
+    private int _votingCountdownDuration = 20;
+
+    [SerializeField]
+    private int _gameStartCountdownDuration = 5;
+
+
+    [SerializeField]
     private int _postGameWaitTime = 5;
 
     [SerializeField]
@@ -72,6 +85,9 @@ public class SessionManager : MonoBehaviour
     private NetworkManager _networkManager;
 
     private BeamContext _beamContext;
+
+    private Coroutine _votingCountdownCoroutine;
+    //private Coroutine _votingCountdownCoroutine;
 
     #endregion
 
@@ -96,6 +112,7 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcastServer, false);
         _networkManager.ServerManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcastServer, false);
         _networkManager.ServerManager.RegisterBroadcast<KillLimitBroadcast>(OnKillLimitBroadcastServer, false);
+        _networkManager.ServerManager.RegisterBroadcast<OptionVoteBroadcast>(OnOptionVoteBroadcastServer, false);
 
         // Client broadcast receivers
 
@@ -104,6 +121,7 @@ public class SessionManager : MonoBehaviour
         _networkManager.ClientManager.RegisterBroadcast<GameModeUpdateBroadcast>(OnGameModeUpdateBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<KillLimitBroadcast>(OnKillLimitBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<OptionVoteBroadcast>(OnOptionVoteBroadcast);
     }
 
     #endregion
@@ -145,6 +163,7 @@ public class SessionManager : MonoBehaviour
         Lobby_OnUpdated();
 
         UpdateLobbyDetails();
+
     }
 
     private void Lobby_OnUpdated()
@@ -170,6 +189,12 @@ public class SessionManager : MonoBehaviour
         */
     }
 
+
+    /// <summary>
+    /// Called when a client connects to the server.
+    /// </summary>
+    /// <param name="conn"></param>
+    /// <param name="args"></param>
     private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
         PlayerListUpdateBroadcast playerListUpdateBroadcast = new PlayerListUpdateBroadcast();
@@ -240,6 +265,8 @@ public class SessionManager : MonoBehaviour
                 ReturnToLobby();
             }
         }
+
+
     }
 
     #endregion
@@ -286,6 +313,13 @@ public class SessionManager : MonoBehaviour
         {
             StartCoroutine(PostGameCoroutine());
         }
+        /*
+        else if (gameState == GameState.PreGame)
+        {
+            // Moved back to lobby
+            ResetLobby();
+        }
+        */
     }
 
     private void OnClientPresenceChangeEnd(ClientPresenceChangeEventArgs args)
@@ -319,21 +353,36 @@ public class SessionManager : MonoBehaviour
         OnPlayerListUpdate.Invoke(broadcast);
     }
 
+    /// <summary>
+    /// When the session state is updated on the server, update the session state on the client.
+    /// </summary>
+    /// <param name="broadcast"></param>
     private void OnSessionStateUpdateBroadcast(SessionStateUpdateBroadcast broadcast)
     {
         SessionState = broadcast.SessionState;
 
-        // Toggle the AudioListener on and off based on the session state.
-        if (SessionState == SessionState.InLobby)
+        switch (SessionState)
         {
-            //_audioListener.enabled = true;
+            case SessionState.InLobbyWaitingForVote:
+                break;
+            case SessionState.InLobbyCountdown:
+                StartCoroutine(LobbyCountdownCoroutine());
+                break;
+            case SessionState.InGame:
+                _audioListener.enabled = false;
+                break;
         }
-        else if (SessionState == SessionState.InGame)
-        {
-            _audioListener.enabled = false;
-        }
+
+        OnSessionStateUpdate.Invoke(broadcast.SessionState);
     }
 
+
+    // TODO: Combine all these into one broadcast 'GameSettingsUpdateBroadcast' or something.
+
+    /// <summary>
+    /// When the game mode is updated on the server, update the game mode on the client.
+    /// </summary>
+    /// <param name="broadcast"></param>
     private void OnGameModeUpdateBroadcast(GameModeUpdateBroadcast broadcast)
     {
         GameMode = broadcast.GameMode;
@@ -341,6 +390,10 @@ public class SessionManager : MonoBehaviour
         OnGameModeUpdate.Invoke(broadcast);
     }
 
+    /// <summary>
+    /// When the selected map index is updated on the server, update the selected map index on the client.
+    /// </summary>
+    /// <param name="broadcast"></param>
     private void OnMapChangeBroadcast(MapChangeBroadcast broadcast)
     {
         SelectedMapIndex = broadcast.SelectedMapIndex;
@@ -348,11 +401,26 @@ public class SessionManager : MonoBehaviour
         OnMapChange.Invoke(broadcast);
     }
 
+    /// <summary>
+    /// When the kill limit is updated on the server, update the kill limit on the client.
+    /// </summary>
+    /// <param name="broadcast"></param>
     private void OnKillLimitBroadcast(KillLimitBroadcast broadcast)
     {
         KillLimit = broadcast.KillLimit;
 
         OnKillLimitChange.Invoke(broadcast);
+    }
+
+    /// <summary>
+    /// When a player votes for an option, update the vote count on the clients.
+    /// </summary>
+    /// <param name="broadcast"></param>
+    private void OnOptionVoteBroadcast(OptionVoteBroadcast broadcast)
+    {
+        // Update the vote count for the option.
+
+
     }
 
     #endregion
@@ -409,6 +477,64 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.Broadcast(broadcast);
     }
 
+
+    /// <summary>
+    /// When a client votes for a map, set the clients choice for their player and broadcast the vote to all clients.
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="broadcast"></param>
+    private void OnOptionVoteBroadcastServer(NetworkConnection connection, OptionVoteBroadcast broadcast)
+    {
+        Debug.Log("Client " + connection.ClientId + " voted for option " + broadcast.OptionVoteIndex + ".");
+
+        if (SessionState == SessionState.InLobbyWaitingForVote)
+        {
+            // Voting hasn't started and this is the first vote
+            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+
+            // Initate the voting countdown.
+            StartLobbyVotingCountdown();
+        }
+        else if (SessionState == SessionState.InLobbyVoting)
+        {
+            // Update the players vote.
+            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+        }
+        else
+        {
+            return;
+        }
+
+        // Check if everyone has voted.
+        List<int> voteCounts = new List<int>();
+        foreach (var player in Players.Values)
+        {
+            if (player.OptionVoteIndex == -1)
+            {
+                return;
+            }
+
+            voteCounts[player.OptionVoteIndex]++;
+        }
+
+        int highestVoteCount = 0;
+        int highestVoteIndex = 0;
+        for (int i = 0; i < voteCounts.Count; i++)
+        {
+            if (voteCounts[i] > highestVoteCount)
+            {
+                highestVoteCount = voteCounts[i];
+                highestVoteIndex = i;
+            }
+        }
+
+        // Broadcast the highest voted map to all clients.  
+        OnOptionSelected.Invoke(highestVoteIndex);
+
+        // If everyone has voted, end the voting and start the game.
+        StartLobbyCountdown();
+    }
+
     #endregion
 
     #endregion
@@ -423,6 +549,17 @@ public class SessionManager : MonoBehaviour
         // Broadcast to the server to start the game.
         StartGameBroadcast startGameBroadcast = new StartGameBroadcast();
         _networkManager.ClientManager.Broadcast(startGameBroadcast);
+    }
+
+    public void OnSelectOption(int index)
+    {
+        // Broadcast to the server to vote for the selected option.
+        OptionVoteBroadcast optionVoteBroadcast = new OptionVoteBroadcast()
+        {
+            OptionVoteIndex = index,
+        };
+
+        _networkManager.ClientManager.Broadcast(optionVoteBroadcast);
     }
 
     public void ChangeMap(int index)
@@ -477,6 +614,58 @@ public class SessionManager : MonoBehaviour
 
     #region Private Methods
 
+    private void StartLobbyVotingCountdown()
+    {
+        // Set the session state to InLobbyVoting.
+        SessionState = SessionState.InLobbyVoting;
+
+        // Broadcast the session state update to all clients.
+        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobbyVoting });
+
+        // Start the countdown.
+        StartCoroutine(StartLobbyVotingCountdownCoroutine());
+    }
+
+    private IEnumerator StartLobbyVotingCountdownCoroutine()
+    {
+        Debug.Log("Voting has started!");
+
+        yield return new WaitForSeconds(_votingCountdownDuration);
+
+        StartLobbyCountdown();
+    }
+
+    private void StartLobbyCountdown()
+    {
+        Debug.Log("Starting lobby countdown.");
+
+        // Set the session state to InLobbyCountdown.
+        SessionState = SessionState.InLobbyCountdown;
+
+        // Broadcast the session state update to all clients.
+        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobbyCountdown });
+
+        // Start the countdown.
+        StartCoroutine(LobbyCountdownCoroutine());
+    }
+
+    private IEnumerator LobbyCountdownCoroutine()
+    {
+        int countdown = _gameStartCountdownDuration;
+
+        while (countdown > 0)
+        {
+            yield return new WaitForSeconds(1);
+
+            countdown--;
+
+            // Broadcast the countdown to all clients.
+            //_networkManager.ServerManager.Broadcast(new LobbyCountdownBroadcast() { Countdown = countdown });
+        }
+
+        StartGame();
+    }
+
     /// <summary>
     /// Called by the server when receiving a StartGameBroadcast.
     /// </summary>
@@ -502,13 +691,15 @@ public class SessionManager : MonoBehaviour
         // If the player isn't in a lobby or isn't the host, return.
         if (_beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
 
-        var sessionState = SessionState == SessionState.InLobby ? "In Lobby" : "In Game";
+        var sessionState = SessionState == SessionState.InLobbyWaitingForVote ? "In Lobby" : "In Game";
 
         var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  MapPrefabs[SelectedMapIndex].name + ";FFA;" + sessionState;
 
         SimGameType simGameType = await _simGameTypeRef.Resolve();
 
         await _beamContext.Lobby.Update(Lobby.lobbyId, Lobby.Restriction, Lobby.host, Lobby.name, description, simGameType.Id, 8);
+
+        await _beamContext.Lobby.Refresh();
     }
 
     /// <summary>
@@ -521,6 +712,9 @@ public class SessionManager : MonoBehaviour
         {
             player.Nob.Despawn();
             player.Nob = null;
+
+            // Reset the player's voting
+            player.OptionVoteIndex = -1;
         }
 
         SceneLoadData preGameLobbyScene = new SceneLoadData("PreGameLobby");
@@ -528,9 +722,9 @@ public class SessionManager : MonoBehaviour
         _networkManager.SceneManager.LoadGlobalScenes(preGameLobbyScene);
 
 
-        SessionState = SessionState.InLobby;
+        SessionState = SessionState.InLobbyWaitingForVote;
 
-        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobby });
+        _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobbyWaitingForVote });
 
         UpdateLobbyDetails();
     }
@@ -569,6 +763,7 @@ public class SessionManager : MonoBehaviour
     #endregion
 }
 
+// TODO: Switch this to a PlayerUpdateBroadcast. It will be used for both updating usernames and voting, and maybe other things.
 public struct UsernameBroadcast : IBroadcast
 {
     public string Username;
@@ -602,9 +797,22 @@ public struct KillLimitBroadcast : IBroadcast
     public int KillLimit;
 }
 
+public struct OptionVoteBroadcast : IBroadcast
+{
+    public int OptionVoteIndex;
+    public int PlayerId;
+}
+
+public struct OptionsVoteUpdateBroadcast : IBroadcast
+{
+    public List<int> OptionVotes;
+}
+
 public enum SessionState
 {
-    InLobby,
+    InLobbyWaitingForVote,
+    InLobbyVoting,
+    InLobbyCountdown,
     InGame
 }
 

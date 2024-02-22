@@ -27,7 +27,16 @@ public class PreGameLobbyUIManager : MonoBehaviour
     private GameObject _startGameButton;
 
     [SerializeField]
+    private TMP_Text _lobbyNameText;
+
+    [SerializeField]
     private TMP_Text _lobbyCodeText;
+
+    [SerializeField]
+    private TMP_Text _lobbyTimerText;
+
+    [SerializeField]
+    private List<GameObject> _options;
 
     private void Start()
     {
@@ -46,9 +55,24 @@ public class PreGameLobbyUIManager : MonoBehaviour
         _sessionManager.OnKillLimitChange.AddListener(OnKillLimitChange);
         _sessionManager.OnLobbyUpdate.AddListener(OnLobbyUpdate);
         _sessionManager.OnHostChange.AddListener(OnHostChange);
+        _sessionManager.OnOptionVoteChange.AddListener(OnOptionVoteChange);
+        _sessionManager.OnOptionSelected.AddListener(OnOptionSelected);
+        _sessionManager.OnSessionStateUpdate.AddListener(OnSessionStateUpdate);
 
         _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
         _killLimitInputField.onEndEdit.AddListener(OnKillLimitInputFieldEndEdit);
+
+        int optionIndex = 0;
+        foreach (var option in _options)
+        {
+            option.GetComponent<Button>().onClick.AddListener(() => OnOptionButtonClick(optionIndex));
+            optionIndex++;
+        }
+    }
+
+    private void OnOptionButtonClick(int optionIndex)
+    {
+        _sessionManager.OnSelectOption(optionIndex);
     }
 
     private void OnMapDropdownValueChanged(int index)
@@ -96,6 +120,37 @@ public class PreGameLobbyUIManager : MonoBehaviour
         }
     }
 
+    private void OnOptionVoteChange(List<int> optionVotes)
+    {
+        List<TMP_Text> _optionsVoteText = new List<TMP_Text>();
+        foreach (var option in _options)
+        {
+            _optionsVoteText.Add(option.GetComponentInChildren<TMP_Text>());
+        }
+
+        for (int i = 0; i < _optionsVoteText.Count; i++)
+        {
+            _optionsVoteText[i].text = optionVotes[i].ToString();
+        }
+    }
+
+    private void OnOptionSelected(int optionIndex)
+    {
+        Image image = _options[optionIndex].GetComponent<Image>();
+
+        image.color = Color.green;
+    }
+
+    private void OnSessionStateUpdate(SessionState sessionState)
+    {
+        switch (sessionState)
+        {
+            case SessionState.InLobbyWaitingForVote:
+                _lobbyTimerText.text = "Waiting for vote";
+                break;
+        }
+    }
+
     private void OnLobbyUpdate(Lobby lobby)
     {
         var details = ParseDescription(lobby.description);
@@ -105,15 +160,18 @@ public class PreGameLobbyUIManager : MonoBehaviour
         // TODO: Set the other details provided by the lobby.
 
         _lobbyCodeText.text = lobby.passcode;
+        _lobbyNameText.text = lobby.name;
     }
 
     private void OnHostChange(bool isHost)
     {
+        /*
         Debug.Log("isHost: " + isHost);
 
         _mapDropdown.gameObject.SetActive(isHost);
         _killLimitInputField.gameObject.SetActive(isHost);
         _startGameButton.SetActive(isHost);
+        */
     }
 
     public void OnStartGame()
