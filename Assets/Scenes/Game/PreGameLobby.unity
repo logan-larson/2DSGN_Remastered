@@ -404,7 +404,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Voting ends in: 15'
+  m_text: Waiting for vote...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -657,6 +657,7 @@ GameObject:
   - component: {fileID: 294508682}
   - component: {fileID: 294508681}
   - component: {fileID: 294508680}
+  - component: {fileID: 294508683}
   m_Layer: 5
   m_Name: FirstOptionButton
   m_TagString: Untagged
@@ -731,7 +732,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 294508681}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 294508683}
+        m_TargetAssemblyTypeName: OptionButton, Assembly-CSharp
+        m_MethodName: OnOptionClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &294508681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -770,6 +783,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 294508678}
   m_CullTransparentMesh: 1
+--- !u!114 &294508683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294508678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5887ea1fab107c4ba1ad6ceaae9e6be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VoteCountText: {fileID: 1559120758}
+  OptionIndex: 0
+  _preGameLobbyUIManager: {fileID: 407496416}
 --- !u!1 &305224166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1097,6 +1125,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: KillLimit
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: _userInfo
       value: 
       objectReference: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
@@ -1110,12 +1142,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.size
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.data[0]
       value: 
+      objectReference: {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: MapPrefabs.Array.data[1]
+      value: 
       objectReference: {fileID: 5063949607307197275, guid: 0f5f8f394171af0449d51bde5200f7a4, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: _votingCountdownDuration
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 6030808624407447608, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: _persistence
       value: 0
@@ -1311,8 +1351,10 @@ MonoBehaviour:
   _startGameButton: {fileID: 1750482812}
   _lobbyNameText: {fileID: 805853423}
   _lobbyCodeText: {fileID: 805853423}
-  _lobbyTimerText: {fileID: 0}
-  _options: []
+  _lobbyTimerText: {fileID: 87370869}
+  _options:
+  - {fileID: 294508678}
+  - {fileID: 534935007}
 --- !u!1 &534935007
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,6 +1367,7 @@ GameObject:
   - component: {fileID: 534935011}
   - component: {fileID: 534935010}
   - component: {fileID: 534935009}
+  - component: {fileID: 534935012}
   m_Layer: 5
   m_Name: SecondOptionButton
   m_TagString: Untagged
@@ -1399,7 +1442,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 534935010}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 534935012}
+        m_TargetAssemblyTypeName: OptionButton, Assembly-CSharp
+        m_MethodName: OnOptionClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &534935010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1438,6 +1493,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534935007}
   m_CullTransparentMesh: 1
+--- !u!114 &534935012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534935007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5887ea1fab107c4ba1ad6ceaae9e6be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VoteCountText: {fileID: 945132875}
+  OptionIndex: 1
+  _preGameLobbyUIManager: {fileID: 407496416}
 --- !u!1 &563686133
 GameObject:
   m_ObjectHideFlags: 0
@@ -4723,7 +4793,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Big Map
+  m_text: Small Map
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

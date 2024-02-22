@@ -59,19 +59,19 @@ public class PreGameLobbyUIManager : MonoBehaviour
         _sessionManager.OnOptionSelected.AddListener(OnOptionSelected);
         _sessionManager.OnSessionStateUpdate.AddListener(OnSessionStateUpdate);
 
-        _mapDropdown.onValueChanged.AddListener(OnMapDropdownValueChanged);
-        _killLimitInputField.onEndEdit.AddListener(OnKillLimitInputFieldEndEdit);
-
         int optionIndex = 0;
         foreach (var option in _options)
         {
-            option.GetComponent<Button>().onClick.AddListener(() => OnOptionButtonClick(optionIndex));
+            var optionManager = option.GetComponent<OptionButton>();
+            optionManager.VoteCountText.text = "0";
+            optionManager.OptionIndex = optionIndex;
             optionIndex++;
         }
     }
 
-    private void OnOptionButtonClick(int optionIndex)
+    public void OnOptionClicked(int optionIndex)
     {
+        Debug.Log("Option " + optionIndex + " clicked.");
         _sessionManager.OnSelectOption(optionIndex);
     }
 
@@ -120,39 +120,47 @@ public class PreGameLobbyUIManager : MonoBehaviour
         }
     }
 
-    private void OnOptionVoteChange(List<int> optionVotes)
+    private void OnOptionVoteChange(OptionVoteChangeBroadcast broadcast)
     {
-        List<TMP_Text> _optionsVoteText = new List<TMP_Text>();
-        foreach (var option in _options)
+        for (int i = 0; i < _options.Count; i++)
         {
-            _optionsVoteText.Add(option.GetComponentInChildren<TMP_Text>());
-        }
-
-        for (int i = 0; i < _optionsVoteText.Count; i++)
-        {
-            _optionsVoteText[i].text = optionVotes[i].ToString();
+            _options[i].GetComponent<OptionButton>().VoteCountText.text = broadcast.OptionVotes[i].ToString();
         }
     }
 
-    private void OnOptionSelected(int optionIndex)
+    private void OnOptionSelected(OptionSelectedBroadcast broadcast)
     {
-        Image image = _options[optionIndex].GetComponent<Image>();
+        Image image = _options[broadcast.OptionIndex].GetComponent<Image>();
 
         image.color = Color.green;
     }
 
-    private void OnSessionStateUpdate(SessionState sessionState)
+    private void OnSessionStateUpdate(SessionStateUpdateBroadcast broadcast)
     {
-        switch (sessionState)
+        switch (broadcast.SessionState)
         {
             case SessionState.InLobbyWaitingForVote:
                 _lobbyTimerText.text = "Waiting for vote";
+                break;
+            case SessionState.InLobbyVoting:
+                _lobbyTimerText.text = "Voting ends in " + broadcast.CountdownNumber;
+                break;
+            case SessionState.InLobbyCountdown:
+                _lobbyTimerText.text = "Game starting in " + broadcast.CountdownNumber;
                 break;
         }
     }
 
     private void OnLobbyUpdate(Lobby lobby)
     {
+        if (lobby == null)
+        {
+            // Local lobby test
+            _lobbyCodeText.text = "------";
+            _lobbyNameText.text = "Local Lobby Test";
+            return;
+        }
+
         var details = ParseDescription(lobby.description);
 
         _mapDropdown.value = _mapDropdown.options.FindIndex(option => option.text == details.Map);

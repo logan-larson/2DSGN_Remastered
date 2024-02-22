@@ -178,6 +178,11 @@ public class PlayerSpawner : MonoBehaviour
     /// <param name="rot"></param>
     private void SetSpawn(Transform prefab, out Vector3 pos, out Quaternion rot)
     {
+        //Increase next spawn and reset if needed.
+        _nextSpawn++;
+        if (_nextSpawn >= Spawns.Length)
+            _nextSpawn = 0;
+
         //No spawns specified.
         if (Spawns.Length == 0)
         {
@@ -195,11 +200,6 @@ public class PlayerSpawner : MonoBehaviour
             pos = result.position;
             rot = result.rotation;
         }
-
-        //Increase next spawn and reset if needed.
-        _nextSpawn++;
-        if (_nextSpawn >= Spawns.Length)
-            _nextSpawn = 0;
     }
 
     /// <summary>

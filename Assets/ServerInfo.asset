@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b839a69209540714c8a727772c01186a, type: 3}
   m_Name: ServerInfo
   m_EditorClassIdentifier: 
-  Address: 
-  Port: 0
+  Address: localhost
+  Port: 41214
+  IsFreeplay: 0

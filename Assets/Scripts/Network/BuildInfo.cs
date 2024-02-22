@@ -7,6 +7,8 @@ public class BuildInfo : ScriptableObject
 {
     public bool IsServer;
 
+    public bool IsLocalTest;
+
     public bool IsProduction;
 
     public bool IsFreeplay;

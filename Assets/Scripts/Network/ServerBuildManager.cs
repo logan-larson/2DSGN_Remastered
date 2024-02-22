@@ -36,6 +36,25 @@ public class ServerBuildManager : MonoBehaviour
 
             // Query the lobby ID for the initial player list.
         }
+        else if (_buildInfo.IsLocalTest)
+        {
+            // Connect to the local server
+            multipass.SetClientTransport<Tugboat>();
+
+            _networkManagerUI.SetActive(false);
+
+            // Set the connection info
+            _tugboat.SetPort(7770);
+            _tugboat.SetClientAddress("localhost");
+
+            if (_networkManager.ClientManager == null)
+            {
+                //Debug.LogError("ClientManager is null.");
+                return;
+            }
+
+            _networkManager.ClientManager.StartConnection();
+        }
         else if (_serverInfo.IsFreeplay)
         {
             multipass.SetClientTransport<Yak>();

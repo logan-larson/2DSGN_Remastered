@@ -37,6 +37,9 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _serverStatusText;
 
+    [SerializeField]
+    private GameObject _joinLocalLobbyTestButton;
+
     #endregion
 
     #region Scriptable Object References
@@ -87,6 +90,11 @@ public class MainMenuUIManager : MonoBehaviour
 
         UsernameText.text = "Welcome back, " + _userInfo.Username;
 
+        if (_buildInfo.IsLocalTest)
+        {
+            _joinLocalLobbyTestButton.SetActive(true);
+        }
+
         SetupHathora();
 
         SetupBeamable();
@@ -126,7 +134,7 @@ public class MainMenuUIManager : MonoBehaviour
     {
         if (lobby == null) return;
 
-        Debug.Log($"Lobby updated: {lobby.name}, Description: {lobby.description}, Players: {lobby.players.Count}/{lobby.maxPlayers}");
+        //Debug.Log($"Lobby updated: {lobby.name}, Description: {lobby.description}, Players: {lobby.players.Count}/{lobby.maxPlayers}");
         // Otherwise set the server info to the lobby's server info
     }
 
@@ -140,15 +148,26 @@ public class MainMenuUIManager : MonoBehaviour
 
         foreach (var lobby in Lobbies)
         {
-            Debug.Log("name: " + lobby.name);
+            //Debug.Log("name: " + lobby.name);
             if (lobby.data == null) continue;
             foreach (var data in lobby.data)
             {
-                Debug.Log($"key: {data.Key}; value: {data.Value}");
+                //Debug.Log($"key: {data.Key}; value: {data.Value}");
             }
         }
 
         OnLobbyListUpdated.Invoke(Lobbies);
+    }
+
+    public void OnJoinLocalLobbyTest()
+    {
+        _serverInfo.IsFreeplay = false;
+
+        _serverInfo.Address = "localhost";
+        _serverInfo.Port = 7770;
+
+        // Load the freeplay scene
+        SceneManager.LoadScene("PreGameLobby");
     }
 
     public void OnJoinLobbyByPasscode()
