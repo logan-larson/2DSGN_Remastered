@@ -17,6 +17,7 @@ MonoBehaviour:
   SpriteWithHandsPath: Sprites/Weapons/RevolverWithHands
   FireSoundPath: Sounds/Weapons/Revolver
   BulletTrailRendererPath: 
+  SpinningAnimationPath: Animations/RevolverSpinning
   FireRate: 0.5
   Damage: 30
   Range: 15

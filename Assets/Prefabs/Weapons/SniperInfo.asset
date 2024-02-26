@@ -17,6 +17,7 @@ MonoBehaviour:
   SpriteWithHandsPath: Sprites/Weapons/SniperWithHands
   FireSoundPath: Sounds/Weapons/Shotgun
   BulletTrailRendererPath: 
+  SpinningAnimationPath: Animations/SniperSpinning
   FireRate: 2
   Damage: 90
   Range: 25

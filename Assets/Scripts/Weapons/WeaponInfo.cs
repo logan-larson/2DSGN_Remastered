@@ -12,6 +12,7 @@ public class WeaponInfo : ScriptableObject
     public string SpriteWithHandsPath;
     public string FireSoundPath;
     public string BulletTrailRendererPath;
+    public string SpinningAnimationPath; 
 
     public float FireRate;
     public float Damage;

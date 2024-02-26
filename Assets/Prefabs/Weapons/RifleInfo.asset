@@ -17,6 +17,7 @@ MonoBehaviour:
   SpriteWithHandsPath: Sprites/Weapons/RifleWithHands
   FireSoundPath: Sounds/Weapons/SMG
   BulletTrailRendererPath: 
+  SpinningAnimationPath: Animations/RifleSpinning
   FireRate: 0.2
   Damage: 25
   Range: 20

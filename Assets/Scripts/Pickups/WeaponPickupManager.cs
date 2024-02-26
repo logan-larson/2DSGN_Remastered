@@ -3,6 +3,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class WeaponPickupManager : Pickup
@@ -13,6 +14,12 @@ public class WeaponPickupManager : Pickup
     public WeaponInfo WeaponInfo;
 
     #endregion
+
+    [SerializeField]
+    private Animator _animator;
+
+    [SerializeField]
+    private AnimatorOverrideController _overrideController;
 
     #region Initialization
 
@@ -28,9 +35,26 @@ public class WeaponPickupManager : Pickup
     {
         base.OnSpawnServer(connection);
 
-        base.SpriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
+        LoadAnimation(WeaponInfo.SpinningAnimationPath);
 
         SetSpriteObserversRpc();
+    }
+
+    private void LoadAnimation(string path)
+    {
+        AnimationClip clip = Resources.Load<AnimationClip>(path);
+
+        if (clip == null) return;
+
+        if (_overrideController == null)
+        {
+            _overrideController = new AnimatorOverrideController(_animator.runtimeAnimatorController);
+            _animator.runtimeAnimatorController = _overrideController;
+        }
+
+        _overrideController["RevolverSpinning"] = clip;
+
+        _animator.Play("RevolverSpinning");
     }
 
     [ObserversRpc]
@@ -39,7 +63,7 @@ public class WeaponPickupManager : Pickup
         if (WeaponInfo == null)
             return;
 
-        base.SpriteRenderer.sprite = Resources.Load<Sprite>(WeaponInfo.SpritePath);
+        LoadAnimation(WeaponInfo.SpinningAnimationPath);
     }
 
     #endregion

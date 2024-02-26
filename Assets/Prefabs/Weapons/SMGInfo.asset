@@ -17,6 +17,7 @@ MonoBehaviour:
   SpriteWithHandsPath: Sprites/Weapons/SMGWithHands
   FireSoundPath: Sounds/Weapons/untitled
   BulletTrailRendererPath: 
+  SpinningAnimationPath: Animations/SMGSpinning
   FireRate: 0.15
   Damage: 20
   Range: 12
