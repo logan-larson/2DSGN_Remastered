@@ -19,11 +19,14 @@ public class Pickup : NetworkBehaviour
 
     public void SetHighlight(bool isHighlighted)
     {
+        if (!IsAvailable)
+            return;
+
         SpriteRenderer.color = isHighlighted ? Color.yellow : Color.white;
     }
 
     public void SetDisabled(bool isAvailable)
     {
-        SpriteRenderer.color = isAvailable ? Color.white : Color.gray;
+        SpriteRenderer.color = isAvailable ? Color.white : new Color32(255, 255, 255, 140);
     }
 }
