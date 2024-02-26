@@ -11,7 +11,7 @@ public class WeaponPickupsInitializer : NetworkBehaviour
         {
             if (pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
             {
-                weaponPickupManager.Initialize(weaponPickupManager.WeaponInfo, Vector2.zero);
+                weaponPickupManager.Initialize(weaponPickupManager.WeaponInfo);
             }
         }
         

@@ -137,9 +137,12 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6132786426448696753}
   _networkObjectCache: {fileID: 6132786426448696753}
   SpriteRenderer: {fileID: 2689411999210917743}
+  SpriteTransform: {fileID: 7395998748336561274}
+  IsAvailable: 1
+  _floatAmplitude: 0.002
+  _floatFrequency: 1
+  _floatOffset: 0
   WeaponInfo: {fileID: 0}
-  InitialVelocity: {x: 0, y: 0}
-  _rigidbody: {fileID: 5189826979155428404}
 --- !u!114 &6132786426448696753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,7 +172,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 7
+  <PrefabId>k__BackingField: 18
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
