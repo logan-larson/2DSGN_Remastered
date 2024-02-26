@@ -8,9 +8,10 @@ public class HealthNutPickupManager : Pickup
 {
     public float HealthAmount = 100f;
 
-    [SyncVar(OnChange = nameof(ToggleIsAvailable))]
-    public bool IsAvailable = true;
+    //[SyncVar(OnChange = nameof(ToggleIsAvailable))]
+    //public bool IsAvailable = true;
 
+    /*
     private void ToggleIsAvailable(bool oldValue, bool newValue, bool isServer)
     {
         if (newValue)
@@ -22,6 +23,7 @@ public class HealthNutPickupManager : Pickup
             SpriteRenderer.enabled = false;
         }
     }
+    */
 
     public void Pickup()
     {

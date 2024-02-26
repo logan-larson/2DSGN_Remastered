@@ -35,6 +35,8 @@ public class GameManager : NetworkBehaviour
         OnGameStateChange.Invoke(newState);
     }
 
+    public List<WeaponPickupManager> WeaponPickups { get; set; } = new List<WeaponPickupManager>();
+
     #endregion
 
     #region Private Fields

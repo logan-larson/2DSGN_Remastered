@@ -27,6 +27,8 @@ public class WeaponManager : NetworkBehaviour
         }
     }
 
+    public NetworkObject CurrentWeaponPickupNob;
+
     public float Bloom => _currentBloomAngle;
 
     #endregion
@@ -101,6 +103,8 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private PlayerManager _playerManager;
 
+    private GameManager _gameManager;
+
     #endregion
 
     #region Time Management
@@ -134,13 +138,15 @@ public class WeaponManager : NetworkBehaviour
         _inputManager ??= GetComponent<InputManager>();
         _playerController ??= GetComponent<PlayerController>();
         _playerManager ??= GetComponent<PlayerManager>();
+
+        _gameManager ??= FindObjectOfType<GameManager>();
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
-        SetCurrentWeapon(_defaultWeaponInfo);
+        SetCurrentWeapon(_defaultWeaponInfo, null);
 
         var map = GameObject.FindWithTag("Map");
 
@@ -354,12 +360,16 @@ public class WeaponManager : NetworkBehaviour
         // Try to get the weapon pickup manager from the pickup.
         if (pickup.TryGetComponent<WeaponPickupManager>(out var weaponPickupManager))
         {
+            if (!weaponPickupManager.IsAvailable) return;
+
             // Drop the current weapon.
             DropCurrentWeapon();
 
             // Set the player's weapon info to the pickup info.
-            SetCurrentWeapon(weaponPickupManager.WeaponInfo);
+            SetCurrentWeapon(weaponPickupManager.WeaponInfo, weaponPickupManager.NetworkObject);
             //SetCurrentWeaponObserversRpc(weaponPickupManager.WeaponInfo);
+
+            weaponPickupManager.IsAvailable = false;
 
             /* TODO: Fix the movement for the weapon holder after picking up a weapon.
             IsWeaponEquipped = false;
@@ -370,7 +380,7 @@ public class WeaponManager : NetworkBehaviour
 
             // Destroy the pickup.
             //InstanceFinder.ServerManager.Despawn(pickup.gameObject);
-            Destroy(pickup.gameObject);
+            //Destroy(pickup.gameObject);
         }
         else if (pickup.TryGetComponent<HealthNutPickupManager>(out var healthNutManager))
         {
@@ -396,35 +406,40 @@ public class WeaponManager : NetworkBehaviour
     public void DropCurrentWeapon()
     {
         // If the player has no current weapon or if the current weapon is the default weapon, return.
-        if (CurrentWeaponInfo == null || CurrentWeaponInfo.Name == _defaultWeaponInfo.Name)
+        if (CurrentWeaponInfo == null || CurrentWeaponInfo.Name == _defaultWeaponInfo.Name || CurrentWeaponPickupNob == null)
             return;
 
         // Create a new weapon pickup based on the current weapon's info.
-        GameObject weaponPickup = Instantiate(_weaponPickupPrefab, transform.position, Quaternion.identity, _pickupsParent.transform);
+        //GameObject weaponPickup = Instantiate(_weaponPickupPrefab, transform.position, Quaternion.identity, _pickupsParent.transform);
 
         // Set the weapon pickup's info.
-        var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();
+        //var weaponPickupManager = weaponPickup.GetComponent<WeaponPickupManager>();
 
         // Call initialize on the weapon pickup.
-        weaponPickupManager.Initialize(CurrentWeaponInfo, _playerController.MovementData.Velocity);
+        //weaponPickupManager.Initialize(CurrentWeaponInfo, _playerController.MovementData.Velocity);
 
-        InstanceFinder.ServerManager.Spawn(weaponPickup);
+        //InstanceFinder.ServerManager.Spawn(weaponPickup);
+        CurrentWeaponPickupNob.GetComponent<WeaponPickupManager>().IsAvailable = true;
+
 
         // Set the current weapon to null.
         CurrentWeaponInfo = null;
+
+        CurrentWeaponPickupNob = null;
     }
 
     [Server]
     public void EquipDefaultWeapon()
     {
-        SetCurrentWeapon(_defaultWeaponInfo);
+        SetCurrentWeapon(_defaultWeaponInfo, null);
     }
 
     [Server]
-    private void SetCurrentWeapon(WeaponInfo weaponInfo)
+    private void SetCurrentWeapon(WeaponInfo weaponInfo, NetworkObject weaponPickupNob)
     {
         // Set the current weapon to the weapon info.
         CurrentWeaponInfo = weaponInfo;
+        CurrentWeaponPickupNob = weaponPickupNob;
     }
 
     [ServerRpc]
