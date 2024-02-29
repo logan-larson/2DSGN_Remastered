@@ -98,7 +98,8 @@ public class PlayersManager : NetworkBehaviour
         // Subscribe to the remote connection state disconnects.
         ServerManager.OnRemoteConnectionState += ServerManager_OnRemoteConnectionState;
 
-        _mapInitializer.OnMapSpawned.AddListener(OnMapSpawned);
+        //_mapInitializer.OnMapSpawned.AddListener(OnMapSpawned);
+        OnMapSpawned();
     }
 
     private void OnMapSpawned()

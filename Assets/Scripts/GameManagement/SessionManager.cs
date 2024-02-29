@@ -384,7 +384,7 @@ public class SessionManager : MonoBehaviour
         switch (SessionState)
         {
             case SessionState.InLobbyWaitingForVote:
-                SetMapPrefabOptions();
+                //SetMapPrefabOptions();
                 break;
             case SessionState.InLobbyCountdown:
                 break;
@@ -419,7 +419,8 @@ public class SessionManager : MonoBehaviour
             MapOptions = CurrentMapOptions
         };
 
-        _networkManager.ServerManager.Broadcast(mapPrefabOptionsBroadcast);
+        if (_networkManager.ServerManager.isActiveAndEnabled)
+            _networkManager.ServerManager.Broadcast(mapPrefabOptionsBroadcast);
         
         OnMapOptionsChange.Invoke(mapPrefabOptionsBroadcast);
     }
@@ -781,7 +782,7 @@ public class SessionManager : MonoBehaviour
         //SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
 
         // Load the game scene based on the selected map.
-        SceneLoadData gameScene = new SceneLoadData(AvailableMaps[SelectedMapIndex].Name);
+        SceneLoadData gameScene = new SceneLoadData(CurrentMapOptions[SelectedMapIndex].Name);
 
         gameScene.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(gameScene);
@@ -803,7 +804,7 @@ public class SessionManager : MonoBehaviour
 
         var sessionState = SessionState == SessionState.InLobbyWaitingForVote ? "In Lobby" : "In Game";
 
-        var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  AvailableMaps[SelectedMapIndex].name + ";FFA;" + sessionState;
+        var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  CurrentMapOptions[SelectedMapIndex].name + ";FFA;" + sessionState;
 
         SimGameType simGameType = await _simGameTypeRef.Resolve();
 
@@ -835,6 +836,8 @@ public class SessionManager : MonoBehaviour
         SessionState = SessionState.InLobbyWaitingForVote;
 
         _networkManager.ServerManager.Broadcast(new SessionStateUpdateBroadcast() { SessionState = SessionState.InLobbyWaitingForVote });
+
+        SetMapPrefabOptions();
 
         UpdateLobbyDetails();
     }

@@ -107,7 +107,7 @@ public class PlayerSpawner : MonoBehaviour
 
         // If the current scene is OnlineGame then spawn the player.
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        if (sceneName == "OnlineGame" || sceneName == "OfflineGame")
+        if (sceneName != "PreGameLobby")
             SpawnPlayer(conn);
     }
 
@@ -125,7 +125,7 @@ public class PlayerSpawner : MonoBehaviour
 
         // If the current scene is OnlineGame then spawn the player.
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        if (sceneName == "OnlineGame" || sceneName == "OfflineGame")
+        if (sceneName != "PreGameLobby")
             SpawnPlayer(args.Connection);
     }
 

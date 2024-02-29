@@ -28,6 +28,8 @@ public class WeaponPickupManager : Pickup
             return;
 
         WeaponInfo = weaponInfo;
+
+        //LoadAnimation(weaponInfo.SpinningAnimationPath);
     }
 
     public override void OnSpawnServer(NetworkConnection connection)
