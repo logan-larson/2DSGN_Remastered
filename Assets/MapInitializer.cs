@@ -11,19 +11,23 @@ public class MapInitializer : NetworkBehaviour
 
     public override void OnStartServer()
     {
+        /*
         base.OnStartServer();
 
         var networkManager = InstanceFinder.NetworkManager;
 
         var sessionManager = networkManager.GetComponent<SessionManager>();
 
-        var mapPrefab = sessionManager.MapPrefabs[sessionManager.SelectedMapIndex];
+        var mapInfo = sessionManager.AvailableMaps[sessionManager.SelectedMapIndex];
+
+        var mapPrefab = Resources.Load<GameObject>(mapInfo.PrefabPath);
 
         var map = Instantiate(mapPrefab);
 
         InstanceFinder.ServerManager.Spawn(map);
 
         map.name = mapPrefab.name;
+        */
 
         OnMapSpawned.Invoke();
     }

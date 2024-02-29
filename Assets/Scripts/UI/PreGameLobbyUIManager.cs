@@ -36,7 +36,7 @@ public class PreGameLobbyUIManager : MonoBehaviour
     private TMP_Text _lobbyTimerText;
 
     [SerializeField]
-    private List<GameObject> _options;
+    private List<OptionButton> _options;
 
     private void Start()
     {
@@ -58,13 +58,13 @@ public class PreGameLobbyUIManager : MonoBehaviour
         _sessionManager.OnOptionVoteChange.AddListener(OnOptionVoteChange);
         _sessionManager.OnOptionSelected.AddListener(OnOptionSelected);
         _sessionManager.OnSessionStateUpdate.AddListener(OnSessionStateUpdate);
+        _sessionManager.OnMapOptionsChange.AddListener(OnMapOptionsChange);
 
         int optionIndex = 0;
         foreach (var option in _options)
         {
-            var optionManager = option.GetComponent<OptionButton>();
-            optionManager.VoteCountText.text = "0";
-            optionManager.OptionIndex = optionIndex;
+            option.VoteCountText.text = "0";
+            option.OptionIndex = optionIndex;
             optionIndex++;
         }
     }
@@ -124,15 +124,13 @@ public class PreGameLobbyUIManager : MonoBehaviour
     {
         for (int i = 0; i < _options.Count; i++)
         {
-            _options[i].GetComponent<OptionButton>().VoteCountText.text = broadcast.OptionVotes[i].ToString();
+            _options[i].VoteCountText.text = broadcast.OptionVotes[i].ToString();
         }
     }
 
     private void OnOptionSelected(OptionSelectedBroadcast broadcast)
     {
-        Image image = _options[broadcast.OptionIndex].GetComponent<Image>();
-
-        image.color = Color.green;
+        _options[broadcast.OptionIndex].SetImageColor(Color.green);
     }
 
     private void OnSessionStateUpdate(SessionStateUpdateBroadcast broadcast)
@@ -148,6 +146,14 @@ public class PreGameLobbyUIManager : MonoBehaviour
             case SessionState.InLobbyCountdown:
                 _lobbyTimerText.text = "Game starting in " + broadcast.CountdownNumber;
                 break;
+        }
+    }
+
+    private void OnMapOptionsChange(MapOptionsBroadcast broadcast)
+    {
+        for (int i = 0; i < broadcast.MapOptions.Count; i++)
+        {
+            _options[i].SetMapInfo(broadcast.MapOptions[i]);
         }
     }
 

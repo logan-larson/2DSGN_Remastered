@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 3839515196984782955}
   - component: {fileID: 3818472558376582985}
   - component: {fileID: 3818472558376582962}
+  - component: {fileID: 7467671467942352994}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -115,6 +116,12 @@ MonoBehaviour:
   OnPlayerListUpdate:
     m_PersistentCalls:
       m_Calls: []
+  OnSessionStateUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+  OnOptionSelected:
+    m_PersistentCalls:
+      m_Calls: []
   OnGameModeUpdate:
     m_PersistentCalls:
       m_Calls: []
@@ -124,18 +131,27 @@ MonoBehaviour:
   OnKillLimitChange:
     m_PersistentCalls:
       m_Calls: []
-  MapPrefabs:
-  - {fileID: 5063949607307197275, guid: 0f5f8f394171af0449d51bde5200f7a4, type: 3}
-  - {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
-  - {fileID: 8642975376856295050, guid: 7503cdd63f5d827438f0e8eaf61398da, type: 3}
+  OnOptionVoteChange:
+    m_PersistentCalls:
+      m_Calls: []
+  AvailableMaps: []
+  CurrentMapOptions: []
+  OnMapOptionsChange:
+    m_PersistentCalls:
+      m_Calls: []
   SelectedMapIndex: 0
   KillLimit: 20
   OnLobbyUpdate:
     m_PersistentCalls:
       m_Calls: []
+  OnHostChange:
+    m_PersistentCalls:
+      m_Calls: []
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
   _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
   _audioListener: {fileID: 4162585637748075726}
+  _votingCountdownDuration: 20
+  _gameStartCountdownDuration: 5
   _postGameWaitTime: 10
   _simGameTypeRef:
     Id: game_types.FFA
@@ -291,6 +307,24 @@ MonoBehaviour:
   _networkManagerUI: {fileID: 579283459155506203}
   _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
   _tugboat: {fileID: 3818472558376582985}
+--- !u!114 &7467671467942352994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6030808624407447609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d0962ead4b02a34aae248fccce671ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WriteSceneObjectDetails: 1
+  ObserverRpcLinks: 1
+  TargetRpcLinks: 1
+  ReplicateRpcLinks: 1
+  ReconcileRpcLinks: 1
+  ServerRpcLinks: 1
 --- !u!1001 &3818472560023089832
 PrefabInstance:
   m_ObjectHideFlags: 0

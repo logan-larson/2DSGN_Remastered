@@ -226,6 +226,7 @@ MonoBehaviour:
   zFactor: 0.4
   _playerController: {fileID: 0}
   _inputManager: {fileID: 0}
+  _playerManager: {fileID: 0}
 --- !u!114 &119172114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +639,26 @@ PrefabInstance:
       propertyPath: _userInfo
       value: 
       objectReference: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: MapPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: AvailableMapPrefabs.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: AvailableMapPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: AvailableMapPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: AvailableMapPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 5063949607307197275, guid: 0f5f8f394171af0449d51bde5200f7a4, type: 3}
     - target: {fileID: 6030808624407447609, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: m_Name
       value: NetworkManager

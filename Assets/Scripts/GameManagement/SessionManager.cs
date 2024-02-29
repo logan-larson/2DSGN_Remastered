@@ -42,7 +42,11 @@ public class SessionManager : MonoBehaviour
 
     //public UnityEvent<int> OnOptionSelected = new UnityEvent<int>();
 
-    public List<GameObject> MapPrefabs = new List<GameObject>();
+    public List<MapInfo> AvailableMaps = new List<MapInfo>();
+
+    public List<MapInfo> CurrentMapOptions = new List<MapInfo>();
+
+    public UnityEvent<MapOptionsBroadcast> OnMapOptionsChange = new UnityEvent<MapOptionsBroadcast>();
 
     public int SelectedMapIndex = 0;
 
@@ -127,6 +131,9 @@ public class SessionManager : MonoBehaviour
 
         _networkManager.ClientManager.RegisterBroadcast<OptionVoteChangeBroadcast>(OnOptionVoteChangeBroadcast);
         _networkManager.ClientManager.RegisterBroadcast<OptionSelectedBroadcast>(OnOptionSelectedBroadcast);
+        _networkManager.ClientManager.RegisterBroadcast<MapOptionsBroadcast>(OnMapOptionsBroadcast);
+
+        SetMapPrefabOptions();
     }
 
     #endregion
@@ -235,6 +242,13 @@ public class SessionManager : MonoBehaviour
 
             UpdateLobbyDetails();
             Debug.Log($"Player {conn.ClientId} has joined the game.");
+
+            MapOptionsBroadcast mapOptionsBroadcast = new MapOptionsBroadcast()
+            {
+                MapOptions = CurrentMapOptions
+            };
+
+            _networkManager.ServerManager.Broadcast(mapOptionsBroadcast, false);
         }
         else if (args.ConnectionState == RemoteConnectionState.Stopped)
         {
@@ -297,7 +311,8 @@ public class SessionManager : MonoBehaviour
             _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
             */
         }
-        else if (args.LoadedScenes[0].name == "OnlineGame")
+        //else if (args.LoadedScenes[0].name == "OnlineGame")
+        else
         {
             // Reset the kills and deaths of all players.
             foreach (var player in Players.Values)
@@ -369,6 +384,7 @@ public class SessionManager : MonoBehaviour
         switch (SessionState)
         {
             case SessionState.InLobbyWaitingForVote:
+                SetMapPrefabOptions();
                 break;
             case SessionState.InLobbyCountdown:
                 break;
@@ -378,6 +394,34 @@ public class SessionManager : MonoBehaviour
         }
 
         OnSessionStateUpdate.Invoke(broadcast);
+    }
+
+    private void SetMapPrefabOptions()
+    {
+        // Select two random maps from the list of available maps.
+        CurrentMapOptions.Clear();
+
+        // Get two unique random indices within the number of available maps.
+        while (CurrentMapOptions.Count < 2)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, AvailableMaps.Count);
+
+            if (CurrentMapOptions.Contains(AvailableMaps[randomIndex]))
+            {
+                continue;
+            }
+
+            CurrentMapOptions.Add(AvailableMaps[randomIndex]);
+        }
+
+        MapOptionsBroadcast mapPrefabOptionsBroadcast = new MapOptionsBroadcast()
+        {
+            MapOptions = CurrentMapOptions
+        };
+
+        _networkManager.ServerManager.Broadcast(mapPrefabOptionsBroadcast);
+        
+        OnMapOptionsChange.Invoke(mapPrefabOptionsBroadcast);
     }
 
 
@@ -429,6 +473,13 @@ public class SessionManager : MonoBehaviour
     private void OnOptionSelectedBroadcast(OptionSelectedBroadcast broadcast)
     {
         OnOptionSelected.Invoke(broadcast);
+    }
+
+    private void OnMapOptionsBroadcast(MapOptionsBroadcast broadcast)
+    {
+        CurrentMapOptions = broadcast.MapOptions;
+
+        OnMapOptionsChange.Invoke(broadcast);
     }
 
     #endregion
@@ -727,10 +778,13 @@ public class SessionManager : MonoBehaviour
     /// </summary>
     private void StartGame()
     {
-        // Load the game scene.
-        SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
-        onlineGameScene.ReplaceScenes = ReplaceOption.All;
-        _networkManager.SceneManager.LoadGlobalScenes(onlineGameScene);
+        //SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
+
+        // Load the game scene based on the selected map.
+        SceneLoadData gameScene = new SceneLoadData(AvailableMaps[SelectedMapIndex].Name);
+
+        gameScene.ReplaceScenes = ReplaceOption.All;
+        _networkManager.SceneManager.LoadGlobalScenes(gameScene);
 
 
         SessionState = SessionState.InGame;
@@ -745,11 +799,11 @@ public class SessionManager : MonoBehaviour
     private async void UpdateLobbyDetails()
     {
         // If the player isn't in a lobby or isn't the host, return.
-        if (_beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
+        if (_beamContext == null || _beamContext.Lobby == null || _beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
 
         var sessionState = SessionState == SessionState.InLobbyWaitingForVote ? "In Lobby" : "In Game";
 
-        var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  MapPrefabs[SelectedMapIndex].name + ";FFA;" + sessionState;
+        var description = _serverInfo.Address + ":" + _serverInfo.Port + ";" +  AvailableMaps[SelectedMapIndex].name + ";FFA;" + sessionState;
 
         SimGameType simGameType = await _simGameTypeRef.Resolve();
 
@@ -873,6 +927,11 @@ public struct OptionVoteBroadcast : IBroadcast
 public struct OptionsVoteUpdateBroadcast : IBroadcast
 {
     public List<int> OptionVotes;
+}
+
+public struct MapOptionsBroadcast : IBroadcast
+{
+    public List<MapInfo> MapOptions;
 }
 
 public enum SessionState
