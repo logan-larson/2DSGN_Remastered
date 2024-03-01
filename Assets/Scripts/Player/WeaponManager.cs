@@ -139,6 +139,7 @@ public class WeaponManager : NetworkBehaviour
         _playerController ??= GetComponent<PlayerController>();
         _playerManager ??= GetComponent<PlayerManager>();
 
+        _weaponHolder ??= GetComponentInChildren<WeaponHolderController>().transform;
         _gameManager ??= FindObjectOfType<GameManager>();
     }
 
@@ -183,6 +184,12 @@ public class WeaponManager : NetworkBehaviour
         base.OnStartClient();
 
         var map = GameObject.FindWithTag("Map");
+
+        if (map == null)
+        {
+            Debug.LogError("Map not found.");
+            return;
+        }
 
         //_pickupsParent = map.GetComponentInChildren<WeaponPickupsInitializer>().gameObject;
 

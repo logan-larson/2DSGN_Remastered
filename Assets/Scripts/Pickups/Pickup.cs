@@ -35,6 +35,9 @@ public class Pickup : NetworkBehaviour
     {
         // Randomize the float offset so that pickups don't float in sync
         _floatOffset = Random.Range(0f, 1f);
+
+        SpriteRenderer ??= GetComponentInChildren<SpriteRenderer>();
+        SpriteTransform ??= GetComponentInChildren<Transform>();
     }
 
     private void Update()

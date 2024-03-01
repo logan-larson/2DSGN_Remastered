@@ -2619,6 +2619,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 7614852995303497732}
   IsWeaponEquipped: 0
   CurrentWeaponInfo: {fileID: 0}
+  CurrentWeaponPickupNob: {fileID: 0}
   _pickupRadius: 5
   _weaponPickupPrefab: {fileID: 6132786426448696764, guid: 6a375f3d14436cb478d268da7641d56f, type: 3}
   _defaultWeaponInfo: {fileID: 11400000, guid: 53fd179e665b54a46b4544bff76bdd8f, type: 2}
@@ -3355,6 +3356,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+      propertyPath: _crosshair
+      value: 
+      objectReference: {fileID: 63285075294266218}
+    - target: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}
       propertyPath: _inputManager
       value: 
       objectReference: {fileID: 3717805940115971261}
@@ -3397,6 +3402,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &63285075294266218 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1058332941952659527, guid: a758bb5eadf766c46b50d09806600583, type: 3}
+  m_PrefabInstance: {fileID: 1031079418909496109}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8777006623937484511 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8611181835350328818, guid: a758bb5eadf766c46b50d09806600583, type: 3}

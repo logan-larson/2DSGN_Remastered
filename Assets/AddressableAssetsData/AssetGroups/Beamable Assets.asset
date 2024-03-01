@@ -16,11 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 6711040726afa2748bfc33e3374a01ac
-  m_SerializeEntries:
-  - m_GUID: f819a6beb22c04c8d9f8222f930252b5
-    m_Address: Assets/Beamable/DefaultAssets/currency/icon.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fa878dd7df28a7440ae08d5860fe6425, type: 2}
   m_SchemaSet:

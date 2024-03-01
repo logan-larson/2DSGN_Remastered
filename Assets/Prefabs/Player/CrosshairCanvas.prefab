@@ -67,7 +67,7 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
-  - {fileID: 8611181835350328818}
+  - {fileID: 0}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   SerializedTransformProperties:
@@ -96,10 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a73e784c8175f4e8e99b463a62e1ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
+  _componentIndexCache: 255
   _addedNetworkObject: {fileID: 1058332941952659524}
-  _networkObjectCache: {fileID: 1058332941952659524}
-  _crosshair: {fileID: 1058332941952659527}
+  _networkObjectCache: {fileID: 0}
+  _crosshair: {fileID: 0}
   _playerManager: {fileID: 0}
   _weaponManager: {fileID: 0}
   _inputManager: {fileID: 0}
@@ -417,7 +417,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1058332943687859235
 MonoBehaviour:
   m_ObjectHideFlags: 0

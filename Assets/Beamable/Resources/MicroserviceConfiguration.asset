@@ -12,90 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a96b3852b93843ef94fc3401214399e, type: 3}
   m_Name: MicroserviceConfiguration
   m_EditorClassIdentifier: 
-  Microservices:
-  - ServiceName: LobbyDetails
-    Enabled: 1
-    Archived: 0
-    TemplateId: small
-    CustomDockerFileStrings: 
-    IncludeDebugTools: 0
-    DebugData:
-      Username: root
-      Password: Password!
-      SshPort: 11100
-    LastBuiltCheckSum: 
-    RobotId: 
+  Microservices: []
   StorageObjects: []
-  ServiceCodeHandlesOnLastDomainReload:
-  - ServiceName: LobbyDetails
-    CodeClass: 1
-    CodeDirectory: Assets\Beamable\Microservices\LobbyDetails
-    AsmDefInfo:
-      Name: Beamable.Microservice.LobbyDetails
-      References:
-      - Unity.Beamable.Runtime.Common
-      - Unity.Beamable.Server.Runtime
-      - Unity.Beamable.Server.Runtime.Shared
-      - Unity.Beamable
-      - Beamable.SmallerJSON
-      - Unity.Beamable.Server.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Mocks
-      - Unity.Beamable.Customer.Common
-      DllReferences: []
-      Location: Assets/Beamable/Microservices/LobbyDetails/Beamable.Microservice.LobbyDetails.asmdef
-      IncludePlatforms: []
-      AutoReferenced: 0
-    Checksum: 1F20288DFDD7699932D56B8A799F1CE6
-  - ServiceName: Unity.Beamable.Customer.Common
-    CodeClass: 3
-    CodeDirectory: Assets\Beamable\Common
-    AsmDefInfo:
-      Name: Unity.Beamable.Customer.Common
-      References:
-      - Unity.Beamable.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Mocks
-      - Beamable.SmallerJSON
-      DllReferences: []
-      Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
-      IncludePlatforms: []
-      AutoReferenced: 0
-    Checksum: 0AF7513C323127F6C61058ED2EB16B80
-  LastBuiltDockerImagesCodeHandles:
-  - ServiceName: LobbyDetails
-    CodeClass: 1
-    CodeDirectory: Assets\Beamable\Microservices\LobbyDetails
-    AsmDefInfo:
-      Name: Beamable.Microservice.LobbyDetails
-      References:
-      - Unity.Beamable.Runtime.Common
-      - Unity.Beamable.Server.Runtime
-      - Unity.Beamable.Server.Runtime.Shared
-      - Unity.Beamable
-      - Beamable.SmallerJSON
-      - Unity.Beamable.Server.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Mocks
-      - Unity.Beamable.Customer.Common
-      DllReferences: []
-      Location: Assets/Beamable/Microservices/LobbyDetails/Beamable.Microservice.LobbyDetails.asmdef
-      IncludePlatforms: []
-      AutoReferenced: 0
-    Checksum: 1F20288DFDD7699932D56B8A799F1CE6
-  - ServiceName: Unity.Beamable.Customer.Common
-    CodeClass: 3
-    CodeDirectory: Assets\Beamable\Common
-    AsmDefInfo:
-      Name: Unity.Beamable.Customer.Common
-      References:
-      - Unity.Beamable.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Common
-      - Unity.Beamable.Server.Runtime.Mocks
-      - Beamable.SmallerJSON
-      DllReferences: []
-      Location: Assets/Beamable/Common/Unity.Beamable.Customer.Common.asmdef
-      IncludePlatforms: []
-      AutoReferenced: 0
-    Checksum: 0AF7513C323127F6C61058ED2EB16B80
+  ServiceCodeHandlesOnLastDomainReload: []
+  LastBuiltDockerImagesCodeHandles: []
   CustomContainerPrefix: 
   AutoReferenceContent: 0
   AutoBuildCommonAssembly: 1

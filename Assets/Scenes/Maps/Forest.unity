@@ -222,7 +222,7 @@ MonoBehaviour:
   _airborneRotLerpValue: 0.05
   _groundedRotLerpValue: 0.05
   startingZ: -12
-  movementRotationFactor: 1.5
+  movementRotationFactor: 0.5
   zFactor: 0.4
   _playerController: {fileID: 0}
   _inputManager: {fileID: 0}
@@ -276,6 +276,14 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 103249317378697602, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: _pauseCanvas
+      value: 
+      objectReference: {fileID: 271897222}
+    - target: {fileID: 103249317378697602, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: _countdownCanvas
+      value: 
+      objectReference: {fileID: 271897221}
+    - target: {fileID: 103249317378697602, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
       propertyPath: _networkObjectCache
       value: 
       objectReference: {fileID: 271897218}
@@ -283,6 +291,10 @@ PrefabInstance:
       propertyPath: _componentIndexCache
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 103249317378697602, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: _soloScoreboardCanvas
+      value: 
+      objectReference: {fileID: 271897220}
     - target: {fileID: 103249317378697603, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -516,6 +528,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a1f35d184bb61e408aa2982fc7b01ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &271897220 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5724256524808024912, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+  m_PrefabInstance: {fileID: 271897217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &271897221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5094521399827838392, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+  m_PrefabInstance: {fileID: 271897217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &271897222 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 103249318596712000, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+  m_PrefabInstance: {fileID: 271897217}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &324589540
 GameObject:
   m_ObjectHideFlags: 0
