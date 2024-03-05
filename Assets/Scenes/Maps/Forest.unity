@@ -666,6 +666,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map
       objectReference: {fileID: 0}
+    - target: {fileID: 881630510163990062, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+      propertyPath: _scenePathHash
+      value: 337895573
+      objectReference: {fileID: 0}
+    - target: {fileID: 881630510163990062, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+      propertyPath: <SceneId>k__BackingField
+      value: 1451250437670961544
+      objectReference: {fileID: 0}
+    - target: {fileID: 881630510163990062, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+      propertyPath: <ChildNetworkObjects>k__BackingField.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1220796445201353809, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
       propertyPath: _scenePathHash
       value: 337895573

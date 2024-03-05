@@ -136,6 +136,10 @@ MonoBehaviour:
       m_Calls: []
   AvailableMaps: []
   CurrentMapOptions: []
+  MapPrefabs:
+  - {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
+  - {fileID: 5938284130531031722, guid: ed906de8a5ad1d44182278df0c15879f, type: 3}
+  - {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
   OnMapOptionsChange:
     m_PersistentCalls:
       m_Calls: []
@@ -154,7 +158,7 @@ MonoBehaviour:
   _gameStartCountdownDuration: 5
   _postGameWaitTime: 10
   _simGameTypeRef:
-    Id: game_types.FFA
+    Id: game_types.default1
 --- !u!114 &8074955569133304615
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -46,6 +46,8 @@ public class SessionManager : MonoBehaviour
 
     public List<MapInfo> CurrentMapOptions = new List<MapInfo>();
 
+    public List<GameObject> MapPrefabs = new List<GameObject>();
+
     public UnityEvent<MapOptionsBroadcast> OnMapOptionsChange = new UnityEvent<MapOptionsBroadcast>();
 
     public int SelectedMapIndex = 0;
@@ -419,7 +421,7 @@ public class SessionManager : MonoBehaviour
             MapOptions = CurrentMapOptions
         };
 
-        if (_networkManager.ServerManager.isActiveAndEnabled)
+        if (_networkManager.ServerManager.AnyServerStarted())
             _networkManager.ServerManager.Broadcast(mapPrefabOptionsBroadcast);
         
         OnMapOptionsChange.Invoke(mapPrefabOptionsBroadcast);
@@ -779,10 +781,12 @@ public class SessionManager : MonoBehaviour
     /// </summary>
     private void StartGame()
     {
-        //SceneLoadData onlineGameScene = new SceneLoadData("OnlineGame");
+        SceneLoadData gameScene = new SceneLoadData("OnlineGame");
 
         // Load the game scene based on the selected map.
-        SceneLoadData gameScene = new SceneLoadData(CurrentMapOptions[SelectedMapIndex].Name);
+        //SceneLoadData gameScene = new SceneLoadData(CurrentMapOptions[SelectedMapIndex].Name);
+
+        Debug.Log(CurrentMapOptions[SelectedMapIndex].Name);
 
         gameScene.ReplaceScenes = ReplaceOption.All;
         _networkManager.SceneManager.LoadGlobalScenes(gameScene);

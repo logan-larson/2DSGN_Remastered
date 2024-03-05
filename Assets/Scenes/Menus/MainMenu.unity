@@ -2236,7 +2236,7 @@ MonoBehaviour:
   _serverInfo: {fileID: 11400000, guid: b98d2fac23e0e84408ae3b9313d3067f, type: 2}
   _userInfo: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
   _simGameTypeRef:
-    Id: game_types.FFA
+    Id: game_types.default1
   _serverConfig: {fileID: 11400000, guid: fe5e593fcdde82743a2bf178e241d2ac, type: 2}
   _lobbyName: {fileID: 1607510828}
   _publicPrivateDropdown: {fileID: 1093042167}

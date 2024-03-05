@@ -113,7 +113,7 @@ public class CrosshairController : NetworkBehaviour
 
     private void OnTick()
     {
-        if (_weaponManager.CurrentWeaponInfo == null) return;
+        if (_weaponManager.CurrentWeaponInfo == null || Camera.main == null) return;
 
         var size = Mathf.Max(_minSize * _weaponManager.CurrentWeaponInfo.MaxBloomAngle, _weaponManager.Bloom * _sizeMultiplier);
 

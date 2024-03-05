@@ -15,3 +15,4 @@ MonoBehaviour:
   Name: Forest
   PrefabPath: Prefabs/Maps/Forest
   ThumbnailPath: Sprites/Environment/Backgrounds/ForestBackground
+  SessionManagerIndex: 2

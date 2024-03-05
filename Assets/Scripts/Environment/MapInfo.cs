@@ -8,4 +8,5 @@ public class MapInfo : ScriptableObject
     public string Name;
     public string PrefabPath;
     public string ThumbnailPath;
+    public int SessionManagerIndex;
 }

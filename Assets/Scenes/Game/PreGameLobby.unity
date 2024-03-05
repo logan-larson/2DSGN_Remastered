@@ -855,11 +855,11 @@ PrefabInstance:
       objectReference: {fileID: 363674799}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: _simGameTypeRef.Id
-      value: game_types.FFA
+      value: game_types.default1
       objectReference: {fileID: 0}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: AvailableMaps.Array.size
@@ -868,11 +868,15 @@ PrefabInstance:
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
+      objectReference: {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: MapPrefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
+      objectReference: {fileID: 5938284130531031722, guid: ed906de8a5ad1d44182278df0c15879f, type: 3}
+    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
+      propertyPath: MapPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
     - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: _votingCountdownDuration
       value: 15
@@ -3699,7 +3703,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -637, y: 275}
+  m_AnchoredPosition: {x: 388, y: -277}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1750482814
