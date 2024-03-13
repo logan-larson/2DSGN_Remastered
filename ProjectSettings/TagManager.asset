@@ -11,6 +11,8 @@ TagManager:
   - BodyHitbox
   - Map
   - Pickups
+  - button
+  - MatchManager
   layers:
   - Default
   - TransparentFX

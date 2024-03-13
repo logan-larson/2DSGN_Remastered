@@ -103,8 +103,6 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField]
     private PlayerManager _playerManager;
 
-    private GameManager _gameManager;
-
     #endregion
 
     #region Time Management
@@ -140,7 +138,6 @@ public class WeaponManager : NetworkBehaviour
         _playerManager ??= GetComponent<PlayerManager>();
 
         _weaponHolder ??= GetComponentInChildren<WeaponHolderController>().transform;
-        _gameManager ??= FindObjectOfType<GameManager>();
     }
 
     public override void OnStartServer()
@@ -391,6 +388,8 @@ public class WeaponManager : NetworkBehaviour
         }
         else if (pickup.TryGetComponent<HealthNutPickupManager>(out var healthNutManager))
         {
+            if (PlayersManager.Instance == null) return;
+
             // Add health to the player.
             PlayersManager.Instance.HealPlayer(base.Owner, healthNutManager.HealthAmount);
 

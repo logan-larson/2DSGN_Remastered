@@ -15,15 +15,15 @@ public class ServerBuildManager : MonoBehaviour
     private NetworkManager _networkManager;
 
     [SerializeField]
-    private GameObject _networkManagerUI;
-
-    [SerializeField]
     private ServerInfo _serverInfo;
 
     [SerializeField]
     private Tugboat _tugboat;
 
-    private void Awake()
+    [SerializeField]
+    private Yak _yak;
+
+    private void Start()
     {
         if (_networkManager == null || _networkManager.TransportManager == null) return;
 
@@ -32,7 +32,6 @@ public class ServerBuildManager : MonoBehaviour
         if (_buildInfo.IsServer)
         {
             _networkManager.ServerManager.StartConnection();
-            _networkManagerUI.SetActive(false);
 
             // Query the lobby ID for the initial player list.
         }
@@ -40,8 +39,6 @@ public class ServerBuildManager : MonoBehaviour
         {
             // Connect to the local server
             multipass.SetClientTransport<Tugboat>();
-
-            _networkManagerUI.SetActive(false);
 
             // Set the connection info
             _tugboat.SetPort(7770);
@@ -59,19 +56,12 @@ public class ServerBuildManager : MonoBehaviour
         {
             multipass.SetClientTransport<Yak>();
 
-            _networkManagerUI.SetActive(false);
-
             _networkManager.ServerManager.StartConnection();
             _networkManager.ClientManager.StartConnection();
         }
         else
         {
             multipass.SetClientTransport<Tugboat>();
-
-            if (_buildInfo.IsProduction)
-            {
-                _networkManagerUI.SetActive(false);
-            }
 
             // Set the connection info
             _tugboat.SetPort(_serverInfo.Port);

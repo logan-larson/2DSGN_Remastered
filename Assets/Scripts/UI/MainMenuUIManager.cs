@@ -167,7 +167,7 @@ public class MainMenuUIManager : MonoBehaviour
         _serverInfo.Port = 7770;
 
         // Load the freeplay scene
-        SceneManager.LoadScene("PreGameLobby");
+        SceneManager.LoadScene("OnlineGame");
     }
 
     public void OnJoinLobbyByPasscode()

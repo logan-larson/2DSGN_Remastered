@@ -27,10 +27,7 @@
 <assembly fullname="Unity.Beamable.Runtime.UserStorageObject.xxxx" preserve="all"/>
 <assembly fullname="Unity.Beamable.Samples.Runtime" preserve="all"/>
 <assembly fullname="Unity.Beamable.Server.Runtime" preserve="all"/>
-<assembly fullname="Unity.Beamable.Server.Runtime.Common" preserve="all"/>
-<assembly fullname="Unity.Beamable.Server.Runtime.Mocks" preserve="all"/>
 <assembly fullname="Unity.Beamable.Server.Runtime.Shared" preserve="all"/>
 <assembly fullname="Unity.Beamable.Server.Runtime.Tests" preserve="all"/>
-<assembly fullname="Unity.Beamable.Server.Templates" preserve="all"/>
 <assembly fullname="Unity.Beamable.Tests" preserve="all"/>
 </linker>

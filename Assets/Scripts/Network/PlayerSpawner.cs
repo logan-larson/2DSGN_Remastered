@@ -47,6 +47,8 @@ public class PlayerSpawner : MonoBehaviour
 
     private SessionManager _sessionManager;
 
+    private MapInitializer _mapInitializer;
+
     /// <summary>
     /// Next spawns to use.
     /// </summary>
@@ -89,6 +91,7 @@ public class PlayerSpawner : MonoBehaviour
         _networkManager.SceneManager.OnClientLoadedStartScenes += SceneManager_OnClientLoadedStartScenes;
 
         _networkManager.SceneManager.OnClientPresenceChangeEnd += SceneManager_OnClientPresenceChangeEnd;
+
     }
 
     /// <summary>
@@ -108,7 +111,16 @@ public class PlayerSpawner : MonoBehaviour
         // If the current scene is OnlineGame then spawn the player.
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         if (sceneName != "PreGameLobby")
-            SpawnPlayer(conn);
+            _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapInitializer>();
+            
+        if (_mapInitializer == null)
+        {
+            Debug.LogWarning($"MapInitializer not found.");
+            return;
+        }
+
+        //SpawnPlayer(conn);
+        //_mapInitializer.OnMapSpawned.AddListener(() => SpawnPlayer(conn));
     }
 
     /// <summary>
@@ -125,8 +137,18 @@ public class PlayerSpawner : MonoBehaviour
 
         // If the current scene is OnlineGame then spawn the player.
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        //if (sceneName == "OnlineGame" || sceneName == "TestGame")
         if (sceneName != "PreGameLobby")
-            SpawnPlayer(args.Connection);
+            _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapInitializer>();
+            
+        if (_mapInitializer == null)
+        {
+            Debug.LogWarning($"MapInitializer not found.");
+            return;
+        }
+
+        SpawnPlayer(args.Connection);
+        //_mapInitializer.OnMapSpawned.AddListener(() => SpawnPlayer(args.Connection));
     }
 
     private void SpawnPlayer(NetworkConnection conn)

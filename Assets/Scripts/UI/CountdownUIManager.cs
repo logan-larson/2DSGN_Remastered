@@ -15,10 +15,20 @@ public class CountdownUIManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnCountdown.AddListener(OnCountdown);
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager is null.");
+
+            _backgroundImage.gameObject.SetActive(false);
+            _countdownText.gameObject.SetActive(false);
+
+            return;
+        }
 
         _backgroundImage.gameObject.SetActive(GameManager.Instance.GameState == GameState.PreGame);
         _countdownText.gameObject.SetActive(GameManager.Instance.GameState == GameState.PreGame);
+
+        GameManager.Instance.OnCountdown.AddListener(OnCountdown);
     }
 
     private void OnCountdown(int num)

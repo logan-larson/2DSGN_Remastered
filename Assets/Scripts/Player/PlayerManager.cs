@@ -231,6 +231,8 @@ public class PlayerManager : NetworkBehaviour
         // Enable the player's visual elements.
         OnPlayerStatusChanged(PlayerStatus.Alive, PlayerStatus.Alive, true);
 
+        if (PlayersManager.Instance == null) return;
+
         PlayersManager.Instance.SetUsername(conn, username);
     }
 
@@ -244,6 +246,8 @@ public class PlayerManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
+
+        if (GameManager.Instance == null) return;
 
         GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
     }

@@ -353,9 +353,12 @@ public class PlayerController : NetworkBehaviour
     {
         base.OnStartServer();
 
-        _controllerEnabled = GameManager.Instance.GameState == GameState.InGame;
+        if (GameManager.Instance != null)
+        {
+            _controllerEnabled = GameManager.Instance.GameState == GameState.InGame;
 
-        GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
+            GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
+        }
 
         SubscribeToTimeManager(true);
     }
@@ -371,7 +374,10 @@ public class PlayerController : NetworkBehaviour
         base.OnStartClient();
         SubscribeToTimeManager(true);
 
-        SetCursorEnabled(GameManager.Instance.GameState != GameState.InGame);
+        if (GameManager.Instance != null)
+        {
+            SetCursorEnabled(GameManager.Instance.GameState != GameState.InGame);
+        }
 
         if (base.IsOwner)
         {

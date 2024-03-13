@@ -18,11 +18,10 @@ GameObject:
   - component: {fileID: 3003257726005275706}
   - component: {fileID: 3734279370084207225}
   - component: {fileID: 4881892032749119366}
-  - component: {fileID: 2131522337207792119}
-  - component: {fileID: 3839515196984782955}
   - component: {fileID: 3818472558376582985}
   - component: {fileID: 3818472558376582962}
   - component: {fileID: 7467671467942352994}
+  - component: {fileID: 8078602733868316605}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -60,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _refreshDefaultPrefabs: 0
   _runInBackground: 1
-  _dontDestroyOnLoad: 0
+  _dontDestroyOnLoad: 1
   _objectPool: {fileID: 0}
   _persistence: 0
   _logging: {fileID: 0}
@@ -134,7 +133,10 @@ MonoBehaviour:
   OnOptionVoteChange:
     m_PersistentCalls:
       m_Calls: []
-  AvailableMaps: []
+  AvailableMaps:
+  - {fileID: 11400000, guid: c45774327b23e8a4bb239d47b35a8982, type: 2}
+  - {fileID: 11400000, guid: dc01f5b992458be4cb90150b572bde19, type: 2}
+  - {fileID: 11400000, guid: 96cae72e06f5c0347981adff6ca785a9, type: 2}
   CurrentMapOptions: []
   MapPrefabs:
   - {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
@@ -239,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e4a322dca349547989b14021da4e23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Transport: {fileID: 2131522337207792119}
+  Transport: {fileID: 3818472558376582985}
   _intermediateLayer: {fileID: 0}
   _latencySimulator:
     _enabled: 0
@@ -247,34 +249,6 @@ MonoBehaviour:
     _latency: 0
     _outOfOrder: 0
     _packetLoss: 0
---- !u!114 &2131522337207792119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6030808624407447609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 314b449d3505bd24487ba69b61c2fda5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalServerActions: 1
-  _transports:
-  - {fileID: 3839515196984782955}
-  - {fileID: 3818472558376582985}
---- !u!114 &3839515196984782955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6030808624407447609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91f4cf5273666764789e6f8bada05e3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3818472558376582985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +303,18 @@ MonoBehaviour:
   ReplicateRpcLinks: 1
   ReconcileRpcLinks: 1
   ServerRpcLinks: 1
+--- !u!114 &8078602733868316605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6030808624407447609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6bf269690af6074dbfad8de398a6266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3818472560023089832
 PrefabInstance:
   m_ObjectHideFlags: 0

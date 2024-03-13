@@ -833,86 +833,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 579283459155506183, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 579283459155506203, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: KillLimit
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _userInfo
-      value: 
-      objectReference: {fileID: 11400000, guid: 32504a96c21e6074d8a80a129599f715, type: 2}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _audioListener
-      value: 
-      objectReference: {fileID: 363674799}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _simGameTypeRef.Id
-      value: game_types.default1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: MapPrefabs.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: AvailableMaps.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: MapPrefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 103163528415820971, guid: 5c83855221463944b80b3152ae019383, type: 3}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: MapPrefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 5938284130531031722, guid: ed906de8a5ad1d44182278df0c15879f, type: 3}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: MapPrefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 103163528415820971, guid: 9e2a9c5c4c86a9a4a8207750b42e28fa, type: 3}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _votingCountdownDuration
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: AvailableMaps.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: c45774327b23e8a4bb239d47b35a8982, type: 2}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: AvailableMaps.Array.data[1]
-      value: 
-      objectReference: {fileID: 11400000, guid: 96cae72e06f5c0347981adff6ca785a9, type: 2}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: AvailableMaps.Array.data[2]
-      value: 
-      objectReference: {fileID: 11400000, guid: dc01f5b992458be4cb90150b572bde19, type: 2}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: CurrentMapOptions.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: CurrentMapOptions.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: c45774327b23e8a4bb239d47b35a8982, type: 2}
-    - target: {fileID: 3583834901183877028, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: CurrentMapOptions.Array.data[1]
-      value: 
-      objectReference: {fileID: 11400000, guid: 96cae72e06f5c0347981adff6ca785a9, type: 2}
-    - target: {fileID: 6030808624407447608, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _persistence
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6030808624407447608, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-      propertyPath: _dontDestroyOnLoad
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6030808624407447609, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
       propertyPath: m_Name
       value: NetworkManager
@@ -963,11 +883,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
---- !u!81 &363674799 stripped
-AudioListener:
-  m_CorrespondingSourceObject: {fileID: 4162585637748075726, guid: 2cc671fe470fac6478bda59fc2782590, type: 3}
-  m_PrefabInstance: {fileID: 363674797}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &407496411
 GameObject:
   m_ObjectHideFlags: 0
@@ -3684,7 +3599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1750482813
 RectTransform:
   m_ObjectHideFlags: 0

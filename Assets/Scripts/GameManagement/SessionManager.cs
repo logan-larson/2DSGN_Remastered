@@ -122,6 +122,7 @@ public class SessionManager : MonoBehaviour
         _networkManager.ServerManager.RegisterBroadcast<MapChangeBroadcast>(OnMapChangeBroadcastServer, false);
         _networkManager.ServerManager.RegisterBroadcast<KillLimitBroadcast>(OnKillLimitBroadcastServer, false);
         _networkManager.ServerManager.RegisterBroadcast<OptionVoteBroadcast>(OnOptionVoteBroadcastServer, false);
+        _networkManager.ServerManager.RegisterBroadcast<ReturnToLobbyBroadcast>(OnReturnToLobbyServer, false);
 
         // Client broadcast receivers
 
@@ -323,9 +324,11 @@ public class SessionManager : MonoBehaviour
                 player.Deaths = 0;
             }
 
-            GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
+            if (GameManager.Instance != null)
+                GameManager.Instance.OnGameStateChange.AddListener(OnGameStateChange);
 
-            PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
+            if (PlayersManager.Instance != null)
+                PlayersManager.Instance.OnPlayerKilled.AddListener(OnPlayerKilled);
         }
     }
 
@@ -622,6 +625,11 @@ public class SessionManager : MonoBehaviour
         StartLobbyCountdown();
     }
 
+    private void OnReturnToLobbyServer(NetworkConnection connection, ReturnToLobbyBroadcast broadcast)
+    {
+        ReturnToLobby();
+    }
+
     #endregion
 
     #endregion
@@ -695,6 +703,11 @@ public class SessionManager : MonoBehaviour
 
         // Set the player's nob to null.
         Players[conn.ClientId].Nob = null;
+    }
+
+    public void OnReturnToLobby()
+    {
+        _networkManager.ClientManager.Broadcast(new ReturnToLobbyBroadcast());
     }
 
     #endregion
@@ -825,6 +838,8 @@ public class SessionManager : MonoBehaviour
         // For each player, despawn their nob.
         foreach (var player in Players.Values)
         {
+            if (player.Nob == null) continue;
+
             player.Nob.Despawn();
             player.Nob = null;
 
@@ -940,6 +955,8 @@ public struct MapOptionsBroadcast : IBroadcast
 {
     public List<MapInfo> MapOptions;
 }
+
+public struct ReturnToLobbyBroadcast : IBroadcast { }
 
 public enum SessionState
 {

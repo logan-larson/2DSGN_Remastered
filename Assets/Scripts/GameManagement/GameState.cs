@@ -8,3 +8,10 @@ public enum GameState
 }
 
 
+public enum LobbyState
+{
+    Lobby,
+    Countdown,
+    Game
+    // Add more states here
+}
