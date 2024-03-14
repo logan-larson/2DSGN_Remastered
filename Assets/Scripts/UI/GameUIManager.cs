@@ -88,6 +88,9 @@ public class GameUIManager : NetworkBehaviour
             return;
         }
 
+        _currentScoreboardCanvas = _soloScoreboardCanvas;
+
+        /*
         _sessionManager = networkManager.GetComponent<SessionManager>();
 
         if (_sessionManager == null)
@@ -121,6 +124,7 @@ public class GameUIManager : NetworkBehaviour
 
         if (_currentScoreLeaderCanvas != null)
             _currentScoreLeaderCanvas.SetActive(true);
+        */
     }
 
     public override void OnStartClient()
@@ -135,6 +139,7 @@ public class GameUIManager : NetworkBehaviour
             return;
         }
 
+        /*
         _sessionManager = networkManager.GetComponent<SessionManager>();
 
         if (_sessionManager == null)
@@ -168,6 +173,7 @@ public class GameUIManager : NetworkBehaviour
 
         if (_currentScoreLeaderCanvas != null)
             _currentScoreLeaderCanvas.SetActive(true);
+        */
     }
 
     private void OnDestroy()

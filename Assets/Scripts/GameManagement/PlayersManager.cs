@@ -20,6 +20,8 @@ public class PlayersManager : NetworkBehaviour
 
     public static PlayersManager Instance { get; private set; }
 
+    public Dictionary<int, Player> Players = new Dictionary<int, Player>();
+
     #endregion
 
     #region Serialized Fields
@@ -35,7 +37,7 @@ public class PlayersManager : NetworkBehaviour
     private UserInfo _userInfo;
 
     [SerializeField]
-    private MapInitializer _mapInitializer;
+    private MapManager _mapInitializer;
 
     #endregion
 
@@ -133,16 +135,42 @@ public class PlayersManager : NetworkBehaviour
         // Get the connection.
         NetworkConnection conn = nob.Owner;
 
-        _sessionManager.Players[conn.ClientId].Nob = nob;
+        //_sessionManager.Players[conn.ClientId].Nob = nob;
+        Players[conn.ClientId].Nob = nob;
     }
 
     private void ServerManager_OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
     {
+        if (args.ConnectionState == RemoteConnectionState.Started)
+        {
+            Players.Add(conn.ClientId, new Player
+            {
+                Connection = conn,
+                Username = "",
+                Health = 100,
+                Status = PlayerStatus.Alive
+            });
+        }
+        else
+        {
+            Players.Remove(conn.ClientId);
+        }
     }
 
     #endregion
 
     #region Public Methods
+
+    [Server]
+    public bool IsPlayerSpawned(NetworkConnection conn)
+    {
+        if (Players.ContainsKey(conn.ClientId))
+        {
+            return Players[conn.ClientId].Nob != null;
+        }
+
+        return false;
+    }
 
     [Server]
     public void DamagePlayer(NetworkConnection targetConn, NetworkConnection attackerConn = null, WeaponInfo weapon = null, bool isHeadshot = false, Vector3 hitPosition = new Vector3())
@@ -212,7 +240,7 @@ public class PlayersManager : NetworkBehaviour
     {
         Debug.Log($"Player {conn.ClientId} has set their username to {username}.");
 
-        _sessionManager.Players[conn.ClientId].Username = username;
+        //_sessionManager.Players[conn.ClientId].Username = username;
     }
 
     #endregion

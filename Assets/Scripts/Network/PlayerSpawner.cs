@@ -45,9 +45,10 @@ public class PlayerSpawner : MonoBehaviour
     /// </summary>
     private NetworkManager _networkManager;
 
-    private SessionManager _sessionManager;
+    //private SessionManager _sessionManager;
+    private PlayersManager _playersManager;
 
-    private MapInitializer _mapInitializer;
+    private MapManager _mapInitializer;
 
     /// <summary>
     /// Next spawns to use.
@@ -80,13 +81,15 @@ public class PlayerSpawner : MonoBehaviour
             return;
         }
 
-        _sessionManager = _networkManager.GetComponent<SessionManager>();
+        //_sessionManager = _networkManager.GetComponent<SessionManager>();
 
+        /*
         if (_sessionManager == null)
         {
             Debug.LogWarning($"PlayerSpawner on {gameObject.name} cannot work as SessionManager wasn't found on this object or within parent objects.");
             return;
         }
+        */
 
         _networkManager.SceneManager.OnClientLoadedStartScenes += SceneManager_OnClientLoadedStartScenes;
 
@@ -110,8 +113,10 @@ public class PlayerSpawner : MonoBehaviour
 
         // If the current scene is OnlineGame then spawn the player.
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        if (sceneName != "PreGameLobby")
-            _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapInitializer>();
+
+        //if (sceneName != "PreGameLobby")
+
+        _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapManager>();
             
         if (_mapInitializer == null)
         {
@@ -119,7 +124,9 @@ public class PlayerSpawner : MonoBehaviour
             return;
         }
 
-        //SpawnPlayer(conn);
+        //if (LobbyManager.Instance != null)
+        SpawnPlayer(conn);
+
         //_mapInitializer.OnMapSpawned.AddListener(() => SpawnPlayer(conn));
     }
 
@@ -139,7 +146,7 @@ public class PlayerSpawner : MonoBehaviour
         var sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         //if (sceneName == "OnlineGame" || sceneName == "TestGame")
         if (sceneName != "PreGameLobby")
-            _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapInitializer>();
+            _mapInitializer = GameObject.FindWithTag("MatchManager").GetComponent<MapManager>();
             
         if (_mapInitializer == null)
         {
@@ -147,17 +154,25 @@ public class PlayerSpawner : MonoBehaviour
             return;
         }
 
-        SpawnPlayer(args.Connection);
+        //SpawnPlayer(args.Connection);
         //_mapInitializer.OnMapSpawned.AddListener(() => SpawnPlayer(args.Connection));
     }
 
     private void SpawnPlayer(NetworkConnection conn)
     {
+        // Check if the player has been spawned already.
+        if (PlayersManager.Instance.IsPlayerSpawned(conn))
+        {
+            Debug.LogWarning($"Player is already spawned.");
+            return;
+        }
+        /*
         if (_sessionManager.Players.TryGetValue(conn.ClientId, out Player player) && player.Nob != null)
         {
             Debug.LogWarning($"Player {player.Username} is already spawned.");
             return;
         }
+        */
 
         GameObject spawnPoints = GameObject.Find("SpawnPoints");
 
@@ -183,7 +198,8 @@ public class PlayerSpawner : MonoBehaviour
         NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
         _networkManager.ServerManager.Spawn(nob, conn);
 
-        _sessionManager.Players[conn.ClientId].Nob = nob;
+        //_sessionManager.Players[conn.ClientId].Nob = nob;
+        //PlayersManager.Instance.Players[conn.ClientId].Nob = nob;
 
         //If there are no global scenes 
         if (_addToDefaultScene)

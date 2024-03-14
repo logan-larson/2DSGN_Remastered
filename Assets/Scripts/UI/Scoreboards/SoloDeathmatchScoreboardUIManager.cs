@@ -16,7 +16,7 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
     [SerializeField]
     private GameObject _playerListItemPrefab;
 
-    private SessionManager _sessionManager;
+    //private SessionManager _sessionManager;
 
     public override void OnStartServer()
     {
@@ -31,9 +31,9 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
         }
 
         // Find the session manager and listen for player list updates
-        _sessionManager = networkManager.GetComponent<SessionManager>();
+        //_sessionManager = networkManager.GetComponent<SessionManager>();
 
-        _sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerListServer);
+        //_sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerListServer);
     }
 
     public override void OnStartClient()
@@ -49,9 +49,9 @@ public class SoloDeathmatchScoreboardUIManager : NetworkBehaviour
         }
 
         // Find the session manager and listen for player list updates
-        _sessionManager = networkManager.GetComponent<SessionManager>();
+        //_sessionManager = networkManager.GetComponent<SessionManager>();
 
-        _sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerList);
+        //_sessionManager.OnPlayerListUpdate.AddListener(UpdatePlayerList);
     }
 
     [Server]
