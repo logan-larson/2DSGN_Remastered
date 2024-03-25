@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: BuildInfo
   m_EditorClassIdentifier: 
   IsServer: 0
-  IsLocalTest: 1
+  IsLocalTest: 0
   IsProduction: 1
   IsFreeplay: 0

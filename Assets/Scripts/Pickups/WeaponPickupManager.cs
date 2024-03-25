@@ -3,7 +3,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
+//using UnityEditor.Animations;
 using UnityEngine;
 
 public class WeaponPickupManager : Pickup
