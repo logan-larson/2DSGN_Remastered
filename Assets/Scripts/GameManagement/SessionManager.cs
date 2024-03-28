@@ -92,6 +92,8 @@ public class SessionManager : MonoBehaviour
 
     private Coroutine _gameStartCountdownCoroutine;
 
+    private bool _isOffline = false;
+
     #endregion
 
     #region Initialization
@@ -498,7 +500,8 @@ public class SessionManager : MonoBehaviour
         if (SessionState == SessionState.InLobbyWaitingForVote)
         {
             // Voting hasn't started and this is the first vote
-            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+            if (!_isOffline)
+                Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
 
             // Initate the voting countdown.
             StartLobbyVotingCountdown();
@@ -506,10 +509,21 @@ public class SessionManager : MonoBehaviour
         else if (SessionState == SessionState.InLobbyVoting)
         {
             // Update the players vote.
-            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+            if (!_isOffline)
+                Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
         }
         else
         {
+            return;
+        }
+
+        if (_isOffline)
+        {
+            SelectedMapIndex = broadcast.OptionVoteIndex;
+
+            // If everyone has voted, end the voting and start the game.
+            StartLobbyCountdown();
+
             return;
         }
 
@@ -573,6 +587,11 @@ public class SessionManager : MonoBehaviour
     #endregion
 
     #region Public Methods
+
+    public void SetIsOffline(bool isOffline)
+    {
+        _isOffline = isOffline;
+    }
 
     /// <summary>
     /// Called by the host to start the game.

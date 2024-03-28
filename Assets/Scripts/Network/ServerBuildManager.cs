@@ -23,6 +23,9 @@ public class ServerBuildManager : MonoBehaviour
     [SerializeField]
     private Tugboat _tugboat;
 
+    [SerializeField]
+    private SessionManager _sessionManager;
+
     private void Awake()
     {
         if (_networkManager == null || _networkManager.TransportManager == null) return;
@@ -38,6 +41,20 @@ public class ServerBuildManager : MonoBehaviour
         }
         else if (_buildInfo.IsLocalTest)
         {
+            if (_serverInfo.IsFreeplay)
+            {
+                _sessionManager.SetIsOffline(true);
+
+                multipass.SetClientTransport<Yak>();
+
+                _networkManagerUI.SetActive(false);
+
+                _networkManager.ServerManager.StartConnection();
+                _networkManager.ClientManager.StartConnection();
+
+                return;
+            }
+
             // Connect to the local server
             multipass.SetClientTransport<Tugboat>();
 
@@ -55,17 +72,22 @@ public class ServerBuildManager : MonoBehaviour
 
             _networkManager.ClientManager.StartConnection();
         }
-        else if (_serverInfo.IsFreeplay)
-        {
-            multipass.SetClientTransport<Yak>();
-
-            _networkManagerUI.SetActive(false);
-
-            _networkManager.ServerManager.StartConnection();
-            _networkManager.ClientManager.StartConnection();
-        }
         else
         {
+            if (_serverInfo.IsFreeplay)
+            {
+                _sessionManager.SetIsOffline(true);
+
+                multipass.SetClientTransport<Yak>();
+
+                _networkManagerUI.SetActive(false);
+
+                _networkManager.ServerManager.StartConnection();
+                _networkManager.ClientManager.StartConnection();
+
+                return;
+            }
+
             multipass.SetClientTransport<Tugboat>();
 
             if (_buildInfo.IsProduction)
@@ -85,6 +107,8 @@ public class ServerBuildManager : MonoBehaviour
 
             _networkManager.ClientManager.StartConnection();
         }
+
+        _sessionManager.SetIsOffline(false);
     }
 
     // Stop connection when leaving game to lobby??

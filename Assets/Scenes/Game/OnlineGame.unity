@@ -222,10 +222,11 @@ MonoBehaviour:
   _airborneRotLerpValue: 0.05
   _groundedRotLerpValue: 0.05
   startingZ: -12
-  movementRotationFactor: 1.5
+  movementRotationFactor: 0.25
   zFactor: 0.4
   _playerController: {fileID: 0}
   _inputManager: {fileID: 0}
+  _playerManager: {fileID: 0}
 --- !u!114 &119172114
 MonoBehaviour:
   m_ObjectHideFlags: 0
