@@ -12,8 +12,19 @@ public class OptionButton : MonoBehaviour
     [SerializeField]
     private PreGameLobbyUIManager _preGameLobbyUIManager;
 
+
+    #region Scriptable Object Method
+
+    public IntVariable VoteOptionIndex;
+    public GameEvent OnVoteCast;
+
+    #endregion
+
     public void OnOptionClicked()
     {
         _preGameLobbyUIManager.OnOptionClicked(OptionIndex);
+
+        VoteOptionIndex.Value = OptionIndex;
+        OnVoteCast.Raise();
     }
 }
