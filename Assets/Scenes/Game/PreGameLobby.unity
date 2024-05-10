@@ -658,6 +658,7 @@ GameObject:
   - component: {fileID: 294508681}
   - component: {fileID: 294508680}
   - component: {fileID: 294508683}
+  - component: {fileID: 294508684}
   m_Layer: 5
   m_Name: FirstOptionButton
   m_TagString: Untagged
@@ -796,10 +797,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   VoteCountText: {fileID: 1559120758}
+  ButtonImage: {fileID: 294508681}
   OptionIndex: 0
   _preGameLobbyUIManager: {fileID: 407496416}
   VoteOptionIndex: {fileID: 11400000, guid: 6c46140e807643845b3436162349ecc8, type: 2}
   OnVoteCast: {fileID: 11400000, guid: 695fb06912148144787d27bcb4f4913d, type: 2}
+--- !u!114 &294508684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294508678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a4ba6ffbaa19247b43f327f450f7d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 695fb06912148144787d27bcb4f4913d, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 294508683}
+        m_TargetAssemblyTypeName: OptionButton, Assembly-CSharp
+        m_MethodName: OnVoteCasted
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &305224166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1367,7 +1397,7 @@ MonoBehaviour:
   _killLimitInputField: {fileID: 340295612}
   _startGameButton: {fileID: 1750482812}
   _lobbyNameText: {fileID: 805853423}
-  _lobbyCodeText: {fileID: 805853423}
+  _lobbyCodeText: {fileID: 1845380694}
   _lobbyTimerText: {fileID: 87370869}
   _options:
   - {fileID: 294508678}
@@ -1385,6 +1415,7 @@ GameObject:
   - component: {fileID: 534935010}
   - component: {fileID: 534935009}
   - component: {fileID: 534935012}
+  - component: {fileID: 534935013}
   m_Layer: 5
   m_Name: SecondOptionButton
   m_TagString: Untagged
@@ -1523,10 +1554,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   VoteCountText: {fileID: 945132875}
+  ButtonImage: {fileID: 534935010}
   OptionIndex: 1
   _preGameLobbyUIManager: {fileID: 407496416}
   VoteOptionIndex: {fileID: 11400000, guid: 6c46140e807643845b3436162349ecc8, type: 2}
   OnVoteCast: {fileID: 11400000, guid: 695fb06912148144787d27bcb4f4913d, type: 2}
+--- !u!114 &534935013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534935007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a4ba6ffbaa19247b43f327f450f7d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 695fb06912148144787d27bcb4f4913d, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 534935012}
+        m_TargetAssemblyTypeName: OptionButton, Assembly-CSharp
+        m_MethodName: OnVoteCasted
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &563686133
 GameObject:
   m_ObjectHideFlags: 0

@@ -2238,6 +2238,7 @@ MonoBehaviour:
   _simGameTypeRef:
     Id: game_types.FFA
   _serverConfig: {fileID: 11400000, guid: fe5e593fcdde82743a2bf178e241d2ac, type: 2}
+  _clientConfig: {fileID: 11400000, guid: 012af5a949a08a544b18078787ed125e, type: 2}
   _lobbyName: {fileID: 1607510828}
   _publicPrivateDropdown: {fileID: 1093042167}
   _gamemodeDropdown: {fileID: 1908603849}

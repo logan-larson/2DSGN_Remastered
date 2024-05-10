@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionButton : MonoBehaviour
 {
     public TMP_Text VoteCountText;
+
+    public Image ButtonImage; 
 
     public int OptionIndex;
 
@@ -26,5 +29,17 @@ public class OptionButton : MonoBehaviour
 
         VoteOptionIndex.Value = OptionIndex;
         OnVoteCast.Raise();
+    }
+
+    public void OnVoteCasted()
+    {
+        if (VoteOptionIndex.Value == OptionIndex)
+        {
+            ButtonImage.color = Color.green;
+        }
+        else
+        {
+            ButtonImage.color = Color.white;
+        }
     }
 }

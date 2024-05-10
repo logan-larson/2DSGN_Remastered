@@ -298,6 +298,7 @@ public class SessionManager : MonoBehaviour
 
             _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
             */
+            OnLobbyUpdate.Invoke(Lobby);
         }
         else if (args.LoadedScenes[0].name == "OnlineGame")
         {

@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb160920f10c1ed44a87bb6ce2765ffd, type: 3}
-  m_Name: VoteOptionIndex
+  m_Script: {fileID: 11500000, guid: 2ed3ff9ba0bb1114a9faee767b0b5b43, type: 3}
+  m_Name: HathoraClientConfig
   m_EditorClassIdentifier: 
-  Value: 0
+  _appId: app-b330c055-60e2-4bdf-9427-9c9e900eb48f
