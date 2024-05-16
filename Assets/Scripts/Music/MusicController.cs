@@ -7,9 +7,20 @@ public class MusicController : MonoBehaviour
     [SerializeField]
     private AudioSource _audioSource;
 
+    [SerializeField]
+    private BoolVariable _themeMusicObjectExists;
+
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (_themeMusicObjectExists.Value)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            DontDestroyOnLoad(gameObject);
+            _themeMusicObjectExists.Value = true;
+        }
     }
 
     public void PlayMusic()
