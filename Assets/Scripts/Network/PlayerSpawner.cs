@@ -161,7 +161,8 @@ public class PlayerSpawner : MonoBehaviour
         NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
         _networkManager.ServerManager.Spawn(nob, conn);
 
-        _sessionManager.Players[conn.ClientId].Nob = nob;
+        if (_sessionManager.Players.ContainsKey(conn.ClientId))
+            _sessionManager.Players[conn.ClientId].Nob = nob;
 
         //If there are no global scenes 
         if (_addToDefaultScene)

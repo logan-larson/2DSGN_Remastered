@@ -152,7 +152,10 @@ public class SessionManager : MonoBehaviour
         }
         else if (args.ConnectionState == LocalConnectionState.Stopped)
         {
-            _beamContext.Lobby.Leave();
+            if (_beamContext != null && _beamContext.Lobby != null)
+            {
+                _beamContext.Lobby.Leave();
+            }
         }
     }
 
@@ -765,7 +768,7 @@ public class SessionManager : MonoBehaviour
     private async void UpdateLobbyDetails()
     {
         // If the player isn't in a lobby or isn't the host, return.
-        if (_beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
+        if (_beamContext.Lobby == null || _beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
 
         var sessionState = SessionState == SessionState.InLobbyWaitingForVote ? "In Lobby" : "In Game";
 
