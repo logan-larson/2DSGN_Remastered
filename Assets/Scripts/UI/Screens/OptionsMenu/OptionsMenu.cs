@@ -28,4 +28,9 @@ public class OptionsMenu : MonoBehaviour
     {
         _musicMixer.SetFloat("Volume", volume);
     }
+
+    public void SetFullscreen(bool isFullscreen)
+    {
+        Screen.fullScreen = isFullscreen;
+    }
 }
