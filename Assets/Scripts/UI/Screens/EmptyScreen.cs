@@ -9,7 +9,7 @@ public class EmptyScreen : MonoBehaviour
     private UIDocument _document;
 
     [SerializeField]
-    private StyleSheet _styleSheet;
+    private List<StyleSheet> _styleSheets;
 
     private void Start()
     {
@@ -30,9 +30,19 @@ public class EmptyScreen : MonoBehaviour
         var root = _document.rootVisualElement;
         root.Clear();
 
-        root.styleSheets.Add(_styleSheet);
+        foreach (var sheet in _styleSheets)
+        {
+            root.styleSheets.Add(sheet);
+        }
+    }
 
-
-
+    private T Create<T>(params string[] classList) where T : VisualElement, new()
+    {
+        var element = new T();
+        for (int i = 0; i < classList.Length; i++)
+        {
+            element.AddToClassList(classList[i]);
+        }
+        return element;
     }
 }

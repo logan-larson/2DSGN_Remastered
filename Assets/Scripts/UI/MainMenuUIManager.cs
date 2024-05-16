@@ -64,6 +64,9 @@ public class MainMenuUIManager : MonoBehaviour
     [SerializeField]
     private HathoraClientConfig _clientConfig;
 
+    [SerializeField]
+    private GameEvent _playMusicEvent;
+
     #endregion
 
     #region Lobby Parameters
@@ -91,6 +94,8 @@ public class MainMenuUIManager : MonoBehaviour
 
     private void Start()
     {
+        _playMusicEvent.Raise();
+
         _buildInfo.IsFreeplay = false;
 
         UsernameText.text = "Welcome back, " + _userInfo.Username;

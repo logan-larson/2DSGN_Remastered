@@ -327,6 +327,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 103249317836800785, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 103249317836800785, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 72
+      objectReference: {fileID: 0}
+    - target: {fileID: 103249318102561212, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 103249318102561212, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -160
+      objectReference: {fileID: 0}
+    - target: {fileID: 103249318596712000, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1195596815022556775, guid: 800e7d9415e735f4c80ebc515377d651, type: 3}
       propertyPath: _scenePathHash
       value: 3097083124
@@ -554,6 +574,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1234214565159709641, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
+      propertyPath: _stopMusicEvent
+      value: 
+      objectReference: {fileID: 11400000, guid: 65f53eceb45c1d24283d4b454730a3d1, type: 2}
     - target: {fileID: 3159047174390764698, guid: 181827d1a0e42a24cbca9792e93c95f4, type: 3}
       propertyPath: _networkObjectCache
       value: 

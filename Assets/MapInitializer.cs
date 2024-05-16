@@ -9,6 +9,14 @@ public class MapInitializer : NetworkBehaviour
 {
     public UnityEvent OnMapSpawned = new UnityEvent();
 
+    [SerializeField]
+    private GameEvent _stopMusicEvent;
+
+    private void Start()
+    {
+        _stopMusicEvent.Raise();
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();

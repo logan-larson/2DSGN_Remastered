@@ -26,8 +26,13 @@ public class AuthenticationUIManager : MonoBehaviour
 
     private PlayerAccount _playerAccount;
 
+    [SerializeField]
+    private GameEvent _playMusicEvent;
+
     private async void Start()
     {
+        _playMusicEvent.Raise();
+
         _usernameError.gameObject.SetActive(false);
 
         _beamContext = BeamContext.Default;
