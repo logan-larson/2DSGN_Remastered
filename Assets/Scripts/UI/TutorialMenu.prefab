@@ -35,9 +35,9 @@ RectTransform:
   m_Father: {fileID: 2384980239707361628}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960, y: -300}
   m_SizeDelta: {x: 60, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6372817986892955873
@@ -169,9 +169,9 @@ RectTransform:
   m_Father: {fileID: 2384980239707361628}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 500, y: -300}
   m_SizeDelta: {x: 820, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2794844177510521057
@@ -617,9 +617,9 @@ RectTransform:
   m_Father: {fileID: 6705562531393625895}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 410, y: -250}
   m_SizeDelta: {x: 820, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6821964195143957496
@@ -643,7 +643,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 0.57254905}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -894,9 +894,9 @@ RectTransform:
   m_Father: {fileID: 3737200146804755442}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 710, y: -745.83746}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4431591841094581375
@@ -1026,9 +1026,9 @@ RectTransform:
   m_Father: {fileID: 3737200146804755442}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 710, y: -46.25625}
   m_SizeDelta: {x: 461.1484, y: 92.5125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7771153485981541353
@@ -1234,23 +1234,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TutorialItems:
   - Text: Use 'A' and 'D' to move Left and Right respectively.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: 0489be4a830549f46ad85ab8c6022f11, type: 3}
   - Text: Use 'W' or 'Space' to Jump.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: 0c541f8a8026e5b409c983329e2443b0, type: 3}
   - Text: Use 'Shift' to switch to Sprint mode.
-    Image: {fileID: 0}
-  - Text: Use 'Left Ctrl' to switch to Slide mode.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: c7d44a7a3b15d0947ad7583cb30644d0, type: 3}
+  - Text: Use 'Left Ctrl' or 'S' to switch to Slide mode.
+    Image: {fileID: 21300000, guid: 53b17941c026e454198d236c857a4dd7, type: 3}
   - Text: Use 'Left Mouse Button' to fire your weapon. This automatically switches
       to Shoot mode
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: 070d664199498cd49863662df8ee1493, type: 3}
   - Text: Use 'Right Mouse Button' to aim your weapon. This locks the camera rotation.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: 6705901089dc36048acde892696d9501, type: 3}
   - Text: Use 'F' to pickup new weapons and health nuts. Health nuts restore health
       to 100%.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: c4ca92287c5dcab45892a88de6dff2a6, type: 3}
   - Text: Use 'Tab' to toggle the scoreboard, and 'Esc' to open the pause menu.
-    Image: {fileID: 0}
+    Image: {fileID: 21300000, guid: b47371a78669d58419ab0082947b5d8d, type: 3}
   CurrentImage: {fileID: 5678416740846214721}
   CurrentText: {fileID: 4321881353964220350}
   NextButton: {fileID: 7488176874252608421}
@@ -1290,9 +1290,9 @@ RectTransform:
   m_Father: {fileID: 2384980239707361628}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 40, y: -300}
   m_SizeDelta: {x: 60, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1146286355343077918
@@ -1422,9 +1422,9 @@ RectTransform:
   m_Father: {fileID: 6705562531393625895}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 410, y: -550}
   m_SizeDelta: {x: 820, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8393815784885800713
@@ -1660,9 +1660,9 @@ RectTransform:
   m_Father: {fileID: 3737200146804755442}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 710, y: -411.675}
   m_SizeDelta: {x: 1000, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &236699772215055368
