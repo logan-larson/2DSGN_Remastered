@@ -1,5 +1,7 @@
 using Beamable;
 using Beamable.Player;
+using Hathora.Core.Scripts.Runtime.Client;
+using HathoraCloud;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,13 +26,22 @@ public class AuthenticationUIManager : MonoBehaviour
 
     private PlayerAccount _playerAccount;
 
+    [SerializeField]
+    private GameEvent _playMusicEvent;
+
     private async void Start()
     {
+        _playMusicEvent.Raise();
+
         _usernameError.gameObject.SetActive(false);
 
         _beamContext = BeamContext.Default;
 
         _loginStatus.text = "Connecting to authentication service...";
+
+        // Login to Hathora, sets the AuthToken in HathoraClientMgr
+        //await HathoraClientMgr.Singleton.AuthLoginAsync();
+
         await _beamContext.OnReady;
 
         _loginStatus.text = "Fetching user details...";

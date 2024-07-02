@@ -198,8 +198,13 @@ public class PlayerSpawner : MonoBehaviour
         NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
         _networkManager.ServerManager.Spawn(nob, conn);
 
+<<<<<<< HEAD
         //_sessionManager.Players[conn.ClientId].Nob = nob;
         //PlayersManager.Instance.Players[conn.ClientId].Nob = nob;
+=======
+        if (_sessionManager.Players.ContainsKey(conn.ClientId))
+            _sessionManager.Players[conn.ClientId].Nob = nob;
+>>>>>>> the-revert-pt2
 
         //If there are no global scenes 
         if (_addToDefaultScene)

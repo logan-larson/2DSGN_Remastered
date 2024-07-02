@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/Game/TestGame.unity.meta
 guid: 6bc9bc16946b66547b6ae16ab66f5474
+========
+guid: c2c0862550e97cf4ca7a8928abf01d60
+folderAsset: yes
+>>>>>>>> the-revert-pt2:Assets/FishNet.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

@@ -38,8 +38,13 @@ public class PreGameLobbyUIManager : MonoBehaviour
     [SerializeField]
     private List<OptionButton> _options;
 
+    [SerializeField]
+    private GameEvent _playMusicEvent;
+
     private void Start()
     {
+        _playMusicEvent.Raise();
+
         var networkManager = InstanceFinder.NetworkManager;
 
         _sessionManager = networkManager.GetComponent<SessionManager>();

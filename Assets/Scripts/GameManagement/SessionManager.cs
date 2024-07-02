@@ -98,6 +98,8 @@ public class SessionManager : MonoBehaviour
 
     private Coroutine _gameStartCountdownCoroutine;
 
+    private bool _isOffline = false;
+
     #endregion
 
     #region Initialization
@@ -160,7 +162,10 @@ public class SessionManager : MonoBehaviour
         }
         else if (args.ConnectionState == LocalConnectionState.Stopped)
         {
-            _beamContext.Lobby.Leave();
+            if (_beamContext != null && _beamContext.Lobby != null)
+            {
+                _beamContext.Lobby.Leave();
+            }
         }
     }
 
@@ -313,6 +318,7 @@ public class SessionManager : MonoBehaviour
 
             _networkManager.ServerManager.Broadcast(playerListUpdateBroadcast);
             */
+            OnLobbyUpdate.Invoke(Lobby);
         }
         //else if (args.LoadedScenes[0].name == "OnlineGame")
         else
@@ -555,7 +561,8 @@ public class SessionManager : MonoBehaviour
         if (SessionState == SessionState.InLobbyWaitingForVote)
         {
             // Voting hasn't started and this is the first vote
-            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+            if (!_isOffline)
+                Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
 
             // Initate the voting countdown.
             StartLobbyVotingCountdown();
@@ -563,10 +570,21 @@ public class SessionManager : MonoBehaviour
         else if (SessionState == SessionState.InLobbyVoting)
         {
             // Update the players vote.
-            Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
+            if (!_isOffline)
+                Players[connection.ClientId].OptionVoteIndex = broadcast.OptionVoteIndex;
         }
         else
         {
+            return;
+        }
+
+        if (_isOffline)
+        {
+            SelectedMapIndex = broadcast.OptionVoteIndex;
+
+            // If everyone has voted, end the voting and start the game.
+            StartLobbyCountdown();
+
             return;
         }
 
@@ -635,6 +653,11 @@ public class SessionManager : MonoBehaviour
     #endregion
 
     #region Public Methods
+
+    public void SetIsOffline(bool isOffline)
+    {
+        _isOffline = isOffline;
+    }
 
     /// <summary>
     /// Called by the host to start the game.
@@ -817,7 +840,11 @@ public class SessionManager : MonoBehaviour
     private async void UpdateLobbyDetails()
     {
         // If the player isn't in a lobby or isn't the host, return.
+<<<<<<< HEAD
         if (_beamContext == null || _beamContext.Lobby == null || _beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
+=======
+        if (_beamContext.Lobby == null || _beamContext.Lobby.Value == null || _beamContext.Lobby.Host != _beamContext.PlayerId.ToString()) return;
+>>>>>>> the-revert-pt2
 
         var sessionState = SessionState == SessionState.InLobbyWaitingForVote ? "In Lobby" : "In Game";
 

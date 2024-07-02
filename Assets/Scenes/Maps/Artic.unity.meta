@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/Maps/Artic.unity.meta
 guid: 0c3aa66871ccf6449baf821741cb5b79
+========
+guid: 138051f07e3f43f4d9cb355535b03897
+folderAsset: yes
+>>>>>>>> the-revert-pt2:Assets/FishNet/CodeGenerating.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

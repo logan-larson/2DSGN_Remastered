@@ -3,6 +3,10 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using System.Collections;
 using System.Collections.Generic;
+<<<<<<< HEAD
+=======
+//using UnityEditor.Animations;
+>>>>>>> the-revert-pt2
 using UnityEngine;
 
 public class WeaponPickupManager : Pickup

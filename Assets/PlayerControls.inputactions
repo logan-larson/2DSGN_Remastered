@@ -328,6 +328,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b2258977-f6d8-4c2b-8300-350997a19519",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f8c85a76-1537-478f-96bb-45c075094f6c",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",

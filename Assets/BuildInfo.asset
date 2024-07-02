@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9efc09e56702bb4a92f12720a029a05, type: 3}
   m_Name: BuildInfo
   m_EditorClassIdentifier: 
-  IsServer: 1
-  IsLocalTest: 1
+  IsServer: 0
+  IsLocalTest: 0
   IsProduction: 1
   IsFreeplay: 0
